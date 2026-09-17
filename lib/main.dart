@@ -16,7 +16,7 @@ class KimiaXploreApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'KimiaXplore',
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.onboarding,
       getPages: AppPages.pages,
     );
   }
