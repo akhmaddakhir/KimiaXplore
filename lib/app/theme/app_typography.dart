@@ -47,7 +47,7 @@ abstract final class AppTypography {
 
   static const TextStyle button = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: FontWeight.w800,
   );
 }

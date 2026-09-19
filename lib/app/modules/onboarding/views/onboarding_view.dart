@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'package:get/get.dart';
+import '../../../widgets/app_button.dart';
 
-import '../controllers/onboarding_controller.dart';
-
-class OnboardingView extends GetView<OnboardingController> {
+class OnboardingView extends StatelessWidget {
   const OnboardingView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('OnboardingView'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text(
-          'OnboardingView is working',
-          style: TextStyle(fontSize: 20),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: AppButton.primary(label: 'Lanjut', onPressed: () {}),
+          ),
         ),
       ),
     );
