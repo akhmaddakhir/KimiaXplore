@@ -1,23 +1,32 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class OnboardingController extends GetxController {
-  //TODO: Implement OnboardingController
+  final PageController pageController = PageController();
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  final currentPage = 0.obs;
+
+  void onPageChanged(int index) {
+    currentPage.value = index;
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void nextPage() {
+    pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void previousPage() {
+    pageController.previousPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void onClose() {
+    pageController.dispose();
     super.onClose();
   }
-
-  void increment() => count.value++;
 }
