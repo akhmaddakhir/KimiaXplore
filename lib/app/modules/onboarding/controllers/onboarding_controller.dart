@@ -100,6 +100,8 @@ class OnboardingController extends GetxController {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+    } else {
+      Get.back();
     }
   }
 

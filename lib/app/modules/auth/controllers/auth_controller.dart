@@ -9,6 +9,7 @@ class AuthController extends GetxController {
   final confirmPasswordController = TextEditingController();
 
   final isFormValid = false.obs;
+  final isLoginFormValid = false.obs;
 
   @override
   void onInit() {
@@ -71,9 +72,20 @@ class AuthController extends GetxController {
 
     isFormValid.value =
         isEmailValid && isPasswordValid && isConfirmPasswordValid;
+    isLoginFormValid.value = isEmailValid && isPasswordValid;
   }
 
   void register() {
+    final isValid = formKey.currentState?.validate() ?? false;
+
+    if (!isValid) {
+      return;
+    }
+
+    validateForm();
+  }
+
+  void login() {
     final isValid = formKey.currentState?.validate() ?? false;
 
     if (!isValid) {

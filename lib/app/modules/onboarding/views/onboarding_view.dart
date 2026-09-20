@@ -17,58 +17,65 @@ class OnboardingView extends GetView<OnboardingController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Obx(
-              () => AppStepHeader.steps(
-                currentStep: controller.currentPage.value + 1,
-                totalSteps: controller.totalPages,
-                onBackPressed: controller.isIntroPage
-                    ? null
-                    : controller.previousPage,
-              ),
-            ),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: PageView(
-                  controller: controller.pageController,
-                  onPageChanged: controller.onPageChanged,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    const OnboardingIntro(),
-
-                    ...controller.questions.map(
-                      (question) => _buildQuestionPage(question),
-                    ),
-
-                    const OnboardingTransition(),
-                  ],
+    return Obx(
+      () => PopScope(
+        canPop: controller.currentPage.value == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          if (controller.currentPage.value > 0) {
+            controller.previousPage();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          body: SafeArea(
+            child: Column(
+              children: [
+                AppStepHeader.steps(
+                  currentStep: controller.currentPage.value + 1,
+                  totalSteps: controller.totalPages,
+                  onBackPressed: controller.previousPage,
                 ),
-              ),
-            ),
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-              child: SizedBox(
-                width: double.infinity,
-                child: Obx(
-                  () => AppButton.primary(
-                    label: controller.isTransitionPage
-                        ? 'Kenalan, yuk!'
-                        : 'Lanjut',
-                    onPressed: controller.canContinue
-                        ? controller.nextPage
-                        : null,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: PageView(
+                      controller: controller.pageController,
+                      onPageChanged: controller.onPageChanged,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        const OnboardingIntro(),
+
+                        ...controller.questions.map(
+                          (question) => _buildQuestionPage(question),
+                        ),
+
+                        const OnboardingTransition(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Obx(
+                      () => AppButton.primary(
+                        label: controller.isTransitionPage
+                            ? 'Kenalan, yuk!'
+                            : 'Lanjut',
+                        onPressed: controller.canContinue
+                            ? controller.nextPage
+                            : null,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

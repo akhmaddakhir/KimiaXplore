@@ -85,7 +85,7 @@ class LoginView extends GetView<AuthController> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => Get.offNamed(AppRoutes.register),
+                              onTap: () => Get.offNamed(AppRoutes.onboarding),
                               child: Text(
                                 'Gas bikin',
                                 style: AppTypography.bodySmall.copyWith(

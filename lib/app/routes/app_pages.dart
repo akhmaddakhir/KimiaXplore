@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:kimiaxplore/app/modules/auth/bindings/auth_binding.dart';
+import 'package:kimiaxplore/app/modules/auth/views/login_view.dart';
 import 'package:kimiaxplore/app/modules/auth/views/register_view.dart';
 import 'package:kimiaxplore/app/modules/onboarding/bindings/onboarding_binding.dart';
 import 'package:kimiaxplore/app/modules/onboarding/views/onboarding_view.dart';
@@ -20,6 +21,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.register,
       page: () => const RegisterView(),
+      binding: AuthBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.login,
+      page: () => const LoginView(),
       binding: AuthBinding(),
     ),
     GetPage(
