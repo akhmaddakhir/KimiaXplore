@@ -3,6 +3,8 @@ import 'package:kimiaxplore/app/modules/auth/bindings/auth_binding.dart';
 import 'package:kimiaxplore/app/modules/auth/views/register_view.dart';
 import 'package:kimiaxplore/app/modules/onboarding/bindings/onboarding_binding.dart';
 import 'package:kimiaxplore/app/modules/onboarding/views/onboarding_view.dart';
+import 'package:kimiaxplore/app/modules/welcome/bindings/welcome_binding.dart';
+import 'package:kimiaxplore/app/modules/welcome/views/welcome_view.dart';
 
 import 'app_routes.dart';
 
@@ -19,6 +21,11 @@ class AppPages {
       name: AppRoutes.register,
       page: () => const RegisterView(),
       binding: AuthBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.welcome,
+      page: () => const WelcomeView(),
+      binding: WelcomeBinding(),
     ),
   ];
 }
