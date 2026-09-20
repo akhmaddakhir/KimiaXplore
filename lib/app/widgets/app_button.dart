@@ -32,6 +32,21 @@ class AppButton extends StatefulWidget {
   }) : gradientColors = const [AppColors.lightBlue, AppColors.blue500],
        shadowColor = AppColors.blue700;
 
+  const AppButton.outline({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.height = 52,
+    this.width,
+    this.borderRadius = AppRadius.button,
+    this.textColor = AppColors.blue500,
+    this.icon,
+  }) : gradientColors = const [AppColors.surface, AppColors.surface],
+       shadowColor = AppColors.blue100,
+       border = const Border.fromBorderSide(
+         BorderSide(color: AppColors.blue100, width: 2.0),
+       );
+
   const AppButton.icon({
     super.key,
     required this.icon,
@@ -98,6 +113,14 @@ class _AppButtonState extends State<AppButton> {
 
     final currentTextColor = _isEnabled ? widget.textColor : AppColors.textHint;
 
+    final currentBorder = _isEnabled
+        ? widget.border
+        : (widget.border != null
+              ? const Border.fromBorderSide(
+                  BorderSide(color: AppColors.border, width: 2.0),
+                )
+              : null);
+
     final buttonWidth =
         widget.width ?? (_isIconOnly ? widget.height : double.infinity);
 
@@ -114,7 +137,7 @@ class _AppButtonState extends State<AppButton> {
           transform: Matrix4.translationValues(0, pressedOffset, 0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.borderRadius),
-            border: widget.border,
+            border: currentBorder,
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
