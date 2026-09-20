@@ -50,4 +50,10 @@ abstract final class AppTypography {
     fontSize: 18,
     fontWeight: FontWeight.w800,
   );
+
+  static const TextStyle option = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
+  );
 }
