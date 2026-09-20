@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../models/onboarding_question.dart';
 import '../data/onboarding_questions.dart';
+import '../models/onboarding_question.dart';
 
 class OnboardingController extends GetxController {
   final PageController pageController = PageController();
@@ -13,20 +13,30 @@ class OnboardingController extends GetxController {
 
   final answers = <String, String>{}.obs;
 
-  int get totalPages => questions.length + 1;
+  int get totalPages => questions.length + 2;
+
+  int get transitionPageIndex => totalPages - 1;
 
   bool get isIntroPage => currentPage.value == 0;
 
-  int get currentQuestionIndex => currentPage.value - 1;
+  bool get isTransitionPage => currentPage.value == transitionPageIndex;
 
   bool get isLastPage => currentPage.value == totalPages - 1;
 
+  int get currentQuestionIndex {
+    if (isIntroPage || isTransitionPage) return -1;
+
+    return currentPage.value - 1;
+  }
+
   OnboardingQuestion? get currentQuestion {
-    if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
+    final index = currentQuestionIndex;
+
+    if (index < 0 || index >= questions.length) {
       return null;
     }
 
-    return questions[currentQuestionIndex];
+    return questions[index];
   }
 
   void onPageChanged(int index) {
@@ -54,7 +64,7 @@ class OnboardingController extends GetxController {
   }
 
   bool get canContinue {
-    if (isIntroPage) return true;
+    if (isIntroPage || isTransitionPage) return true;
 
     final question = currentQuestion;
 
@@ -89,7 +99,7 @@ class OnboardingController extends GetxController {
 
   void completeOnboarding() {
     // Menyimpan jawaban onboarding.
-    // Mengarahkan user ke Register page.
+    // Mengarahkan user ke form perkenalan.
   }
 
   @override
