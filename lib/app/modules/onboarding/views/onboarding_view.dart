@@ -7,6 +7,7 @@ import '../../../widgets/app_button.dart';
 import '../../../widgets/app_step_header.dart';
 import '../controllers/onboarding_controller.dart';
 import '../models/onboarding_question.dart';
+import '../widgets/onboarding_intro.dart';
 import '../widgets/onboarding_option.dart';
 
 class OnboardingView extends GetView<OnboardingController> {
@@ -34,9 +35,12 @@ class OnboardingView extends GetView<OnboardingController> {
                   controller: controller.pageController,
                   onPageChanged: controller.onPageChanged,
                   physics: const NeverScrollableScrollPhysics(),
-                  children: controller.questions
-                      .map((question) => _buildQuestionPage(question))
-                      .toList(),
+                  children: [
+                    const OnboardingIntro(),
+                    ...controller.questions.map(
+                      (question) => _buildQuestionPage(question),
+                    ),
+                  ],
                 ),
               ),
             ),
