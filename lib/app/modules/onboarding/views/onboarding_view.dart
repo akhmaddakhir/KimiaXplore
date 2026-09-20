@@ -19,10 +19,12 @@ class OnboardingView extends GetView<OnboardingController> {
       body: SafeArea(
         child: Column(
           children: [
-            AppStepHeader.steps(
-              currentStep: 1,
-              totalSteps: 7,
-              onBackPressed: controller.previousPage,
+            Obx(
+              () => AppStepHeader.steps(
+                currentStep: controller.currentPage.value + 1,
+                totalSteps: controller.totalPages,
+                onBackPressed: controller.previousPage,
+              ),
             ),
 
             Expanded(
@@ -32,7 +34,9 @@ class OnboardingView extends GetView<OnboardingController> {
                   controller: controller.pageController,
                   onPageChanged: controller.onPageChanged,
                   physics: const NeverScrollableScrollPhysics(),
-                  children: [_buildQuestionPage(controller.questions.first)],
+                  children: controller.questions
+                      .map((question) => _buildQuestionPage(question))
+                      .toList(),
                 ),
               ),
             ),
@@ -41,9 +45,13 @@ class OnboardingView extends GetView<OnboardingController> {
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
               child: SizedBox(
                 width: double.infinity,
-                child: AppButton.primary(
-                  label: 'Lanjut',
-                  onPressed: controller.nextPage,
+                child: Obx(
+                  () => AppButton.primary(
+                    label: controller.isLastPage ? 'Selesai' : 'Lanjut',
+                    onPressed: controller.canContinue
+                        ? controller.nextPage
+                        : null,
+                  ),
                 ),
               ),
             ),
