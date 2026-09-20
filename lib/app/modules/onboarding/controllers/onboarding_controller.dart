@@ -13,9 +13,11 @@ class OnboardingController extends GetxController {
 
   final answers = <String, String>{}.obs;
 
-  int get totalPages => questions.length;
+  int get totalPages => questions.length + 1;
 
-  int get currentQuestionIndex => currentPage.value;
+  bool get isIntroPage => currentPage.value == 0;
+
+  int get currentQuestionIndex => currentPage.value - 1;
 
   bool get isLastPage => currentPage.value == totalPages - 1;
 
@@ -52,6 +54,8 @@ class OnboardingController extends GetxController {
   }
 
   bool get canContinue {
+    if (isIntroPage) return true;
+
     final question = currentQuestion;
 
     if (question == null) return false;
