@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_button.dart';
+import '../widgets/auth_divider.dart';
 import '../../../widgets/app_step_header.dart';
 import '../../../widgets/app_text_field.dart';
 import '../controllers/auth_controller.dart';
@@ -50,34 +51,7 @@ class RegisterView extends GetView<AuthController> {
                           onPressed: null,
                         ),
                         const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Divider(
-                                color: AppColors.border,
-                                thickness: 1.5,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                'Atau',
-                                style: AppTypography.bodySmall.copyWith(
-                                  color: AppColors.textHint,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            const Expanded(
-                              child: Divider(
-                                color: AppColors.border,
-                                thickness: 1.5,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const AuthDivider(),
                         const SizedBox(height: 24),
                         AppTextField(
                           label: 'Email',
