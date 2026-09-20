@@ -12,8 +12,7 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness:
-          Brightness.dark,
+      statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
     ),
   );
@@ -33,7 +32,7 @@ class KimiaXploreApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.background,
         useMaterial3: true,
       ),
-      initialRoute: AppRoutes.onboarding,
+      initialRoute: AppRoutes.welcome,
       getPages: AppPages.pages,
     );
   }
