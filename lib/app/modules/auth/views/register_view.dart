@@ -1,0 +1,116 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_typography.dart';
+import '../../../widgets/app_button.dart';
+import '../../../widgets/app_step_header.dart';
+import '../../../widgets/app_text_field.dart';
+import '../controllers/auth_controller.dart';
+
+class RegisterView extends GetView<AuthController> {
+  const RegisterView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            AppStepHeader(progress: 1.0, onBackPressed: () => Get.back()),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 32),
+                      Text(
+                        'Siap Mulai?',
+                        textAlign: TextAlign.center,
+                        style: AppTypography.heading1.copyWith(
+                          color: AppColors.textDark,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      AppButton.icon(
+                        width: double.infinity,
+                        icon: SvgPicture.asset(
+                          'assets/icons/google.svg',
+                          width: 24,
+                          height: 24,
+                        ),
+                        onPressed: null,
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Divider(
+                              color: AppColors.border,
+                              thickness: 1.5,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'Atau',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.textHint,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const Expanded(
+                            child: Divider(
+                              color: AppColors.border,
+                              thickness: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      const AppTextField(
+                        label: 'Email',
+                        hintText: 'Masukkan email kamu',
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 16),
+                      const AppTextField(
+                        label: 'Sandi',
+                        hintText: 'Minimal 6 karakter',
+                        isPassword: true,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 16),
+                      const AppTextField(
+                        label: 'Konfirmasi sandi',
+                        hintText: 'Masukkan ulang sandi kamu',
+                        isPassword: true,
+                        textInputAction: TextInputAction.done,
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+              child: SizedBox(
+                width: double.infinity,
+                child: AppButton.primary(label: 'Selesai', onPressed: null),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
