@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../routes/app_routes.dart';
 import '../data/onboarding_questions.dart';
 import '../models/onboarding_question.dart';
 
@@ -78,6 +79,11 @@ class OnboardingController extends GetxController {
   void nextPage() {
     if (!canContinue) return;
 
+    if (isTransitionPage) {
+      Get.toNamed(AppRoutes.register);
+      return;
+    }
+
     if (!isLastPage) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -98,8 +104,7 @@ class OnboardingController extends GetxController {
   }
 
   void completeOnboarding() {
-    // Menyimpan jawaban onboarding.
-    // Mengarahkan user ke form perkenalan.
+    Get.toNamed(AppRoutes.register);
   }
 
   @override
