@@ -22,14 +22,13 @@ class AppStepHeader extends StatelessWidget {
     this.trackColor = AppColors.textHint,
     this.arrowColor = AppColors.textDark,
     this.padding = const EdgeInsets.fromLTRB(
-      AppSpacing.xl, // 24.0 (mentok sejajar margin kiri)
-      AppSpacing.md, // 12.0
-      AppSpacing.xl, // 24.0
-      AppSpacing.md, // 12.0
+      AppSpacing.xl,
+      AppSpacing.md,
+      AppSpacing.xl,
+      AppSpacing.md,
     ),
   });
 
-  /// Constructor helper jika ingin memakai hitungan step (misal step 1 dari 8)
   factory AppStepHeader.steps({
     Key? key,
     required int currentStep,
