@@ -4,15 +4,17 @@ abstract final class OnboardingQuestions {
   static const List<OnboardingQuestion> items = [
     OnboardingQuestion(
       id: 'discovery_source',
-      title: 'Tau KimiaXplore dari mana?',
+      title: 'Darimana tau KimiaXplore?',
       isRequired: false,
       options: [
         OnboardingOption(id: 'instagram', title: 'Instagram'),
-        OnboardingOption(id: 'tiktok', title: 'TikTok'),
-        OnboardingOption(id: 'friends_family', title: 'Teman atau keluarga'),
-        OnboardingOption(id: 'school', title: 'Guru atau sekolah'),
-        OnboardingOption(id: 'google', title: 'Google'),
-        OnboardingOption(id: 'website', title: 'Website atau blog'),
+        OnboardingOption(id: 'tiktok', title: 'Tiktok'),
+        OnboardingOption(
+          id: 'friends_family',
+          title: 'Teman atau orang terdekat',
+        ),
+        OnboardingOption(id: 'google_search', title: 'Google search'),
+        OnboardingOption(id: 'website_blog', title: 'Website/blog'),
         OnboardingOption(id: 'other', title: 'Lainnya'),
       ],
     ),

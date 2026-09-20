@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
+import '../../../theme/app_typography.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_step_header.dart';
 import '../controllers/onboarding_controller.dart';
+import '../models/onboarding_question.dart';
+import '../widgets/onboarding_option.dart';
 
 class OnboardingView extends GetView<OnboardingController> {
   const OnboardingView({super.key});
@@ -29,9 +32,7 @@ class OnboardingView extends GetView<OnboardingController> {
                   controller: controller.pageController,
                   onPageChanged: controller.onPageChanged,
                   physics: const NeverScrollableScrollPhysics(),
-                  children: const [
-                    // Onboarding page content
-                  ],
+                  children: [_buildQuestionPage(controller.questions.first)],
                 ),
               ),
             ),
@@ -48,6 +49,40 @@ class OnboardingView extends GetView<OnboardingController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildQuestionPage(OnboardingQuestion question) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
+          Text(
+            question.title,
+            style: AppTypography.heading2.copyWith(color: AppColors.textDark),
+          ),
+          const SizedBox(height: 24),
+          ...question.options.map(
+            (option) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Obx(
+                () => OnboardingOptionCard(
+                  label: option.title,
+                  isSelected: controller.isOptionSelectedForQuestion(
+                    question.id,
+                    option.id,
+                  ),
+                  onTap: () => controller.selectAnswerForQuestion(
+                    question.id,
+                    option.id,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

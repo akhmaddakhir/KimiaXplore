@@ -10,10 +10,10 @@ class OnboardingController extends GetxController {
 
   final questions = OnboardingQuestions.items;
 
-  int get totalPages => questions.length + 1;
-  int get currentQuestionIndex => currentPage.value - 1;
+  int get totalPages => questions.length;
+  int get currentQuestionIndex => currentPage.value;
 
-  bool get isIntroPage => currentPage.value == 0;
+  bool get isIntroPage => false;
 
   OnboardingQuestion? get currentQuestion {
     if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
@@ -49,6 +49,14 @@ class OnboardingController extends GetxController {
     if (question == null) return false;
 
     return answers[question.id] == optionId;
+  }
+
+  void selectAnswerForQuestion(String questionId, String optionId) {
+    answers[questionId] = optionId;
+  }
+
+  bool isOptionSelectedForQuestion(String questionId, String optionId) {
+    return answers[questionId] == optionId;
   }
 
   bool get canContinue {
