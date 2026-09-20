@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class AuthController extends GetxController {
   final formKey = GlobalKey<FormState>();
+  final loginFormKey = GlobalKey<FormState>();
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -18,6 +19,9 @@ class AuthController extends GetxController {
     emailController.addListener(validateForm);
     passwordController.addListener(validateForm);
     confirmPasswordController.addListener(validateForm);
+
+    emailController.addListener(validateLoginForm);
+    passwordController.addListener(validateLoginForm);
   }
 
   String? validateEmail(String? value) {
@@ -72,6 +76,13 @@ class AuthController extends GetxController {
 
     isFormValid.value =
         isEmailValid && isPasswordValid && isConfirmPasswordValid;
+  }
+
+  void validateLoginForm() {
+    final isEmailValid = validateEmail(emailController.text) == null;
+
+    final isPasswordValid = validatePassword(passwordController.text) == null;
+
     isLoginFormValid.value = isEmailValid && isPasswordValid;
   }
 
@@ -86,13 +97,15 @@ class AuthController extends GetxController {
   }
 
   void login() {
-    final isValid = formKey.currentState?.validate() ?? false;
+    final isValid =
+        (loginFormKey.currentState ?? formKey.currentState)?.validate() ??
+        false;
 
     if (!isValid) {
       return;
     }
 
-    validateForm();
+    validateLoginForm();
   }
 
   @override
@@ -100,6 +113,9 @@ class AuthController extends GetxController {
     emailController.removeListener(validateForm);
     passwordController.removeListener(validateForm);
     confirmPasswordController.removeListener(validateForm);
+
+    emailController.removeListener(validateLoginForm);
+    passwordController.removeListener(validateLoginForm);
 
     emailController.dispose();
     passwordController.dispose();

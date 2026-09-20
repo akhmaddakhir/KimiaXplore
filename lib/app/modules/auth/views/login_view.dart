@@ -27,7 +27,7 @@ class LoginView extends GetView<AuthController> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: SingleChildScrollView(
                   child: Form(
-                    key: controller.formKey,
+                    key: controller.loginFormKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
