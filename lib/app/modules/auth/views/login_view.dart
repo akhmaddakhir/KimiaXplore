@@ -13,6 +13,9 @@ import '../controllers/auth_controller.dart';
 
 class LoginView extends GetView<AuthController> {
   const LoginView({super.key});
+  
+  @override
+  String? get tag => 'login';
 
   @override
   Widget build(BuildContext context) {

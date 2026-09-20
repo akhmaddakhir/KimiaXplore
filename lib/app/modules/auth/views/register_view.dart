@@ -14,6 +14,9 @@ class RegisterView extends GetView<AuthController> {
   const RegisterView({super.key});
 
   @override
+  String? get tag => 'register';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,

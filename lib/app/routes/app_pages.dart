@@ -14,24 +14,26 @@ class AppPages {
 
   static final pages = <GetPage>[
     GetPage(
+      name: AppRoutes.welcome,
+      page: () => const WelcomeView(),
+      binding: WelcomeBinding(),
+    ),
+    GetPage(
       name: AppRoutes.onboarding,
       page: () => const OnboardingView(),
       binding: OnboardingBinding(),
     ),
+
     GetPage(
       name: AppRoutes.register,
       page: () => const RegisterView(),
-      binding: AuthBinding(),
+      binding: AuthBinding('register'),
     ),
+
     GetPage(
       name: AppRoutes.login,
       page: () => const LoginView(),
-      binding: AuthBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.welcome,
-      page: () => const WelcomeView(),
-      binding: WelcomeBinding(),
+      binding: AuthBinding('login'),
     ),
   ];
 }
