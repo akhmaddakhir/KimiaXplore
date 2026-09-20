@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../models/onboarding_question.dart';
 import '../data/onboarding_questions.dart';
 
@@ -10,10 +11,13 @@ class OnboardingController extends GetxController {
 
   final questions = OnboardingQuestions.items;
 
+  final answers = <String, String>{}.obs;
+
   int get totalPages => questions.length;
+
   int get currentQuestionIndex => currentPage.value;
 
-  bool get isIntroPage => false;
+  bool get isLastPage => currentPage.value == totalPages - 1;
 
   OnboardingQuestion? get currentQuestion {
     if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
@@ -23,14 +27,14 @@ class OnboardingController extends GetxController {
     return questions[currentQuestionIndex];
   }
 
-  final answers = <String, String>{}.obs;
-
   void onPageChanged(int index) {
     currentPage.value = index;
   }
 
-  void selectAnswer(String optionId) {
-    final question = currentQuestion;
+  void selectAnswerForQuestion(String questionId, String optionId) {
+    final question = questions.firstWhereOrNull(
+      (question) => question.id == questionId,
+    );
 
     if (question == null) return;
 
@@ -40,18 +44,6 @@ class OnboardingController extends GetxController {
 
     if (!isValidOption) return;
 
-    answers[question.id] = optionId;
-  }
-
-  bool isOptionSelected(String optionId) {
-    final question = currentQuestion;
-
-    if (question == null) return false;
-
-    return answers[question.id] == optionId;
-  }
-
-  void selectAnswerForQuestion(String questionId, String optionId) {
     answers[questionId] = optionId;
   }
 
@@ -60,8 +52,6 @@ class OnboardingController extends GetxController {
   }
 
   bool get canContinue {
-    if (isIntroPage) return true;
-
     final question = currentQuestion;
 
     if (question == null) return false;
@@ -74,7 +64,7 @@ class OnboardingController extends GetxController {
   void nextPage() {
     if (!canContinue) return;
 
-    if (currentPage.value < totalPages - 1) {
+    if (!isLastPage) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
