@@ -7,6 +7,7 @@ import '../../../widgets/app_bottom_navbar.dart';
 
 import '../../home/views/home_view.dart';
 import '../../lab/views/lab_view.dart';
+import '../../shop/views/shop_view.dart';
 
 import '../controllers/main_controller.dart';
 
@@ -20,7 +21,7 @@ class MainView extends GetView<MainController> {
 
     _PlaceholderPage(title: 'AI Tutor', icon: Icons.smart_toy_rounded),
 
-    _PlaceholderPage(title: 'Shop', icon: Icons.workspace_premium_rounded),
+    ShopView(),
 
     _PlaceholderPage(title: 'Profile', icon: Icons.person_rounded),
   ];
