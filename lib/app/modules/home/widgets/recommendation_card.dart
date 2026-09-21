@@ -4,6 +4,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_button.dart';
+import '../../../widgets/app_progress_bar.dart';
 import '../models/topic_model.dart';
 
 class RecommendationCard extends StatelessWidget {
@@ -136,17 +137,7 @@ class RecommendationCard extends StatelessWidget {
             const SizedBox(height: 16),
 
             if (_hasProgress) ...[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.pill),
-                child: LinearProgressIndicator(
-                  value: topic.progress,
-                  minHeight: 8,
-                  backgroundColor: AppColors.border,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    AppColors.green500,
-                  ),
-                ),
-              ),
+              AppProgressBar(value: topic.progress),
 
               const SizedBox(height: 14),
             ],

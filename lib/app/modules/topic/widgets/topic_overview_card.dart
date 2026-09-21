@@ -4,6 +4,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_button.dart';
+import '../../../widgets/app_progress_bar.dart';
 import '../../home/models/topic_model.dart';
 
 class TopicOverviewCard extends StatelessWidget {
@@ -158,15 +159,7 @@ class TopicOverviewCard extends StatelessWidget {
   }
 
   Widget _buildProgress() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.pill),
-      child: LinearProgressIndicator(
-        value: topic.progress,
-        minHeight: 8,
-        backgroundColor: AppColors.border,
-        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.green500),
-      ),
-    );
+    return AppProgressBar(value: topic.progress);
   }
 
   Widget _buildButton() {
