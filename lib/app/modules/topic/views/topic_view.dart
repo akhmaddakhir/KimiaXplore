@@ -6,6 +6,8 @@ import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_detail_header.dart';
 import '../controllers/topic_controller.dart';
+import '../widgets/topic_overview_card.dart';
+import '../widgets/topic_summary.dart';
 
 class TopicView extends GetView<TopicController> {
   const TopicView({super.key});
@@ -18,18 +20,17 @@ class TopicView extends GetView<TopicController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const AppDetailHeader(title: 'Detail Topik'),
+            const AppDetailHeader(title: 'Detail'),
 
             Expanded(
               child: Obx(() {
-                final currentTopic = controller.topic.value;
+                final topic = controller.topic.value;
 
-                if (currentTopic == null) {
-                  return const Center(
+                if (topic == null) {
+                  return Center(
                     child: Text(
                       'Pilih materi terlebih dahulu',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
+                      style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMedium,
                       ),
                     ),
@@ -37,38 +38,29 @@ class TopicView extends GetView<TopicController> {
                 }
 
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                    vertical: AppSpacing.md,
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xl,
+                    AppSpacing.sm,
+                    AppSpacing.xl,
+                    AppSpacing.xl,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        currentTopic.title,
-                        style: AppTypography.heading1.copyWith(
-                          color: AppColors.textDark,
-                        ),
-                      ),
-
                       const SizedBox(height: AppSpacing.sm),
 
-                      Text(
-                        currentTopic.subtitle,
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.textMedium,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      TopicSummary(topic: topic),
+
+                      const SizedBox(height: AppSpacing.xl),
+
+                      TopicOverviewCard(
+                        topic: topic,
+                        onStartPressed: () {
+                          // Mengarahkan ke aktivitas rekomendsi topik
+                        },
                       ),
 
-                      const SizedBox(height: AppSpacing.md),
-
-                      Text(
-                        currentTopic.description,
-                        style: AppTypography.body.copyWith(
-                          color: AppColors.textMedium,
-                        ),
-                      ),
+                      const SizedBox(height: AppSpacing.xl),
                     ],
                   ),
                 );
