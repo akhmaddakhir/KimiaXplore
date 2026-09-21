@@ -17,20 +17,5 @@ abstract final class LabSimulations {
       title: 'Wujud Zat',
       description: 'Amati perubahan wujud zat dan gerakan partikelnya.',
     ),
-    SimulationModel(
-      id: 'ph_meter',
-      title: 'pH Meter',
-      description: 'Uji tingkat keasaman dan kebasaan berbagai larutan.',
-    ),
-    SimulationModel(
-      id: 'reaction_balancer',
-      title: 'Penyeimbang Reaksi',
-      description: 'Latih kemampuan menyetarakan persamaan reaksi kimia.',
-    ),
-    SimulationModel(
-      id: 'titration',
-      title: 'Titrasi',
-      description: 'Eksplorasi reaksi asam dan basa melalui titrasi.',
-    ),
   ];
 }
