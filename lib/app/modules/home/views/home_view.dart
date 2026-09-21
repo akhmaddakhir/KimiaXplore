@@ -7,6 +7,7 @@ import '../../../theme/app_typography.dart';
 import '../../../widgets/app_main_header.dart';
 import '../../../widgets/app_stat_chip.dart';
 import '../controllers/home_controller.dart';
+import '../widgets/recommendation_card.dart';
 import '../widgets/topic_card.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -53,7 +54,49 @@ class HomeView extends GetView<HomeController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
+
+                    const Text(
+                      'Halo, xplorer!',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF758A83),
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    const Text(
+                      'Mau xplore apa hari ini?',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1E352F),
+                        height: 1.2,
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Obx(() {
+                      if (controller.topics.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final topic = controller.topics.first;
+
+                      return RecommendationCard(
+                        topic: topic,
+                        onButtonPressed: () {
+                          controller.onTopicSelected(topic);
+                        },
+                      );
+                    }),
+
+                    const SizedBox(height: 32),
 
                     const Text(
                       'Fondasi Kimia',
@@ -64,7 +107,9 @@ class HomeView extends GetView<HomeController> {
                         color: Color(0xFF1E352F),
                       ),
                     ),
+
                     const SizedBox(height: 4),
+
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -80,11 +125,13 @@ class HomeView extends GetView<HomeController> {
                             ),
                           ),
                         ),
+
                         const SizedBox(width: 12),
+
                         _ActionTextButton(
                           label: 'Lihat semua',
                           onTap: () {
-                            // Aksi Lihat semua
+                            // Navigasi ke halaman semua materi
                           },
                         ),
                       ],
@@ -100,9 +147,12 @@ class HomeView extends GetView<HomeController> {
                         separatorBuilder: (_, _) => const SizedBox(height: 14),
                         itemBuilder: (context, index) {
                           final topic = controller.topics[index];
+
                           return TopicCard(
                             topic: topic,
-                            onTap: () => controller.onTopicSelected(topic),
+                            onTap: () {
+                              controller.onTopicSelected(topic);
+                            },
                           );
                         },
                       ),
@@ -136,13 +186,20 @@ class _ActionTextButtonState extends State<_ActionTextButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapDown: (_) {
+        setState(() => _isPressed = true);
+      },
       onTapUp: (_) async {
         await Future.delayed(const Duration(milliseconds: 100));
-        if (mounted) setState(() => _isPressed = false);
+
+        if (mounted) {
+          setState(() => _isPressed = false);
+        }
       },
       onTapCancel: () {
-        if (mounted) setState(() => _isPressed = false);
+        if (mounted) {
+          setState(() => _isPressed = false);
+        }
       },
       onTap: widget.onTap,
       behavior: HitTestBehavior.opaque,
