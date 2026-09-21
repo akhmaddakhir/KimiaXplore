@@ -17,6 +17,7 @@ class AppButton extends StatefulWidget {
     this.textColor = AppColors.surface,
     this.border,
     this.icon,
+    this.textStyle,
   });
 
   const AppButton.primary({
@@ -29,6 +30,7 @@ class AppButton extends StatefulWidget {
     this.textColor = AppColors.surface,
     this.border,
     this.icon,
+    this.textStyle,
   }) : gradientColors = const [AppColors.lightBlue, AppColors.blue500],
        shadowColor = AppColors.blue700;
 
@@ -41,6 +43,7 @@ class AppButton extends StatefulWidget {
     this.borderRadius = AppRadius.button,
     this.textColor = AppColors.blue500,
     this.icon,
+    this.textStyle,
   }) : gradientColors = const [AppColors.surface, AppColors.surface],
        shadowColor = AppColors.blue100,
        border = const Border.fromBorderSide(
@@ -59,6 +62,7 @@ class AppButton extends StatefulWidget {
       BorderSide(color: AppColors.border, width: 2.0),
     ),
   }) : label = '',
+       textStyle = null,
        gradientColors = const [AppColors.surface, AppColors.surface],
        shadowColor = AppColors.border;
 
@@ -75,6 +79,7 @@ class AppButton extends StatefulWidget {
   final BoxBorder? border;
 
   final Widget? icon;
+  final TextStyle? textStyle;
 
   @override
   State<AppButton> createState() => _AppButtonState();
@@ -82,19 +87,65 @@ class AppButton extends StatefulWidget {
 
 class _AppButtonState extends State<AppButton> {
   static const double _shadowDepth = 6;
+  static const int _minPressDuration = 160;
 
   bool _isPressed = false;
+  DateTime? _pressStartTime;
 
   bool get _isEnabled => widget.onPressed != null;
 
   bool get _isIconOnly => widget.label.isEmpty;
 
-  void _handleHighlightChanged(bool isHighlighted) {
-    if (!_isEnabled || _isPressed == isHighlighted) return;
+  void _handleTapDown(TapDownDetails details) {
+    if (!_isEnabled) return;
+    _pressStartTime = DateTime.now();
+    if (!_isPressed) {
+      setState(() {
+        _isPressed = true;
+      });
+    }
+  }
 
-    setState(() {
-      _isPressed = isHighlighted;
-    });
+  Future<void> _handleTapUp(TapUpDetails details) async {
+    if (!_isEnabled) return;
+    final startTime = _pressStartTime;
+    if (startTime != null) {
+      final elapsed = DateTime.now().difference(startTime).inMilliseconds;
+      if (elapsed < _minPressDuration) {
+        await Future.delayed(
+          Duration(milliseconds: _minPressDuration - elapsed),
+        );
+      }
+    }
+    if (mounted && _isPressed) {
+      setState(() {
+        _isPressed = false;
+      });
+    }
+  }
+
+  void _handleTapCancel() {
+    if (mounted && _isPressed) {
+      setState(() {
+        _isPressed = false;
+      });
+    }
+  }
+
+  Future<void> _handleTap() async {
+    if (!_isEnabled) return;
+    if (!_isPressed) {
+      setState(() {
+        _isPressed = true;
+      });
+      await Future.delayed(const Duration(milliseconds: _minPressDuration));
+      if (mounted) {
+        setState(() {
+          _isPressed = false;
+        });
+      }
+    }
+    widget.onPressed?.call();
   }
 
   @override
@@ -156,8 +207,10 @@ class _AppButtonState extends State<AppButton> {
             borderRadius: BorderRadius.circular(widget.borderRadius),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
-              onTap: widget.onPressed,
-              onHighlightChanged: _handleHighlightChanged,
+              onTapDown: _isEnabled ? _handleTapDown : null,
+              onTapUp: _isEnabled ? _handleTapUp : null,
+              onTapCancel: _isEnabled ? _handleTapCancel : null,
+              onTap: _isEnabled ? _handleTap : null,
               splashFactory: NoSplash.splashFactory,
               overlayColor: const WidgetStatePropertyAll(Colors.transparent),
               child: Center(
@@ -173,9 +226,8 @@ class _AppButtonState extends State<AppButton> {
                     if (!_isIconOnly)
                       Text(
                         widget.label,
-                        style: AppTypography.button.copyWith(
-                          color: currentTextColor,
-                        ),
+                        style: (widget.textStyle ?? AppTypography.button)
+                            .copyWith(color: currentTextColor),
                       ),
                   ],
                 ),
