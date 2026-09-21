@@ -1,23 +1,13 @@
 import 'package:get/get.dart';
 
 class MainController extends GetxController {
-  //TODO: Implement MainController
+  final selectedIndex = 0.obs;
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  void changeTab(int index) {
+    if (index < 0 || index > 4) return;
+
+    if (selectedIndex.value == index) return;
+
+    selectedIndex.value = index;
   }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }
