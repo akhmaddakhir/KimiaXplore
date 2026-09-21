@@ -9,6 +9,7 @@ import '../controllers/topic_controller.dart';
 import '../models/topic_activity_type.dart';
 import '../widgets/topic_activity_card.dart';
 import '../widgets/topic_overview_card.dart';
+import '../widgets/topic_progress_section.dart';
 import '../widgets/topic_summary.dart';
 
 class TopicView extends GetView<TopicController> {
@@ -52,6 +53,10 @@ class TopicView extends GetView<TopicController> {
                       const SizedBox(height: AppSpacing.sm),
 
                       TopicSummary(topic: topic),
+
+                      const SizedBox(height: AppSpacing.xl),
+
+                      const TopicProgressSection(completed: 1, total: 3),
 
                       const SizedBox(height: AppSpacing.xl),
 
