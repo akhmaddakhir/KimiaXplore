@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../routes/app_routes.dart';
+
 class AuthController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final loginFormKey = GlobalKey<FormState>();
@@ -94,6 +96,9 @@ class AuthController extends GetxController {
     }
 
     validateForm();
+    if (isFormValid.value) {
+      Get.offAllNamed(AppRoutes.home);
+    }
   }
 
   void login() {
@@ -106,6 +111,9 @@ class AuthController extends GetxController {
     }
 
     validateLoginForm();
+    if (isLoginFormValid.value) {
+      Get.offAllNamed(AppRoutes.home);
+    }
   }
 
   @override
