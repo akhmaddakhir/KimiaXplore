@@ -1,23 +1,21 @@
 import 'package:get/get.dart';
 
-class MaterialController extends GetxController {
-  //TODO: Implement MaterialController
+import '../../home/models/topic_model.dart';
+import '../data/material_data.dart';
+import '../models/material_model.dart';
 
-  final count = 0.obs;
+class MaterialController extends GetxController {
+  final topic = Rxn<TopicModel>();
+  final material = Rxn<MaterialModel>();
+
   @override
   void onInit() {
     super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+    if (Get.arguments is TopicModel) {
+      topic.value = Get.arguments as TopicModel;
 
-  @override
-  void onClose() {
-    super.onClose();
+      material.value = MaterialData.findByTopicId(topic.value!.id);
+    }
   }
-
-  void increment() => count.value++;
 }
