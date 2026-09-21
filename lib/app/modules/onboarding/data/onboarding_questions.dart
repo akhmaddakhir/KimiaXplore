@@ -5,7 +5,6 @@ abstract final class OnboardingQuestions {
     OnboardingQuestion(
       id: 'discovery_source',
       title: 'Darimana tau KimiaXplore?',
-      isRequired: false,
       options: [
         OnboardingOption(id: 'instagram', title: 'Instagram'),
         OnboardingOption(id: 'tiktok', title: 'Tiktok'),
@@ -26,7 +25,7 @@ abstract final class OnboardingQuestions {
         OnboardingOption(id: 'beginner', title: 'Baru kenalan'),
         OnboardingOption(id: 'intermediate', title: 'Udah tau dikit'),
         OnboardingOption(id: 'advanced', title: 'Lumayan paham'),
-        OnboardingOption(id: 'expert', title: 'Kimia? Makanan sehari-hari 😎'),
+        OnboardingOption(id: 'expert', title: 'Kimia? Cemilan sehari-hari 😎'),
       ],
     ),
 
