@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../routes/app_routes.dart';
 import '../../home/models/topic_model.dart';
 import '../models/topic_activity_type.dart';
 
@@ -16,6 +17,17 @@ class TopicController extends GetxController {
   }
 
   void onActivitySelected(TopicActivityType activity) {
-    // Mengarahkan ke halaman aktivitas yang dipilih
+    final currentTopic = topic.value;
+
+    if (currentTopic == null) return;
+
+    switch (activity) {
+      case TopicActivityType.materi:
+        Get.toNamed(AppRoutes.material, arguments: currentTopic);
+        break;
+
+      default:
+        break;
+    }
   }
 }

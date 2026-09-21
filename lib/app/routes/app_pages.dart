@@ -4,6 +4,8 @@ import 'package:kimiaxplore/app/modules/auth/views/login_view.dart';
 import 'package:kimiaxplore/app/modules/auth/views/register_view.dart';
 import 'package:kimiaxplore/app/modules/home/bindings/home_binding.dart';
 import 'package:kimiaxplore/app/modules/home/views/home_view.dart';
+import 'package:kimiaxplore/app/modules/material/bindings/material_binding.dart';
+import 'package:kimiaxplore/app/modules/material/views/material_view.dart';
 import 'package:kimiaxplore/app/modules/onboarding/bindings/onboarding_binding.dart';
 import 'package:kimiaxplore/app/modules/onboarding/views/onboarding_view.dart';
 import 'package:kimiaxplore/app/modules/topic/bindings/topic_binding.dart';
@@ -46,6 +48,11 @@ class AppPages {
       name: AppRoutes.topic,
       page: () => const TopicView(),
       binding: TopicBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.material,
+      page: () => const MaterialView(),
+      binding: MaterialBinding(),
     ),
   ];
 }
