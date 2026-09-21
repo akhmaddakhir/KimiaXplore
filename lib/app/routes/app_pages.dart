@@ -2,8 +2,8 @@ import 'package:get/get.dart';
 import 'package:kimiaxplore/app/modules/auth/bindings/auth_binding.dart';
 import 'package:kimiaxplore/app/modules/auth/views/login_view.dart';
 import 'package:kimiaxplore/app/modules/auth/views/register_view.dart';
-import 'package:kimiaxplore/app/modules/home/bindings/home_binding.dart';
-import 'package:kimiaxplore/app/modules/home/views/home_view.dart';
+import 'package:kimiaxplore/app/modules/main/bindings/main_binding.dart';
+import 'package:kimiaxplore/app/modules/main/views/main_view.dart';
 import 'package:kimiaxplore/app/modules/material/bindings/material_binding.dart';
 import 'package:kimiaxplore/app/modules/material/views/material_view.dart';
 import 'package:kimiaxplore/app/modules/onboarding/bindings/onboarding_binding.dart';
@@ -41,8 +41,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.home,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
+      page: () => const MainView(),
+      binding: MainBinding(),
     ),
     GetPage(
       name: AppRoutes.topic,
