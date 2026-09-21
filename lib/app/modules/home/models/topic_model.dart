@@ -1,6 +1,7 @@
 class TopicModel {
   final String id;
   final String title;
+  final String description;
   final String level;
   final int totalLessons;
   final int completedLessons;
@@ -9,6 +10,7 @@ class TopicModel {
   const TopicModel({
     required this.id,
     required this.title,
+    required this.description,
     required this.level,
     required this.totalLessons,
     this.completedLessons = 0,
@@ -34,6 +36,7 @@ class TopicModel {
   TopicModel copyWith({
     String? id,
     String? title,
+    String? description,
     String? level,
     int? totalLessons,
     int? completedLessons,
@@ -43,6 +46,7 @@ class TopicModel {
     return TopicModel(
       id: id ?? this.id,
       title: title ?? this.title,
+      description: description ?? this.description,
       level: level ?? this.level,
       totalLessons: totalLessons ?? this.totalLessons,
       completedLessons: completedLessons ?? this.completedLessons,
