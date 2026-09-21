@@ -1,23 +1,15 @@
 import 'package:get/get.dart';
 
-class TopicController extends GetxController {
-  //TODO: Implement TopicController
+import '../../home/models/topic_model.dart';
 
-  final count = 0.obs;
+class TopicController extends GetxController {
+  final topic = Rxn<TopicModel>();
+
   @override
   void onInit() {
     super.onInit();
+    if (Get.arguments is TopicModel) {
+      topic.value = Get.arguments as TopicModel;
+    }
   }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }
