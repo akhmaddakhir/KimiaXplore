@@ -6,6 +6,7 @@ import '../../../theme/app_typography.dart';
 import '../../../widgets/app_bottom_navbar.dart';
 
 import '../../home/views/home_view.dart';
+import '../../lab/views/lab_view.dart';
 
 import '../controllers/main_controller.dart';
 
@@ -15,7 +16,7 @@ class MainView extends GetView<MainController> {
   static const List<Widget> _pages = [
     HomeView(),
 
-    _PlaceholderPage(title: 'Lab', icon: Icons.science_rounded),
+    LabView(),
 
     _PlaceholderPage(title: 'AI Tutor', icon: Icons.smart_toy_rounded),
 

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../home/controllers/home_controller.dart';
+import '../../lab/controllers/lab_controller.dart';
 import '../controllers/main_controller.dart';
 
 class MainBinding extends Bindings {
@@ -9,5 +10,6 @@ class MainBinding extends Bindings {
     Get.lazyPut<MainController>(() => MainController());
 
     Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
+    Get.lazyPut<LabController>(() => LabController(), fenix: true);
   }
 }
