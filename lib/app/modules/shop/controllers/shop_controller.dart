@@ -37,27 +37,29 @@ class ShopController extends GetxController {
 
   final List<PricingPackageModel> packages = const [
     PricingPackageModel(
-      id: 'monthly',
-      title: '1 Bulan',
-      duration: '1 bulan',
-      price: 'Rp19.000',
-      perMonthPrice: 'Rp19.000/bulan',
-    ),
-    PricingPackageModel(
-      id: 'quarterly',
-      title: '3 Bulan',
-      duration: '3 bulan',
-      price: 'Rp49.000',
-      perMonthPrice: 'Rp16.333/bulan',
-    ),
-    PricingPackageModel(
       id: 'yearly',
-      title: '1 Tahun',
+      title: 'Quantum',
       duration: '12 bulan',
+      originalPrice: 'Rp228.000',
       price: 'Rp149.000',
       perMonthPrice: 'Rp12.417/bulan',
       badge: 'Paling Hemat',
       isPopular: true,
+    ),
+    PricingPackageModel(
+      id: 'quarterly',
+      title: 'Catalyst',
+      duration: '3 bulan',
+      originalPrice: 'Rp57.000',
+      price: 'Rp49.000',
+      perMonthPrice: 'Rp16.333/bulan',
+    ),
+    PricingPackageModel(
+      id: 'monthly',
+      title: 'Atom',
+      duration: '1 bulan',
+      price: 'Rp19.000',
+      perMonthPrice: 'Rp19.000/bulan',
     ),
   ];
 
@@ -73,12 +75,6 @@ class ShopController extends GetxController {
 
   void goToPackages() {
     currentStep.value = 1;
-  }
-
-  void goBack() {
-    if (currentStep.value > 0) {
-      currentStep.value--;
-    }
   }
 
   void continueToCheckout() {
