@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../routes/app_routes.dart';
 import '../data/home_topics.dart';
 import '../models/topic_model.dart';
 
@@ -18,6 +19,6 @@ class HomeController extends GetxController {
   }
 
   void onTopicSelected(TopicModel topic) {
-    // Aksi ketika topik dipilih
+    Get.toNamed(AppRoutes.topic, arguments: topic);
   }
 }
