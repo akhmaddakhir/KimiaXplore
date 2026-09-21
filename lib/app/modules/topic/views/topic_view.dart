@@ -6,6 +6,8 @@ import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_detail_header.dart';
 import '../controllers/topic_controller.dart';
+import '../models/topic_activity_type.dart';
+import '../widgets/topic_activity_card.dart';
 import '../widgets/topic_overview_card.dart';
 import '../widgets/topic_summary.dart';
 
@@ -56,7 +58,38 @@ class TopicView extends GetView<TopicController> {
                       TopicOverviewCard(
                         topic: topic,
                         onStartPressed: () {
-                          // Mengarahkan ke aktivitas rekomendsi topik
+                          controller.onActivitySelected(
+                            TopicActivityType.materi,
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: AppSpacing.xl),
+
+                      Text(
+                        'Aktivitas',
+                        style: AppTypography.heading2.copyWith(
+                          color: AppColors.textDark,
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: TopicActivityType.values.length,
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(height: AppSpacing.md),
+                        itemBuilder: (context, index) {
+                          final activity = TopicActivityType.values[index];
+
+                          return TopicActivityCard.fromType(
+                            type: activity,
+                            onTap: () {
+                              controller.onActivitySelected(activity);
+                            },
+                          );
                         },
                       ),
 
