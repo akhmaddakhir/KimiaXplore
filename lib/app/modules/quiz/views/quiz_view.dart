@@ -10,9 +10,19 @@ import '../widgets/quiz_bottom_bar.dart';
 import '../widgets/quiz_option_card.dart';
 import '../widgets/quiz_question_header.dart';
 import 'quiz_completion_view.dart';
+import 'quiz_result_view.dart';
 
-class QuizView extends GetView<QuizController> {
+class QuizView extends StatefulWidget {
   const QuizView({super.key});
+
+  @override
+  State<QuizView> createState() => _QuizViewState();
+}
+
+class _QuizViewState extends State<QuizView> {
+  final QuizController controller = Get.find<QuizController>();
+
+  bool _showResult = false;
 
   QuizBottomState get _bottomState {
     if (!controller.isAnswerChecked.value) {
@@ -63,11 +73,25 @@ class QuizView extends GetView<QuizController> {
     controller.nextQuestion();
   }
 
+  void _showQuizResult() {
+    setState(() {
+      _showResult = true;
+    });
+  }
+
+  void _exitQuiz() {
+    Get.back();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isQuizFinished.value) {
-        return QuizCompletionView(onContinue: () => Get.back());
+        if (_showResult) {
+          return QuizResultView(onContinue: _exitQuiz);
+        }
+
+        return QuizCompletionView(onContinue: _showQuizResult);
       }
 
       return Scaffold(
@@ -83,7 +107,7 @@ class QuizView extends GetView<QuizController> {
                   backIcon: Icons.close_rounded,
                   progressColor: AppColors.blue500,
                   trackColor: AppColors.border,
-                  onBackPressed: () => Get.back(),
+                  onBackPressed: _exitQuiz,
                 ),
               ),
               Expanded(
