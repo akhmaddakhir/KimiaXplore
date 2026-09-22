@@ -9,6 +9,7 @@ import '../controllers/quiz_controller.dart';
 import '../widgets/quiz_bottom_bar.dart';
 import '../widgets/quiz_option_card.dart';
 import '../widgets/quiz_question_header.dart';
+import 'quiz_completion_view.dart';
 
 class QuizView extends GetView<QuizController> {
   const QuizView({super.key});
@@ -64,87 +65,88 @@ class QuizView extends GetView<QuizController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return Obx(() {
+      if (controller.isQuizFinished.value) {
+        return QuizCompletionView(onContinue: () => Get.back());
+      }
 
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            Obx(
-              () => AppStepHeader.steps(
-                currentStep: controller.currentQuestionNumber,
-                totalSteps: controller.totalQuestions,
-                backIcon: Icons.close_rounded,
-                progressColor: AppColors.blue500,
-                trackColor: AppColors.border,
-                onBackPressed: () => Get.back(),
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              Obx(
+                () => AppStepHeader.steps(
+                  currentStep: controller.currentQuestionNumber,
+                  totalSteps: controller.totalQuestions,
+                  backIcon: Icons.close_rounded,
+                  progressColor: AppColors.blue500,
+                  trackColor: AppColors.border,
+                  onBackPressed: () => Get.back(),
+                ),
               ),
-            ),
+              Expanded(
+                child: Obx(() {
+                  final question = controller.currentQuestion;
 
-            Expanded(
-              child: Obx(() {
-                final question = controller.currentQuestion;
+                  if (question == null) {
+                    return const SizedBox.shrink();
+                  }
 
-                if (question == null) {
-                  return const SizedBox.shrink();
-                }
-
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      QuizQuestionHeader(
-                        questionNumber: controller.currentQuestionNumber,
-                        question: question.question,
-                        onReportPressed: () {},
-                      ),
-
-                      const SizedBox(height: AppSpacing.xl),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        QuizQuestionHeader(
+                          questionNumber: controller.currentQuestionNumber,
+                          question: question.question,
+                          onReportPressed: () {},
                         ),
-                        child: Column(
-                          children: List.generate(question.options.length, (
-                            index,
-                          ) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: AppSpacing.md,
-                              ),
-                              child: QuizOptionCard(
-                                label: question.options[index],
-                                state: _getOptionState(index),
-                                onTap: controller.isAnswerChecked.value
-                                    ? null
-                                    : () => controller.selectOption(index),
-                              ),
-                            );
-                          }),
+                        const SizedBox(height: AppSpacing.xl),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xl,
+                          ),
+                          child: Column(
+                            children: List.generate(question.options.length, (
+                              index,
+                            ) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: AppSpacing.md,
+                                ),
+                                child: QuizOptionCard(
+                                  label: question.options[index],
+                                  state: _getOptionState(index),
+                                  onTap: controller.isAnswerChecked.value
+                                      ? null
+                                      : () => controller.selectOption(index),
+                                ),
+                              );
+                            }),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-
-            Obx(
-              () => QuizBottomBar(
-                state: _bottomState,
-                onPressed:
-                    controller.isAnswerChecked.value ||
-                        controller.canCheckAnswer
-                    ? _handleBottomButton
-                    : null,
+                      ],
+                    ),
+                  );
+                }),
               ),
-            ),
-          ],
+              Obx(
+                () => QuizBottomBar(
+                  state: _bottomState,
+                  onPressed:
+                      controller.isAnswerChecked.value ||
+                          controller.canCheckAnswer
+                      ? _handleBottomButton
+                      : null,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
