@@ -2,11 +2,14 @@ import 'package:get/get.dart';
 
 import '../../../models/activity_navigation.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/learning_progress_service.dart';
 import '../../home/models/topic_model.dart';
 import '../data/quiz_data.dart';
 import '../models/quiz_question_model.dart';
 
 class QuizController extends GetxController {
+  final LearningProgressService _progressService = LearningProgressService();
+
   final topic = Rxn<TopicModel>();
 
   final questions = <QuizQuestionModel>[].obs;
@@ -21,6 +24,7 @@ class QuizController extends GetxController {
   final score = 0.obs;
 
   final isQuizFinished = false.obs;
+  final isSavingProgress = false.obs;
 
   final selectedAnswers = <int, int>{}.obs;
 
@@ -52,6 +56,24 @@ class QuizController extends GetxController {
     return currentQuestionNumber / totalQuestions;
   }
 
+  int get scorePercentage {
+    if (totalQuestions == 0) {
+      return 0;
+    }
+
+    return ((score.value / totalQuestions) * 100).round();
+  }
+
+  String? get quizActivityId {
+    final currentTopic = topic.value;
+
+    if (currentTopic == null) {
+      return null;
+    }
+
+    return '${currentTopic.id}_quiz';
+  }
+
   bool get hasSelectedAnswer => selectedOptionIndex.value != null;
 
   bool get canCheckAnswer =>
@@ -77,6 +99,7 @@ class QuizController extends GetxController {
     }
 
     loadQuestions();
+    _markQuizOpened();
   }
 
   void loadQuestions() {
@@ -98,6 +121,47 @@ class QuizController extends GetxController {
 
     score.value = 0;
     isQuizFinished.value = false;
+  }
+
+  Future<void> _markQuizOpened() async {
+    final currentTopic = topic.value;
+    final activityId = quizActivityId;
+
+    if (currentTopic == null || activityId == null) {
+      return;
+    }
+
+    try {
+      await _progressService.markActivityOpened(
+        topicId: currentTopic.id,
+        activityType: 'quiz',
+        activityId: activityId,
+      );
+    } catch (_) {}
+  }
+
+  Future<void> _saveQuizCompletion() async {
+    final currentTopic = topic.value;
+    final activityId = quizActivityId;
+
+    if (currentTopic == null || activityId == null || isSavingProgress.value) {
+      return;
+    }
+
+    isSavingProgress.value = true;
+
+    try {
+      await _progressService.completeActivity(
+        topicId: currentTopic.id,
+        activityType: 'quiz',
+        activityId: activityId,
+        score: scorePercentage,
+        progress: totalQuestions,
+        total: totalQuestions,
+      );
+    } finally {
+      isSavingProgress.value = false;
+    }
   }
 
   void selectOption(int index) {
@@ -147,12 +211,14 @@ class QuizController extends GetxController {
     }
   }
 
-  void nextQuestion() {
+  Future<void> nextQuestion() async {
     if (!isAnswerChecked.value || isQuizFinished.value) {
       return;
     }
 
     if (isLastQuestion) {
+      await _saveQuizCompletion();
+
       isQuizFinished.value = true;
       return;
     }
@@ -171,6 +237,7 @@ class QuizController extends GetxController {
 
   void restartQuiz() {
     loadQuestions();
+    _markQuizOpened();
   }
 
   void finishQuiz() {
@@ -184,6 +251,7 @@ class QuizController extends GetxController {
           entryPoint: ActivityEntryPoint.recommendation,
         ),
       );
+
       return;
     }
 

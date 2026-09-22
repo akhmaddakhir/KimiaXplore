@@ -5,7 +5,6 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_button.dart';
-
 import '../controllers/quiz_controller.dart';
 
 class QuizCompletionView extends GetView<QuizController> {
@@ -53,7 +52,7 @@ class QuizCompletionView extends GetView<QuizController> {
                           fontSize: 32,
                         ),
                       ),
-                      const Spacer(flex: 1),
+                      const Spacer(),
                     ],
                   ),
                 ),
@@ -84,7 +83,12 @@ class QuizCompletionView extends GetView<QuizController> {
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       Obx(() {
-                        final totalScore = controller.score.value * 100;
+                        final totalQuestions = controller.totalQuestions;
+
+                        final totalScore = totalQuestions == 0
+                            ? 0
+                            : ((controller.score.value / totalQuestions) * 100)
+                                  .round();
 
                         return Text(
                           '$totalScore',
