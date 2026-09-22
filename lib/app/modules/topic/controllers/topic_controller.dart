@@ -4,6 +4,8 @@ import '../../../models/activity_navigation.dart';
 import '../../../routes/app_routes.dart';
 import '../../../services/learning_progress_service.dart';
 import '../../home/models/topic_model.dart';
+import '../../lab/data/lab_simulations.dart';
+import '../../lab/models/simulation_model.dart';
 import '../../material/data/material_lesson_data.dart';
 import '../../material/models/material_lesson_model.dart';
 import '../../material/views/material_lesson_list_view.dart';
@@ -152,6 +154,8 @@ class TopicController extends GetxController {
         break;
 
       case TopicActivityType.simulasi:
+        await _openSimulation(currentTopic);
+        await loadProgress();
         break;
     }
   }
@@ -184,5 +188,51 @@ class TopicController extends GetxController {
         lesson: lessons.first,
       ),
     );
+  }
+
+  Future<void> _openSimulation(TopicModel currentTopic) async {
+    final simulation = _getSimulationForTopic(currentTopic.id);
+
+    if (simulation == null) {
+      Get.snackbar(
+        'Simulasi belum tersedia',
+        'Simulasi untuk ${currentTopic.title} masih dalam pengembangan.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return;
+    }
+
+    await Get.toNamed(AppRoutes.simulation, arguments: simulation);
+  }
+
+  SimulationModel? _getSimulationForTopic(String topicId) {
+    String? simulationId;
+
+    switch (topicId) {
+      case 'atomic_structure':
+        simulationId = 'electron_configuration';
+        break;
+
+      case 'periodic_table':
+        simulationId = 'periodic_table';
+        break;
+
+      case 'chemical_bonding':
+        simulationId = null;
+        break;
+    }
+
+    if (simulationId == null) {
+      return null;
+    }
+
+    for (final simulation in LabSimulations.items) {
+      if (simulation.id == simulationId) {
+        return simulation;
+      }
+    }
+
+    return null;
   }
 }
