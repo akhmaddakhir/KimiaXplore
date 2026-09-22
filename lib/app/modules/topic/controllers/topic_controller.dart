@@ -13,8 +13,16 @@ class TopicController extends GetxController {
   final LearningProgressService _progressService = LearningProgressService();
 
   final topic = Rxn<TopicModel>();
+
+  final completedProgress = 0.obs;
+  final totalProgress = 0.obs;
+
   final completedLessons = 0.obs;
   final totalLessons = 0.obs;
+
+  final isQuizCompleted = false.obs;
+  final isFlashcardCompleted = false.obs;
+
   final isLoadingProgress = false.obs;
 
   @override
@@ -37,6 +45,7 @@ class TopicController extends GetxController {
     final lessons = MaterialLessonData.getLessonsByTopic(currentTopic.id);
 
     totalLessons.value = lessons.length;
+    totalProgress.value = lessons.length + 2;
 
     loadProgress();
   }
@@ -51,18 +60,44 @@ class TopicController extends GetxController {
     isLoadingProgress.value = true;
 
     try {
-      final completedIds = await _progressService.getCompletedActivityIds(
-        topicId: currentTopic.id,
-        activityType: 'material',
+      final lessons = MaterialLessonData.getLessonsByTopic(currentTopic.id);
+
+      final progressData = await _progressService.getTopicProgress(
+        currentTopic.id,
       );
 
-      final lessons = MaterialLessonData.getLessonsByTopic(currentTopic.id);
+      final completedMaterialIds = progressData
+          .where(
+            (item) =>
+                item['activity_type'] == 'material' &&
+                item['is_completed'] == true,
+          )
+          .map((item) => item['activity_id'] as String)
+          .toSet();
+
+      completedLessons.value = lessons
+          .where((lesson) => completedMaterialIds.contains(lesson.id))
+          .length;
 
       totalLessons.value = lessons.length;
 
-      completedLessons.value = lessons
-          .where((lesson) => completedIds.contains(lesson.id))
-          .length;
+      isQuizCompleted.value = progressData.any(
+        (item) =>
+            item['activity_type'] == 'quiz' && item['is_completed'] == true,
+      );
+
+      isFlashcardCompleted.value = progressData.any(
+        (item) =>
+            item['activity_type'] == 'flashcard' &&
+            item['is_completed'] == true,
+      );
+
+      totalProgress.value = lessons.length + 2;
+
+      completedProgress.value =
+          completedLessons.value +
+          (isQuizCompleted.value ? 1 : 0) +
+          (isFlashcardCompleted.value ? 1 : 0);
     } finally {
       isLoadingProgress.value = false;
     }
@@ -106,13 +141,17 @@ class TopicController extends GetxController {
 
       case TopicActivityType.kuis:
         await Get.toNamed(AppRoutes.quiz, arguments: navigation);
+
+        await loadProgress();
         break;
 
       case TopicActivityType.flashcard:
         await Get.toNamed(AppRoutes.flashcard, arguments: navigation);
+
+        await loadProgress();
         break;
 
-      default:
+      case TopicActivityType.simulasi:
         break;
     }
   }

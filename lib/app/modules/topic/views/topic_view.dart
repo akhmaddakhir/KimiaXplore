@@ -53,8 +53,8 @@ class TopicView extends GetView<TopicController> {
                       TopicSummary(topic: topic),
                       const SizedBox(height: AppSpacing.xl),
                       TopicProgressSection(
-                        completed: controller.completedLessons.value,
-                        total: controller.totalLessons.value,
+                        completed: controller.completedProgress.value,
+                        total: controller.totalProgress.value,
                       ),
                       const SizedBox(height: AppSpacing.xl),
                       TopicOverviewCard(
