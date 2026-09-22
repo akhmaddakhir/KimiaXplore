@@ -10,68 +10,56 @@ import '../widgets/quiz_bottom_bar.dart';
 import '../widgets/quiz_option_card.dart';
 import '../widgets/quiz_question_header.dart';
 
-class QuizView extends StatefulWidget {
+class QuizView extends GetView<QuizController> {
   const QuizView({super.key});
 
-  @override
-  State<QuizView> createState() => _QuizViewState();
-}
-
-class _QuizViewState extends State<QuizView> {
-  final QuizController controller = Get.find<QuizController>();
-
-  int? _selectedOptionIndex;
-
-  QuizBottomState _bottomState = QuizBottomState.answering;
-
-  void _selectOption(int index) {
-    if (_bottomState != QuizBottomState.answering) {
-      return;
+  QuizBottomState get _bottomState {
+    if (!controller.isAnswerChecked.value) {
+      return QuizBottomState.answering;
     }
 
-    setState(() {
-      _selectedOptionIndex = index;
-    });
-  }
-
-  void _previewNextState() {
-    if (_selectedOptionIndex == null) {
-      return;
+    if (controller.isAnswerCorrect.value) {
+      return QuizBottomState.correct;
     }
 
-    setState(() {
-      switch (_bottomState) {
-        case QuizBottomState.answering:
-          _bottomState = QuizBottomState.correct;
-          break;
-
-        case QuizBottomState.correct:
-          _bottomState = QuizBottomState.incorrect;
-          break;
-
-        case QuizBottomState.incorrect:
-          _bottomState = QuizBottomState.answering;
-          _selectedOptionIndex = null;
-          break;
-      }
-    });
+    return QuizBottomState.incorrect;
   }
 
   QuizOptionState _getOptionState(int index) {
-    if (_selectedOptionIndex != index) {
+    final question = controller.currentQuestion;
+
+    if (question == null) {
       return QuizOptionState.normal;
     }
 
-    switch (_bottomState) {
-      case QuizBottomState.answering:
+    final selectedIndex = controller.selectedOptionIndex.value;
+
+    if (!controller.isAnswerChecked.value) {
+      if (selectedIndex == index) {
         return QuizOptionState.selected;
+      }
 
-      case QuizBottomState.correct:
-        return QuizOptionState.correct;
-
-      case QuizBottomState.incorrect:
-        return QuizOptionState.incorrect;
+      return QuizOptionState.normal;
     }
+
+    if (index == question.correctOptionIndex) {
+      return QuizOptionState.correct;
+    }
+
+    if (selectedIndex == index) {
+      return QuizOptionState.incorrect;
+    }
+
+    return QuizOptionState.normal;
+  }
+
+  void _handleBottomButton() {
+    if (!controller.isAnswerChecked.value) {
+      controller.checkAnswer();
+      return;
+    }
+
+    controller.nextQuestion();
   }
 
   @override
@@ -130,7 +118,9 @@ class _QuizViewState extends State<QuizView> {
                               child: QuizOptionCard(
                                 label: question.options[index],
                                 state: _getOptionState(index),
-                                onTap: () => _selectOption(index),
+                                onTap: controller.isAnswerChecked.value
+                                    ? null
+                                    : () => controller.selectOption(index),
                               ),
                             );
                           }),
@@ -142,11 +132,15 @@ class _QuizViewState extends State<QuizView> {
               }),
             ),
 
-            QuizBottomBar(
-              state: _bottomState,
-              onPressed: _selectedOptionIndex == null
-                  ? null
-                  : _previewNextState,
+            Obx(
+              () => QuizBottomBar(
+                state: _bottomState,
+                onPressed:
+                    controller.isAnswerChecked.value ||
+                        controller.canCheckAnswer
+                    ? _handleBottomButton
+                    : null,
+              ),
             ),
           ],
         ),
