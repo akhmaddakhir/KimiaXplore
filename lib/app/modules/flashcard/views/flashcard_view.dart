@@ -23,8 +23,6 @@ class FlashcardView extends StatefulWidget {
 class _FlashcardViewState extends State<FlashcardView> {
   final FlashcardController controller = Get.find<FlashcardController>();
 
-  ActivityNavigation? _navigation;
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +32,6 @@ class _FlashcardViewState extends State<FlashcardView> {
     TopicModel? topic;
 
     if (arguments is ActivityNavigation) {
-      _navigation = arguments;
       topic = arguments.topic;
     } else if (arguments is TopicModel) {
       topic = arguments;
@@ -56,6 +53,10 @@ class _FlashcardViewState extends State<FlashcardView> {
   }
 
   void _finishFlashcards() {
+    Get.back();
+  }
+
+  void _exitFlashcards() {
     Get.back();
   }
 
@@ -85,7 +86,7 @@ class _FlashcardViewState extends State<FlashcardView> {
                 backIcon: Icons.close_rounded,
                 progressColor: AppColors.blue500,
                 trackColor: AppColors.border,
-                onBackPressed: () => Get.back(),
+                onBackPressed: _exitFlashcards,
               ),
 
               Expanded(
