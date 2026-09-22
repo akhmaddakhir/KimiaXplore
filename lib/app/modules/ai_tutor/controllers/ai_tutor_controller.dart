@@ -1,23 +1,29 @@
 import 'package:get/get.dart';
 
 class AiTutorController extends GetxController {
-  //TODO: Implement AiTutorController
+  final RxList<String> messages = <String>[].obs;
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  final RxBool isChatOpen = false.obs;
+
+  void sendMessage(String message) {
+    final text = message.trim();
+
+    if (text.isEmpty) {
+      return;
+    }
+
+    messages.add(text);
+
+    isChatOpen.value = true;
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void openNewChat() {
+    messages.clear();
+
+    isChatOpen.value = false;
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+  void openAttachment() {}
 
-  void increment() => count.value++;
+  void openHistory() {}
 }

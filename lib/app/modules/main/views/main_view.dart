@@ -5,6 +5,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_bottom_navbar.dart';
 
+import '../../ai_tutor/views/ai_tutor_view.dart';
 import '../../home/views/home_view.dart';
 import '../../lab/views/lab_view.dart';
 import '../../shop/views/shop_view.dart';
@@ -16,13 +17,9 @@ class MainView extends GetView<MainController> {
 
   static const List<Widget> _pages = [
     HomeView(),
-
     LabView(),
-
-    _PlaceholderPage(title: 'AI Tutor', icon: Icons.smart_toy_rounded),
-
+    AiTutorView(),
     ShopView(),
-
     _PlaceholderPage(title: 'Profile', icon: Icons.person_rounded),
   ];
 
@@ -30,14 +27,12 @@ class MainView extends GetView<MainController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       body: Obx(
         () => IndexedStack(
           index: controller.selectedIndex.value,
           children: _pages,
         ),
       ),
-
       bottomNavigationBar: Obx(
         () => AppBottomNavbar(
           selectedIndex: controller.selectedIndex.value,
@@ -49,10 +44,10 @@ class MainView extends GetView<MainController> {
 }
 
 class _PlaceholderPage extends StatelessWidget {
+  const _PlaceholderPage({required this.title, required this.icon});
+
   final String title;
   final IconData icon;
-
-  const _PlaceholderPage({required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) {

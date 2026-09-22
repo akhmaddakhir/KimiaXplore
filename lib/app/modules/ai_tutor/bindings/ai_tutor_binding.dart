@@ -5,8 +5,6 @@ import '../controllers/ai_tutor_controller.dart';
 class AiTutorBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AiTutorController>(
-      () => AiTutorController(),
-    );
+    Get.lazyPut<AiTutorController>(() => AiTutorController());
   }
 }
