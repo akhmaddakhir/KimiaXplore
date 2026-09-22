@@ -11,6 +11,8 @@ class FlashcardController extends GetxController {
 
   final memorizationStatuses = <String, bool>{}.obs;
 
+  final List<FlashcardModel> _originalFlashcards = [];
+
   FlashcardModel? get currentCard {
     if (flashcards.isEmpty || currentIndex.value >= flashcards.length) {
       return null;
@@ -46,13 +48,20 @@ class FlashcardController extends GetxController {
   }
 
   void initializeFlashcards(List<FlashcardModel> cards) {
-    flashcards.assignAll(cards);
+    _originalFlashcards
+      ..clear()
+      ..addAll(cards);
 
+    _startSession(cards);
+  }
+
+  void _startSession(List<FlashcardModel> cards) {
     currentIndex.value = 0;
     isFlipped.value = false;
     isCompleted.value = false;
 
     memorizationStatuses.clear();
+    flashcards.assignAll(cards);
   }
 
   void flipCard() {
@@ -99,16 +108,22 @@ class FlashcardController extends GetxController {
   }
 
   void restartFlashcards() {
-    final cards = List<FlashcardModel>.from(flashcards);
-
-    initializeFlashcards(cards);
+    _startSession(List<FlashcardModel>.from(_originalFlashcards));
   }
 
   void retryNotMemorized() {
+    if (!isCompleted.value) {
+      return;
+    }
+
     final cards = flashcards.where((card) {
       return memorizationStatuses[card.id] == false;
     }).toList();
 
-    initializeFlashcards(cards);
+    if (cards.isEmpty) {
+      return;
+    }
+
+    _startSession(cards);
   }
 }
