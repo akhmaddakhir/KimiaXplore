@@ -13,6 +13,7 @@ import '../widgets/quiz_explanation_sheet.dart';
 import '../widgets/quiz_option_card.dart';
 import '../widgets/quiz_question_header.dart';
 import 'quiz_completion_view.dart';
+import 'quiz_discussion_view.dart';
 import 'quiz_result_view.dart';
 
 class QuizView extends StatefulWidget {
@@ -109,6 +110,10 @@ class _QuizViewState extends State<QuizView> {
     });
   }
 
+  void _showQuizDiscussion() {
+    Get.to<void>(() => const QuizDiscussionView());
+  }
+
   void _exitQuiz() {
     Get.back();
   }
@@ -118,7 +123,10 @@ class _QuizViewState extends State<QuizView> {
     return Obx(() {
       if (controller.isQuizFinished.value) {
         if (_showResult) {
-          return QuizResultView(onContinue: _exitQuiz);
+          return QuizResultView(
+            onDiscussion: _showQuizDiscussion,
+            onContinue: _exitQuiz,
+          );
         }
 
         return QuizCompletionView(onContinue: _showQuizResult);
