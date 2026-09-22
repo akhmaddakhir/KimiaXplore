@@ -26,6 +26,10 @@ class TopicController extends GetxController {
         Get.toNamed(AppRoutes.material, arguments: currentTopic);
         break;
 
+      case TopicActivityType.kuis:
+        Get.toNamed(AppRoutes.quiz, arguments: currentTopic);
+        break;
+
       default:
         break;
     }
