@@ -41,6 +41,8 @@ class KimiaXploreApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final session = Supabase.instance.client.auth.currentSession;
+
     return GetMaterialApp(
       title: 'KimiaXplore',
       debugShowCheckedModeBanner: false,
@@ -48,7 +50,7 @@ class KimiaXploreApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.background,
         useMaterial3: true,
       ),
-      initialRoute: AppRoutes.welcome,
+      initialRoute: session != null ? AppRoutes.home : AppRoutes.welcome,
       getPages: AppPages.pages,
     );
   }

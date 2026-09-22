@@ -25,9 +25,13 @@ class AuthService {
   }
 
   Future<bool> signInWithGoogle() {
+    final redirectUrl = kIsWeb
+        ? Uri.base.origin
+        : 'com.example.kimiaxplore://login-callback';
+
     return _client.auth.signInWithOAuth(
       OAuthProvider.google,
-      redirectTo: kIsWeb ? null : 'com.example.kimiaxplore://login-callback',
+      redirectTo: redirectUrl,
       authScreenLaunchMode: kIsWeb
           ? LaunchMode.platformDefault
           : LaunchMode.externalApplication,
