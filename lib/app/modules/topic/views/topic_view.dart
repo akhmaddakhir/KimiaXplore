@@ -47,64 +47,45 @@ class TopicView extends GetView<TopicController> {
                     AppSpacing.xl,
                   ),
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: AppSpacing.sm),
-
                       TopicSummary(topic: topic),
-
                       const SizedBox(height: AppSpacing.xl),
-
-                      const TopicProgressSection(
-                        completed: 1,
-                        total: 3,
+                      TopicProgressSection(
+                        completed: controller.completedLessons.value,
+                        total: controller.totalLessons.value,
                       ),
-
                       const SizedBox(height: AppSpacing.xl),
-
                       TopicOverviewCard(
                         topic: topic,
-                        onStartPressed:
-                            controller.onRecommendedActivityPressed,
+                        onStartPressed: controller.onRecommendedActivityPressed,
                       ),
-
                       const SizedBox(height: AppSpacing.xl),
-
                       Text(
                         'Aktivitas',
                         style: AppTypography.heading2.copyWith(
                           color: AppColors.textDark,
                         ),
                       ),
-
                       const SizedBox(height: AppSpacing.md),
-
                       ListView.separated(
                         shrinkWrap: true,
-                        physics:
-                            const NeverScrollableScrollPhysics(),
-                        itemCount:
-                            TopicActivityType.values.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: TopicActivityType.values.length,
                         separatorBuilder: (_, _) =>
-                            const SizedBox(
-                              height: AppSpacing.md,
-                            ),
+                            const SizedBox(height: AppSpacing.md),
                         itemBuilder: (context, index) {
-                          final activity =
-                              TopicActivityType.values[index];
+                          final activity = TopicActivityType.values[index];
 
                           return TopicActivityCard.fromType(
                             type: activity,
                             onTap: () {
-                              controller.onActivitySelected(
-                                activity,
-                              );
+                              controller.onActivitySelected(activity);
                             },
                           );
                         },
                       ),
-
                       const SizedBox(height: AppSpacing.xl),
                     ],
                   ),
