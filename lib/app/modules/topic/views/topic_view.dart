@@ -24,7 +24,6 @@ class TopicView extends GetView<TopicController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const AppDetailHeader(title: 'Detail'),
-
             Expanded(
               child: Obx(() {
                 final topic = controller.topic.value;
@@ -48,7 +47,8 @@ class TopicView extends GetView<TopicController> {
                     AppSpacing.xl,
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: AppSpacing.sm),
 
@@ -56,17 +56,17 @@ class TopicView extends GetView<TopicController> {
 
                       const SizedBox(height: AppSpacing.xl),
 
-                      const TopicProgressSection(completed: 1, total: 3),
+                      const TopicProgressSection(
+                        completed: 1,
+                        total: 3,
+                      ),
 
                       const SizedBox(height: AppSpacing.xl),
 
                       TopicOverviewCard(
                         topic: topic,
-                        onStartPressed: () {
-                          controller.onActivitySelected(
-                            TopicActivityType.materi,
-                          );
-                        },
+                        onStartPressed:
+                            controller.onRecommendedActivityPressed,
                       ),
 
                       const SizedBox(height: AppSpacing.xl),
@@ -82,17 +82,24 @@ class TopicView extends GetView<TopicController> {
 
                       ListView.separated(
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: TopicActivityType.values.length,
+                        physics:
+                            const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            TopicActivityType.values.length,
                         separatorBuilder: (_, _) =>
-                            const SizedBox(height: AppSpacing.md),
+                            const SizedBox(
+                              height: AppSpacing.md,
+                            ),
                         itemBuilder: (context, index) {
-                          final activity = TopicActivityType.values[index];
+                          final activity =
+                              TopicActivityType.values[index];
 
                           return TopicActivityCard.fromType(
                             type: activity,
                             onTap: () {
-                              controller.onActivitySelected(activity);
+                              controller.onActivitySelected(
+                                activity,
+                              );
                             },
                           );
                         },
