@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../../../models/activity_navigation.dart';
+import '../../../routes/app_routes.dart';
 import '../../home/data/home_topics.dart';
 import '../../home/models/topic_model.dart';
 import '../data/material_data.dart';
@@ -16,18 +18,40 @@ class MaterialController extends GetxController {
 
   final lessons = <MaterialLessonModel>[].obs;
 
+  ActivityEntryPoint entryPoint = ActivityEntryPoint.activity;
+
   int get totalLessons => lessons.length;
+
+  bool get isRecommended => entryPoint == ActivityEntryPoint.recommendation;
 
   bool get hasNextLesson => currentLessonIndex.value < totalLessons - 1;
 
   bool get isLastLesson =>
       totalLessons > 0 && currentLessonIndex.value == totalLessons - 1;
 
+  String get bottomButtonLabel {
+    if (hasNextLesson) {
+      return 'Pelajaran Selanjutnya';
+    }
+
+    if (isRecommended) {
+      return 'Lanjut ke Kuis';
+    }
+
+    return 'Selesai';
+  }
+
   @override
   void onInit() {
     super.onInit();
 
     final arguments = Get.arguments;
+
+    if (arguments is ActivityNavigation) {
+      entryPoint = arguments.entryPoint;
+      _initializeTopic(arguments.topic);
+      return;
+    }
 
     if (arguments is MaterialLessonSelection) {
       _initializeLesson(arguments);
@@ -133,6 +157,29 @@ class MaterialController extends GetxController {
   }
 
   void finishMaterial() {
+    final currentTopic = topic.value;
+
+    if (currentTopic == null) {
+      Get.back();
+      return;
+    }
+
+    if (hasNextLesson) {
+      nextLesson();
+      return;
+    }
+
+    if (isRecommended) {
+      Get.offNamed(
+        AppRoutes.quiz,
+        arguments: ActivityNavigation(
+          topic: currentTopic,
+          entryPoint: ActivityEntryPoint.recommendation,
+        ),
+      );
+      return;
+    }
+
     Get.back();
   }
 }
