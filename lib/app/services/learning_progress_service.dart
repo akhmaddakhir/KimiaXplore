@@ -211,7 +211,9 @@ class LearningProgressService {
         .eq('activity_type', activityType)
         .eq('is_completed', true);
 
-    return data.map<String>((item) => item['activity_id'] as String).toSet();
+    return data.map<String>((item) {
+      return item['activity_id'] as String;
+    }).toSet();
   }
 
   Future<List<Map<String, dynamic>>> getTopicProgress(String topicId) async {
@@ -227,6 +229,22 @@ class LearningProgressService {
         .eq('user_id', userId)
         .eq('topic_id', topicId)
         .order('updated_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(data);
+  }
+
+  Future<List<Map<String, dynamic>>> getUserProgress() async {
+    final userId = currentUserId;
+
+    if (userId == null) {
+      return [];
+    }
+
+    final data = await _client
+        .from('learning_progress')
+        .select()
+        .eq('user_id', userId)
+        .order('last_opened_at', ascending: false);
 
     return List<Map<String, dynamic>>.from(data);
   }

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../services/learning_progress_service.dart';
 import '../../../theme/app_colors.dart';
 import '../../home/data/home_topics.dart';
-import '../../home/models/topic_model.dart';
-import '../../quiz/controllers/quiz_controller.dart';
-import '../../quiz/views/quiz_discussion_view.dart';
-import '../models/quiz_history_model.dart';
+import '../../material/data/material_lesson_data.dart';
+import '../models/profile_activity_model.dart';
 
 enum UserTier { free, atom, catalyst, quantum }
 
 class ProfileController extends GetxController {
   final SupabaseClient _supabase = Supabase.instance.client;
+  final LearningProgressService _progressService = LearningProgressService();
 
   final userName = 'Xplorer'.obs;
   final userEmail = ''.obs;
@@ -22,42 +22,21 @@ class ProfileController extends GetxController {
   final emailController = TextEditingController();
 
   final isSavingProfile = false.obs;
+  final isLoadingProfile = false.obs;
 
   final userTier = UserTier.free.obs;
-  final completedTopics = 9.obs;
-  final totalBadges = 12.obs;
 
-  final quizHistories = <QuizHistoryModel>[
-    QuizHistoryModel(
-      id: 'h1',
-      topicId: 'atomic_structure',
-      title: 'Struktur Atom',
-      totalQuestions: 3,
-      correctAnswers: 2,
-      date: DateTime.now().subtract(const Duration(hours: 2)),
-    ),
-    QuizHistoryModel(
-      id: 'h2',
-      topicId: 'periodic_table',
-      title: 'Sistem Periodik',
-      totalQuestions: 3,
-      correctAnswers: 3,
-      date: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-    QuizHistoryModel(
-      id: 'h3',
-      topicId: 'chemical_bonding',
-      title: 'Ikatan Kimia',
-      totalQuestions: 3,
-      correctAnswers: 1,
-      date: DateTime.now().subtract(const Duration(days: 2)),
-    ),
-  ].obs;
+  final completedTopics = 0.obs;
+  final totalBadges = 0.obs;
+
+  final activities = <ProfileActivityModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
+
     loadUser();
+    loadProfileProgress();
   }
 
   void loadUser() {
@@ -110,6 +89,159 @@ class ProfileController extends GetxController {
     }
   }
 
+  Future<void> loadProfileProgress() async {
+    if (isLoadingProfile.value) {
+      return;
+    }
+
+    try {
+      isLoadingProfile.value = true;
+
+      final progress = await _progressService.getUserProgress();
+
+      _calculateCompletedTopics(progress);
+      _buildActivities(progress);
+
+      totalBadges.value = 0;
+    } catch (_) {
+      completedTopics.value = 0;
+      activities.clear();
+      totalBadges.value = 0;
+    } finally {
+      isLoadingProfile.value = false;
+    }
+  }
+
+  void _calculateCompletedTopics(List<Map<String, dynamic>> progress) {
+    var totalCompleted = 0;
+
+    for (final topic in HomeTopics.items) {
+      final topicProgress = progress.where((item) {
+        return item['topic_id'] == topic.id;
+      }).toList();
+
+      final lessons = MaterialLessonData.getLessonsByTopic(topic.id);
+
+      final completedMaterialIds = topicProgress
+          .where((item) {
+            return item['activity_type'] == 'material' &&
+                item['is_completed'] == true;
+          })
+          .map((item) {
+            return item['activity_id']?.toString() ?? '';
+          })
+          .toSet();
+
+      final allMaterialsCompleted =
+          lessons.isNotEmpty &&
+          lessons.every((lesson) {
+            return completedMaterialIds.contains(lesson.id);
+          });
+
+      final quizCompleted = topicProgress.any((item) {
+        return item['activity_type'] == 'quiz' &&
+            item['activity_id'] == '${topic.id}_quiz' &&
+            item['is_completed'] == true;
+      });
+
+      final flashcardCompleted = topicProgress.any((item) {
+        return item['activity_type'] == 'flashcard' &&
+            item['activity_id'] == '${topic.id}_flashcard' &&
+            item['is_completed'] == true;
+      });
+
+      if (allMaterialsCompleted && quizCompleted && flashcardCompleted) {
+        totalCompleted++;
+      }
+    }
+
+    completedTopics.value = totalCompleted;
+  }
+
+  void _buildActivities(List<Map<String, dynamic>> progress) {
+    final result = <ProfileActivityModel>[];
+
+    for (final item in progress.take(5)) {
+      final topicId = item['topic_id']?.toString() ?? '';
+
+      final topic = HomeTopics.items.firstWhereOrNull(
+        (topic) => topic.id == topicId,
+      );
+
+      if (topic == null) {
+        continue;
+      }
+
+      final activityType = item['activity_type']?.toString() ?? '';
+
+      final activityId = item['activity_id']?.toString() ?? '';
+
+      result.add(
+        ProfileActivityModel(
+          id: item['id']?.toString() ?? activityId,
+          topicId: topicId,
+          topicTitle: topic.title,
+          activityType: activityType,
+          activityTitle: _getActivityTitle(
+            topicId: topicId,
+            activityType: activityType,
+            activityId: activityId,
+          ),
+          isCompleted: item['is_completed'] == true,
+          progress: _toInt(item['progress']),
+          total: _toInt(item['total']),
+          score: item['score'] == null ? null : _toInt(item['score']),
+          lastOpenedAt: DateTime.tryParse(
+            item['last_opened_at']?.toString() ?? '',
+          )?.toLocal(),
+        ),
+      );
+    }
+
+    activities.assignAll(result);
+  }
+
+  String _getActivityTitle({
+    required String topicId,
+    required String activityType,
+    required String activityId,
+  }) {
+    switch (activityType) {
+      case 'material':
+        final lessons = MaterialLessonData.getLessonsByTopic(topicId);
+
+        final lesson = lessons.firstWhereOrNull(
+          (lesson) => lesson.id == activityId,
+        );
+
+        return lesson?.title ?? 'Materi';
+
+      case 'quiz':
+        return 'Kuis';
+
+      case 'flashcard':
+        return 'Flashcard';
+
+      case 'simulation':
+        return 'Simulasi';
+
+      default:
+        return 'Aktivitas';
+    }
+  }
+
+  int _toInt(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+
+    if (value is num) {
+      return value.toInt();
+    }
+
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
   Future<void> updateUsername() async {
     if (isSavingProfile.value) {
       return;
@@ -158,7 +290,7 @@ class ProfileController extends GetxController {
       );
 
       if (response.user == null) {
-        throw Exception('User tidak ditemukan');
+        throw Exception();
       }
 
       userName.value = username;
@@ -222,49 +354,11 @@ class ProfileController extends GetxController {
     userTier.value = tier;
   }
 
-  void openQuizDiscussion(QuizHistoryModel history) {
-    final quizController = Get.isRegistered<QuizController>()
-        ? Get.find<QuizController>()
-        : Get.put(QuizController());
-
-    final topic =
-        HomeTopics.items.firstWhereOrNull(
-          (topic) => topic.id == history.topicId,
-        ) ??
-        TopicModel(
-          id: history.topicId,
-          title: history.title,
-          description: 'Evaluasi kuis',
-          level: 'Dasar',
-          totalLessons: 1,
-        );
-
-    quizController.topic.value = topic;
-    quizController.loadQuestions();
-
-    for (int i = 0; i < quizController.questions.length; i++) {
-      final question = quizController.questions[i];
-
-      if (i < history.correctAnswers) {
-        quizController.selectedAnswers[i] = question.correctOptionIndex;
-      } else {
-        final wrongIndex =
-            (question.correctOptionIndex + 1) % question.options.length;
-
-        quizController.selectedAnswers[i] = wrongIndex;
-      }
-    }
-
-    quizController.score.value = history.correctAnswers;
-    quizController.isQuizFinished.value = true;
-
-    Get.to<void>(() => const QuizDiscussionView());
-  }
-
   @override
   void onClose() {
     usernameController.dispose();
     emailController.dispose();
+
     super.onClose();
   }
 }
