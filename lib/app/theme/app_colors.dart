@@ -36,8 +36,15 @@ abstract final class AppColors {
   static const Color darkTeal = Color(0xFF0FA8A4);
 
   // Red
-  static const Color errorRed = Color(0xFFFF6B6B);
-  static const Color darkRed = Color(0xFFD94343);
+  static const Color red50 = Color(0xFFFFF0F0);
+  static const Color red100 = Color(0xFFFFDADA);
+  static const Color lightRed = Color(0xFFFFAAAA);
+  static const Color red500 = Color(0xFFFF6B6B);
+  static const Color red700 = Color(0xFFD94343);
+
+  // Compatibility
+  static const Color errorRed = red500;
+  static const Color darkRed = red700;
 
   // Neutral
   static const Color background = Color(0xFFF7F9FC);
