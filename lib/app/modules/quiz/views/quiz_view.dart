@@ -3,10 +3,13 @@ import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
+import '../../../theme/app_typography.dart';
+import '../../../widgets/app_button.dart';
 import '../../../widgets/app_step_header.dart';
 
 import '../controllers/quiz_controller.dart';
 import '../widgets/quiz_bottom_bar.dart';
+import '../widgets/quiz_explanation_sheet.dart';
 import '../widgets/quiz_option_card.dart';
 import '../widgets/quiz_question_header.dart';
 import 'quiz_completion_view.dart';
@@ -73,6 +76,33 @@ class _QuizViewState extends State<QuizView> {
     controller.nextQuestion();
   }
 
+  void _showExplanationSheet() {
+    if (!controller.isAnswerChecked.value) {
+      return;
+    }
+
+    final question = controller.currentQuestion;
+
+    if (question == null) {
+      return;
+    }
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: AppColors.surface,
+      barrierColor: AppColors.textDark.withValues(alpha: 0.5),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return QuizExplanationSheet(explanation: question.explanation ?? '');
+      },
+    );
+  }
+
   void _showQuizResult() {
     setState(() {
       _showResult = true;
@@ -118,42 +148,72 @@ class _QuizViewState extends State<QuizView> {
                     return const SizedBox.shrink();
                   }
 
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        QuizQuestionHeader(
-                          questionNumber: controller.currentQuestionNumber,
-                          question: question.question,
-                          onReportPressed: () {},
-                        ),
-                        const SizedBox(height: AppSpacing.xl),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xl,
+                  return Stack(
+                    children: [
+                      Positioned.fill(
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.only(
+                            bottom: controller.isAnswerChecked.value
+                                ? 100
+                                : AppSpacing.xl,
                           ),
                           child: Column(
-                            children: List.generate(question.options.length, (
-                              index,
-                            ) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: AppSpacing.md,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              QuizQuestionHeader(
+                                questionNumber:
+                                    controller.currentQuestionNumber,
+                                question: question.question,
+                                onReportPressed: () {},
+                              ),
+                              const SizedBox(height: AppSpacing.xl),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.xl,
                                 ),
-                                child: QuizOptionCard(
-                                  label: question.options[index],
-                                  state: _getOptionState(index),
-                                  onTap: controller.isAnswerChecked.value
-                                      ? null
-                                      : () => controller.selectOption(index),
+                                child: Column(
+                                  children: List.generate(
+                                    question.options.length,
+                                    (index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: AppSpacing.md,
+                                        ),
+                                        child: QuizOptionCard(
+                                          label: question.options[index],
+                                          state: _getOptionState(index),
+                                          onTap:
+                                              controller.isAnswerChecked.value
+                                              ? null
+                                              : () => controller.selectOption(
+                                                  index,
+                                                ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              );
-                            }),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      if (controller.isAnswerChecked.value)
+                        Positioned(
+                          right: AppSpacing.xl,
+                          bottom: AppSpacing.xl,
+                          child: AppButton.icon(
+                            height: 56,
+                            onPressed: _showExplanationSheet,
+                            icon: Text(
+                              '?',
+                              style: AppTypography.heading2.copyWith(
+                                color: AppColors.textDark,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   );
                 }),
               ),
