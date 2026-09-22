@@ -1,5 +1,6 @@
 abstract class AppRoutes {
   AppRoutes._();
+
   static const welcome = '/welcome';
   static const onboarding = '/onboarding';
   static const register = '/register';
@@ -9,5 +10,6 @@ abstract class AppRoutes {
   static const material = '/material';
   static const quiz = '/quiz';
   static const flashcard = '/flashcard';
+  static const simulation = '/simulation';
   static const profile = '/profile';
 }

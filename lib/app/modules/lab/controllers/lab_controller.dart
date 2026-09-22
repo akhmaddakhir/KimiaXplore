@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../routes/app_routes.dart';
 import '../data/lab_simulations.dart';
 import '../models/simulation_model.dart';
 
@@ -18,6 +19,6 @@ class LabController extends GetxController {
   }
 
   void onSimulationSelected(SimulationModel simulation) {
-    // Navigasi ke halaman simulasi spesifik
+    Get.toNamed(AppRoutes.simulation, arguments: simulation);
   }
 }

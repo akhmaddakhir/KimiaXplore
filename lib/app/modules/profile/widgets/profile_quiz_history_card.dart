@@ -40,7 +40,7 @@ class ProfileQuizHistoryCard extends GetView<ProfileController> {
                   ),
                 ),
                 const Text(
-                  'Akurasi',
+                  'Skor',
                   style: TextStyle(
                     fontFamily: AppTypography.fontFamily,
                     color: AppColors.textHint,
