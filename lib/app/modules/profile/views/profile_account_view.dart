@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
+import '../../../widgets/app_button.dart';
 import '../../../widgets/app_detail_header.dart';
 import '../../../widgets/app_text_field.dart';
 import '../controllers/profile_controller.dart';
@@ -13,8 +14,6 @@ class ProfileAccountView extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.loadUser();
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -60,6 +59,17 @@ class ProfileAccountView extends GetView<ProfileController> {
                       keyboardType: TextInputType.emailAddress,
                       prefixIcon: Icons.email_outlined,
                       enabled: false,
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    Obx(
+                      () => AppButton.primary(
+                        label: controller.isSavingProfile.value
+                            ? 'Menyimpan...'
+                            : 'Simpan Perubahan',
+                        onPressed: controller.isSavingProfile.value
+                            ? null
+                            : controller.updateUsername,
+                      ),
                     ),
                   ],
                 ),

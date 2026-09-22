@@ -21,6 +21,8 @@ class ProfileController extends GetxController {
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
 
+  final isSavingProfile = false.obs;
+
   final userTier = UserTier.free.obs;
   final completedTopics = 9.obs;
   final totalBadges = 12.obs;
@@ -105,6 +107,78 @@ class ProfileController extends GetxController {
       avatarUrl.value = picture;
     } else {
       avatarUrl.value = null;
+    }
+  }
+
+  Future<void> updateUsername() async {
+    if (isSavingProfile.value) {
+      return;
+    }
+
+    final username = usernameController.text.trim();
+
+    if (username.isEmpty) {
+      Get.snackbar(
+        'Username belum diisi',
+        'Masukkan username terlebih dahulu.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+
+      return;
+    }
+
+    if (username.length < 3) {
+      Get.snackbar(
+        'Username terlalu pendek',
+        'Username minimal 3 karakter.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+
+      return;
+    }
+
+    if (username == userName.value) {
+      Get.snackbar(
+        'Tidak ada perubahan',
+        'Username kamu masih sama.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+
+      return;
+    }
+
+    try {
+      isSavingProfile.value = true;
+
+      final response = await _supabase.auth.updateUser(
+        UserAttributes(data: {'full_name': username, 'name': username}),
+      );
+
+      if (response.user == null) {
+        throw Exception('User tidak ditemukan');
+      }
+
+      userName.value = username;
+      usernameController.text = username;
+
+      Get.snackbar(
+        'Berhasil',
+        'Username berhasil diperbarui.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    } catch (_) {
+      Get.snackbar(
+        'Gagal memperbarui username',
+        'Terjadi kesalahan saat menyimpan perubahan.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    } finally {
+      isSavingProfile.value = false;
     }
   }
 
