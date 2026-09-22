@@ -8,10 +8,12 @@ import '../../../widgets/app_button.dart';
 class FlashcardBottomBar extends StatelessWidget {
   const FlashcardBottomBar({
     super.key,
+    required this.isFlipped,
     required this.onNotMemorized,
     required this.onMemorized,
   });
 
+  final bool isFlipped;
   final VoidCallback? onNotMemorized;
   final VoidCallback? onMemorized;
 
@@ -41,7 +43,7 @@ class FlashcardBottomBar extends StatelessWidget {
                 shadowColor: AppColors.red100,
                 textColor: AppColors.red700,
                 border: Border.all(color: AppColors.lightRed, width: 2),
-                onPressed: onNotMemorized,
+                onPressed: isFlipped ? onNotMemorized : null,
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -55,7 +57,7 @@ class FlashcardBottomBar extends StatelessWidget {
                 ],
                 shadowColor: AppColors.green700,
                 textColor: AppColors.surface,
-                onPressed: onMemorized,
+                onPressed: isFlipped ? onMemorized : null,
               ),
             ),
           ],
