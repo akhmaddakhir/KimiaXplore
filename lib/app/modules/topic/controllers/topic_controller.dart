@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../models/activity_navigation.dart';
 import '../../../routes/app_routes.dart';
 import '../../home/models/topic_model.dart';
 import '../../material/data/material_lesson_data.dart';
@@ -24,18 +25,11 @@ class TopicController extends GetxController {
 
     if (currentTopic == null) return;
 
-    final lessons = MaterialLessonData.getLessonsByTopic(currentTopic.id);
-
-    if (lessons.isEmpty) {
-      Get.toNamed(AppRoutes.material, arguments: currentTopic);
-      return;
-    }
-
     Get.toNamed(
       AppRoutes.material,
-      arguments: MaterialLessonSelection(
-        topicId: currentTopic.id,
-        lesson: lessons.first,
+      arguments: ActivityNavigation(
+        topic: currentTopic,
+        entryPoint: ActivityEntryPoint.recommendation,
       ),
     );
   }
@@ -45,17 +39,22 @@ class TopicController extends GetxController {
 
     if (currentTopic == null) return;
 
+    final navigation = ActivityNavigation(
+      topic: currentTopic,
+      entryPoint: ActivityEntryPoint.activity,
+    );
+
     switch (activity) {
       case TopicActivityType.materi:
         _openMaterial(currentTopic);
         break;
 
       case TopicActivityType.kuis:
-        Get.toNamed(AppRoutes.quiz, arguments: currentTopic);
+        Get.toNamed(AppRoutes.quiz, arguments: navigation);
         break;
 
       case TopicActivityType.flashcard:
-        Get.toNamed(AppRoutes.flashcard, arguments: currentTopic);
+        Get.toNamed(AppRoutes.flashcard, arguments: navigation);
         break;
 
       default:
@@ -72,7 +71,13 @@ class TopicController extends GetxController {
     }
 
     if (lessons.isEmpty) {
-      Get.toNamed(AppRoutes.material, arguments: currentTopic);
+      Get.toNamed(
+        AppRoutes.material,
+        arguments: ActivityNavigation(
+          topic: currentTopic,
+          entryPoint: ActivityEntryPoint.activity,
+        ),
+      );
       return;
     }
 
