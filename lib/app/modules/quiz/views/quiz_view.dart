@@ -5,9 +5,37 @@ import '../../../theme/app_colors.dart';
 import '../../../widgets/app_step_header.dart';
 
 import '../controllers/quiz_controller.dart';
+import '../widgets/quiz_bottom_bar.dart';
 
-class QuizView extends GetView<QuizController> {
+class QuizView extends StatefulWidget {
   const QuizView({super.key});
+
+  @override
+  State<QuizView> createState() => _QuizViewState();
+}
+
+class _QuizViewState extends State<QuizView> {
+  final QuizController controller = Get.find<QuizController>();
+
+  QuizBottomState _bottomState = QuizBottomState.answering;
+
+  void _previewNextState() {
+    setState(() {
+      switch (_bottomState) {
+        case QuizBottomState.answering:
+          _bottomState = QuizBottomState.correct;
+          break;
+
+        case QuizBottomState.correct:
+          _bottomState = QuizBottomState.incorrect;
+          break;
+
+        case QuizBottomState.incorrect:
+          _bottomState = QuizBottomState.answering;
+          break;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +43,7 @@ class QuizView extends GetView<QuizController> {
       backgroundColor: AppColors.background,
 
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             Obx(
@@ -29,6 +58,8 @@ class QuizView extends GetView<QuizController> {
             ),
 
             const Expanded(child: SizedBox.shrink()),
+
+            QuizBottomBar(state: _bottomState, onPressed: _previewNextState),
           ],
         ),
       ),
