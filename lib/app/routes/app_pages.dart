@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:kimiaxplore/app/modules/auth/bindings/auth_binding.dart';
 import 'package:kimiaxplore/app/modules/auth/views/login_view.dart';
 import 'package:kimiaxplore/app/modules/auth/views/register_view.dart';
+import 'package:kimiaxplore/app/modules/flashcard/bindings/flashcard_binding.dart';
+import 'package:kimiaxplore/app/modules/flashcard/views/flashcard_view.dart';
 import 'package:kimiaxplore/app/modules/main/bindings/main_binding.dart';
 import 'package:kimiaxplore/app/modules/main/views/main_view.dart';
 import 'package:kimiaxplore/app/modules/material/bindings/material_binding.dart';
@@ -60,6 +62,11 @@ class AppPages {
       name: AppRoutes.quiz,
       page: () => const QuizView(),
       binding: QuizBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.flashcard,
+      page: () => const FlashcardView(),
+      binding: FlashcardBinding(),
     ),
   ];
 }

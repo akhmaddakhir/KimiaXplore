@@ -30,6 +30,10 @@ class TopicController extends GetxController {
         Get.toNamed(AppRoutes.quiz, arguments: currentTopic);
         break;
 
+      case TopicActivityType.flashcard:
+        Get.toNamed(AppRoutes.flashcard, arguments: currentTopic);
+        break;
+
       default:
         break;
     }
