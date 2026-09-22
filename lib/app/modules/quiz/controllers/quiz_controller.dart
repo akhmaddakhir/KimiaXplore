@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../../../models/activity_navigation.dart';
+import '../../../routes/app_routes.dart';
 import '../../home/models/topic_model.dart';
 import '../data/quiz_data.dart';
 import '../models/quiz_question_model.dart';
@@ -21,6 +23,10 @@ class QuizController extends GetxController {
   final isQuizFinished = false.obs;
 
   final selectedAnswers = <int, int>{}.obs;
+
+  ActivityEntryPoint entryPoint = ActivityEntryPoint.activity;
+
+  bool get isRecommended => entryPoint == ActivityEntryPoint.recommendation;
 
   QuizQuestionModel? get currentQuestion {
     if (questions.isEmpty) {
@@ -61,8 +67,13 @@ class QuizController extends GetxController {
   void onInit() {
     super.onInit();
 
-    if (Get.arguments is TopicModel) {
-      topic.value = Get.arguments as TopicModel;
+    final arguments = Get.arguments;
+
+    if (arguments is ActivityNavigation) {
+      topic.value = arguments.topic;
+      entryPoint = arguments.entryPoint;
+    } else if (arguments is TopicModel) {
+      topic.value = arguments;
     }
 
     loadQuestions();
@@ -160,5 +171,22 @@ class QuizController extends GetxController {
 
   void restartQuiz() {
     loadQuestions();
+  }
+
+  void finishQuiz() {
+    final currentTopic = topic.value;
+
+    if (isRecommended && currentTopic != null) {
+      Get.offNamed(
+        AppRoutes.flashcard,
+        arguments: ActivityNavigation(
+          topic: currentTopic,
+          entryPoint: ActivityEntryPoint.recommendation,
+        ),
+      );
+      return;
+    }
+
+    Get.back();
   }
 }
