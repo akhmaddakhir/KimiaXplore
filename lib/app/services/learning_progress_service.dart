@@ -47,6 +47,64 @@ class LearningProgressService {
         .eq('activity_id', activityId);
   }
 
+  Future<void> saveActivityProgress({
+    required String topicId,
+    required String activityType,
+    required String activityId,
+    required int progress,
+    required int total,
+    bool isCompleted = false,
+    int? score,
+  }) async {
+    final userId = currentUserId;
+
+    if (userId == null) {
+      return;
+    }
+
+    final existingProgress = await _client
+        .from('learning_progress')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('activity_type', activityType)
+        .eq('activity_id', activityId)
+        .maybeSingle();
+
+    final now = DateTime.now().toIso8601String();
+
+    final data = <String, dynamic>{
+      'topic_id': topicId,
+      'progress': progress,
+      'total': total,
+      'is_completed': isCompleted,
+      'last_opened_at': now,
+      'updated_at': now,
+      'completed_at': isCompleted ? now : null,
+    };
+
+    if (score != null) {
+      data['score'] = score;
+    }
+
+    if (existingProgress == null) {
+      await _client.from('learning_progress').insert({
+        'user_id': userId,
+        'activity_type': activityType,
+        'activity_id': activityId,
+        ...data,
+      });
+
+      return;
+    }
+
+    await _client
+        .from('learning_progress')
+        .update(data)
+        .eq('user_id', userId)
+        .eq('activity_type', activityType)
+        .eq('activity_id', activityId);
+  }
+
   Future<void> completeActivity({
     required String topicId,
     required String activityType,
