@@ -138,16 +138,26 @@ class MaterialView extends GetView<MaterialController> {
                     ),
 
                     Positioned(
-                      left: AppSpacing.xl,
-                      right: AppSpacing.xl,
-                      bottom: AppSpacing.lg,
-                      child: AppButton.primary(
-                        label: controller.hasNextLesson
-                            ? 'Pelajaran Selanjutnya'
-                            : 'Selesai',
-                        onPressed: controller.hasNextLesson
-                            ? controller.nextLesson
-                            : controller.finishMaterial,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: double.infinity,
+                        color: AppColors.background,
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.xl,
+                          AppSpacing.md,
+                          AppSpacing.xl,
+                          AppSpacing.lg,
+                        ),
+                        child: AppButton.primary(
+                          label: controller.hasNextLesson
+                              ? 'Pelajaran Selanjutnya'
+                              : 'Selesai',
+                          onPressed: controller.hasNextLesson
+                              ? controller.nextLesson
+                              : controller.finishMaterial,
+                        ),
                       ),
                     ),
                   ],
