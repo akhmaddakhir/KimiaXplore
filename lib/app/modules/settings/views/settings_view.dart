@@ -17,7 +17,7 @@ class SettingsView extends GetView<SettingsController> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppDetailHeader(title: 'Pengaturan'),
+            AppDetailHeader(title: 'settings_title'.tr),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
@@ -30,20 +30,20 @@ class SettingsView extends GetView<SettingsController> {
                   children: [
                     _SettingsTile(
                       icon: Icons.person_outline_rounded,
-                      title: 'Akun',
+                      title: 'settings_account'.tr,
                       onTap: controller.openAccount,
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     _SettingsTile(
                       icon: Icons.shopping_bag_outlined,
-                      title: 'Riwayat Pembelian',
+                      title: 'settings_purchase_history'.tr,
                       onTap: controller.openPurchaseHistory,
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Obx(
                       () => _SettingsTile(
                         icon: Icons.dark_mode_outlined,
-                        title: 'Mode Tampilan',
+                        title: 'settings_display_mode'.tr,
                         trailing: Switch.adaptive(
                           value: controller.isDarkMode.value,
                           activeThumbColor: AppColors.blue500,
@@ -66,8 +66,8 @@ class SettingsView extends GetView<SettingsController> {
                       () => _SettingsTile(
                         icon: Icons.logout_rounded,
                         title: controller.isLoggingOut.value
-                            ? 'Keluar...'
-                            : 'Log out',
+                            ? 'settings_logging_out'.tr
+                            : 'settings_logout'.tr,
                         iconColor: AppColors.red500,
                         textColor: AppColors.red500,
                         onTap: controller.isLoggingOut.value
@@ -180,7 +180,7 @@ class _LanguageTile extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              'Bahasa',
+              'settings_language'.tr,
               style: AppTypography.body.copyWith(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
@@ -200,12 +200,16 @@ class _LanguageTile extends StatelessWidget {
                 _LanguageOption(
                   label: 'ID',
                   selected: selectedLanguage == 'ID',
-                  onTap: () => onSelected('ID'),
+                  onTap: () {
+                    onSelected('ID');
+                  },
                 ),
                 _LanguageOption(
                   label: 'EN',
                   selected: selectedLanguage == 'EN',
-                  onTap: () => onSelected('EN'),
+                  onTap: () {
+                    onSelected('EN');
+                  },
                 ),
               ],
             ),

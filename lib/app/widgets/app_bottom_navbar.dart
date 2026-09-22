@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
@@ -14,11 +15,11 @@ class AppBottomNavbar extends StatelessWidget {
   final ValueChanged<int> onTabSelected;
 
   static const List<_NavItem> _items = [
-    _NavItem(label: 'Home', icon: Icons.home_outlined),
-    _NavItem(label: 'Lab', icon: Icons.science_outlined),
-    _NavItem(label: 'AI Tutor', icon: Icons.smart_toy_outlined),
-    _NavItem(label: 'Shop', icon: Icons.workspace_premium_outlined),
-    _NavItem(label: 'Profile', icon: Icons.person_outline_rounded),
+    _NavItem(labelKey: 'nav_home', icon: Icons.home_outlined),
+    _NavItem(labelKey: 'nav_lab', icon: Icons.science_outlined),
+    _NavItem(labelKey: 'nav_ai_tutor', icon: Icons.smart_toy_outlined),
+    _NavItem(labelKey: 'nav_shop', icon: Icons.workspace_premium_outlined),
+    _NavItem(labelKey: 'nav_profile', icon: Icons.person_outline_rounded),
   ];
 
   @override
@@ -34,17 +35,17 @@ class AppBottomNavbar extends StatelessWidget {
             children: List.generate(_items.length, (index) {
               final item = _items[index];
 
-              final bool isSelected = selectedIndex == index;
+              final isSelected = selectedIndex == index;
 
               return Expanded(
                 child: InkWell(
-                  onTap: () => onTabSelected(index),
+                  onTap: () {
+                    onTabSelected(index);
+                  },
                   borderRadius: BorderRadius.circular(24),
-
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   hoverColor: Colors.transparent,
-
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -67,11 +68,9 @@ class AppBottomNavbar extends StatelessWidget {
                               : AppColors.textHint,
                         ),
                       ),
-
                       const SizedBox(height: 4),
-
                       Text(
-                        item.label,
+                        item.labelKey.tr,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
@@ -97,8 +96,8 @@ class AppBottomNavbar extends StatelessWidget {
 }
 
 class _NavItem {
-  const _NavItem({required this.label, required this.icon});
+  const _NavItem({required this.labelKey, required this.icon});
 
-  final String label;
+  final String labelKey;
   final IconData icon;
 }

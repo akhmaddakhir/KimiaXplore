@@ -22,7 +22,7 @@ class AiTutorView extends GetView<AiTutorController> {
         child: Column(
           children: [
             AppMainHeader(
-              title: 'AI Tutor',
+              title: 'ai_title'.tr,
               actions: [
                 Obx(
                   () => controller.isChatOpen.value
@@ -66,6 +66,7 @@ class AiTutorView extends GetView<AiTutorController> {
               child: Obx(
                 () => AiChatInput(
                   enabled: !controller.isSending.value,
+                  hintText: 'ai_input_hint'.tr,
                   onSend: controller.sendMessage,
                   onAttachment: controller.openAttachment,
                 ),
@@ -107,7 +108,7 @@ class AiTutorView extends GetView<AiTutorController> {
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     Text(
-                      'Mau belajar apa hari ini?',
+                      'ai_welcome_title'.tr,
                       textAlign: TextAlign.center,
                       style: AppTypography.heading1.copyWith(
                         color: AppColors.textDark,
@@ -115,7 +116,7 @@ class AiTutorView extends GetView<AiTutorController> {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Tanyakan apa saja tentang kimia kepada Kimi!',
+                      'ai_welcome_description'.tr,
                       textAlign: TextAlign.center,
                       style: AppTypography.body.copyWith(
                         color: AppColors.textMedium,
@@ -146,12 +147,13 @@ class AiTutorView extends GetView<AiTutorController> {
         itemCount: itemCount,
         itemBuilder: (context, index) {
           if (isSending && index == 0) {
-            return const Padding(
-              padding: EdgeInsets.only(bottom: AppSpacing.md),
-              child: AiChatBubble(
-                message: 'Kimi sedang berpikir...',
-                isUser: false,
-              ),
+            final thinkingText = controller.activeChatLanguage == 'EN'
+                ? 'Kimi is thinking...'
+                : 'Kimi sedang berpikir...';
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: AiChatBubble(message: thinkingText, isUser: false),
             );
           }
 

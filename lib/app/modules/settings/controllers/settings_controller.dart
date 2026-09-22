@@ -2,22 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../routes/app_routes.dart';
+import '../../../services/app_language_service.dart';
 import '../../../services/auth_service.dart';
 import '../../profile/views/profile_account_view.dart';
 
 class SettingsController extends GetxController {
   final AuthService _authService = AuthService();
 
+  final AppLanguageService _languageService = Get.find<AppLanguageService>();
+
   final isDarkMode = false.obs;
-  final selectedLanguage = 'ID'.obs;
   final isLoggingOut = false.obs;
+
+  RxString get selectedLanguage {
+    return _languageService.selectedLanguage;
+  }
 
   void toggleDarkMode(bool value) {
     isDarkMode.value = value;
   }
 
-  void selectLanguage(String language) {
-    selectedLanguage.value = language;
+  Future<void> selectLanguage(String language) async {
+    await _languageService.setLanguage(language);
   }
 
   void openAccount() {
@@ -26,8 +32,8 @@ class SettingsController extends GetxController {
 
   void openPurchaseHistory() {
     Get.snackbar(
-      'Riwayat Pembelian',
-      'Riwayat pembelian akan ditambahkan nanti.',
+      'purchase_history_title'.tr,
+      'purchase_history_unavailable'.tr,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(16),
     );
@@ -40,18 +46,20 @@ class SettingsController extends GetxController {
 
     final shouldLogout = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Log out?'),
-        content: const Text(
-          'Kamu perlu masuk lagi untuk menggunakan akun KimiaXplore.',
-        ),
+        title: Text('logout_title'.tr),
+        content: Text('logout_description'.tr),
         actions: [
           TextButton(
-            onPressed: () => Get.back(result: false),
-            child: const Text('Batal'),
+            onPressed: () {
+              Get.back(result: false);
+            },
+            child: Text('cancel'.tr),
           ),
           TextButton(
-            onPressed: () => Get.back(result: true),
-            child: const Text('Log out'),
+            onPressed: () {
+              Get.back(result: true);
+            },
+            child: Text('settings_logout'.tr),
           ),
         ],
       ),
@@ -75,8 +83,8 @@ class SettingsController extends GetxController {
       Get.offAllNamed(AppRoutes.welcome);
     } catch (_) {
       Get.snackbar(
-        'Logout gagal',
-        'Terjadi kesalahan saat keluar dari akun.',
+        'logout_failed_title'.tr,
+        'logout_failed_description'.tr,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );
