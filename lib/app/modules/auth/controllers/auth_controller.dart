@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../routes/app_routes.dart';
+import '../../../services/auth_service.dart';
+import '../../../services/profile_service.dart';
 
 class AuthController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -13,6 +16,26 @@ class AuthController extends GetxController {
 
   final isFormValid = false.obs;
   final isLoginFormValid = false.obs;
+  final isLoading = false.obs;
+
+  final AuthService _authService = AuthService();
+  final ProfileService _profileService = ProfileService();
+
+  Map<String, String> get onboardingAnswers {
+    final arguments = Get.arguments;
+
+    if (arguments is Map<String, String>) {
+      return arguments;
+    }
+
+    if (arguments is Map) {
+      return arguments.map(
+        (key, value) => MapEntry(key.toString(), value.toString()),
+      );
+    }
+
+    return {};
+  }
 
   @override
   void onInit() {
@@ -88,32 +111,92 @@ class AuthController extends GetxController {
     isLoginFormValid.value = isEmailValid && isPasswordValid;
   }
 
-  void register() {
+  Future<void> register() async {
     final isValid = formKey.currentState?.validate() ?? false;
 
-    if (!isValid) {
+    if (!isValid || isLoading.value) {
       return;
     }
 
     validateForm();
-    if (isFormValid.value) {
+
+    if (!isFormValid.value) {
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      final response = await _authService.register(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+
+      final user = response.user;
+
+      if (user == null) {
+        _showError('Registrasi gagal', 'Akun tidak berhasil dibuat.');
+        return;
+      }
+
+      await _profileService.createProfile(
+        userId: user.id,
+        email: user.email ?? emailController.text.trim(),
+        onboardingAnswers: onboardingAnswers,
+      );
+
       Get.offAllNamed(AppRoutes.home);
+    } on AuthException catch (error) {
+      _showError('Registrasi gagal', error.message);
+    } on PostgrestException catch (error) {
+      _showError('Profil gagal dibuat', error.message);
+    } catch (_) {
+      _showError('Registrasi gagal', 'Terjadi kesalahan. Coba lagi.');
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  void login() {
+  Future<void> login() async {
     final isValid =
         (loginFormKey.currentState ?? formKey.currentState)?.validate() ??
         false;
 
-    if (!isValid) {
+    if (!isValid || isLoading.value) {
       return;
     }
 
     validateLoginForm();
-    if (isLoginFormValid.value) {
-      Get.offAllNamed(AppRoutes.home);
+
+    if (!isLoginFormValid.value) {
+      return;
     }
+
+    try {
+      isLoading.value = true;
+
+      await _authService.login(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+
+      Get.offAllNamed(AppRoutes.home);
+    } on AuthException catch (error) {
+      _showError('Login gagal', error.message);
+    } catch (_) {
+      _showError('Login gagal', 'Terjadi kesalahan. Coba lagi.');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _showError(String title, String message) {
+    Get.snackbar(
+      title,
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(16),
+    );
   }
 
   @override

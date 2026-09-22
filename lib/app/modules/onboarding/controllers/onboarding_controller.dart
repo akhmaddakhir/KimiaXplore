@@ -25,7 +25,9 @@ class OnboardingController extends GetxController {
   bool get isLastPage => currentPage.value == totalPages - 1;
 
   int get currentQuestionIndex {
-    if (isIntroPage || isTransitionPage) return -1;
+    if (isIntroPage || isTransitionPage) {
+      return -1;
+    }
 
     return currentPage.value - 1;
   }
@@ -49,13 +51,17 @@ class OnboardingController extends GetxController {
       (question) => question.id == questionId,
     );
 
-    if (question == null) return;
+    if (question == null) {
+      return;
+    }
 
     final isValidOption = question.options.any(
       (option) => option.id == optionId,
     );
 
-    if (!isValidOption) return;
+    if (!isValidOption) {
+      return;
+    }
 
     answers[questionId] = optionId;
   }
@@ -65,22 +71,30 @@ class OnboardingController extends GetxController {
   }
 
   bool get canContinue {
-    if (isIntroPage || isTransitionPage) return true;
+    if (isIntroPage || isTransitionPage) {
+      return true;
+    }
 
     final question = currentQuestion;
 
-    if (question == null) return false;
+    if (question == null) {
+      return false;
+    }
 
-    if (!question.isRequired) return true;
+    if (!question.isRequired) {
+      return true;
+    }
 
     return answers.containsKey(question.id);
   }
 
   void nextPage() {
-    if (!canContinue) return;
+    if (!canContinue) {
+      return;
+    }
 
     if (isTransitionPage) {
-      Get.toNamed(AppRoutes.register);
+      _openRegister();
       return;
     }
 
@@ -106,7 +120,14 @@ class OnboardingController extends GetxController {
   }
 
   void completeOnboarding() {
-    Get.toNamed(AppRoutes.register);
+    _openRegister();
+  }
+
+  void _openRegister() {
+    Get.toNamed(
+      AppRoutes.register,
+      arguments: Map<String, String>.from(answers),
+    );
   }
 
   @override
