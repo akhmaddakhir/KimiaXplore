@@ -6,6 +6,7 @@ import '../../../widgets/app_step_header.dart';
 
 import '../controllers/quiz_controller.dart';
 import '../widgets/quiz_bottom_bar.dart';
+import '../widgets/quiz_question_header.dart';
 
 class QuizView extends StatefulWidget {
   const QuizView({super.key});
@@ -57,7 +58,25 @@ class _QuizViewState extends State<QuizView> {
               ),
             ),
 
-            const Expanded(child: SizedBox.shrink()),
+            Expanded(
+              child: Obx(() {
+                final question = controller.currentQuestion;
+
+                if (question == null) {
+                  return const SizedBox.shrink();
+                }
+
+                return SingleChildScrollView(
+                  child: QuizQuestionHeader(
+                    questionNumber: controller.currentQuestionNumber,
+                    question: question.question,
+
+                    // Aksi laporan belum ada
+                    onReportPressed: () {},
+                  ),
+                );
+              }),
+            ),
 
             QuizBottomBar(state: _bottomState, onPressed: _previewNextState),
           ],
