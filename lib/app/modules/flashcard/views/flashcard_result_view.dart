@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../models/activity_navigation.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
@@ -19,6 +20,12 @@ class FlashcardResultView extends GetView<FlashcardController> {
   final Widget? mascot;
   final VoidCallback onRetry;
   final VoidCallback onFinish;
+
+  bool get isRecommended {
+    final arguments = Get.arguments;
+
+    return arguments is ActivityNavigation && arguments.isRecommended;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +47,15 @@ class FlashcardResultView extends GetView<FlashcardController> {
                     child: Column(
                       children: [
                         const SizedBox(height: AppSpacing.xxl),
+
                         SizedBox(
                           width: 180,
                           height: 180,
                           child: mascot ?? const SizedBox.shrink(),
                         ),
+
                         const SizedBox(height: AppSpacing.xxxl),
+
                         Text(
                           'Flashcard Selesai!',
                           textAlign: TextAlign.center,
@@ -54,7 +64,9 @@ class FlashcardResultView extends GetView<FlashcardController> {
                             fontSize: 32,
                           ),
                         ),
+
                         const SizedBox(height: AppSpacing.lg),
+
                         Text(
                           'Kamu sudah mempelajari semua kartu.',
                           textAlign: TextAlign.center,
@@ -62,9 +74,12 @@ class FlashcardResultView extends GetView<FlashcardController> {
                             color: AppColors.textMedium,
                           ),
                         ),
+
                         const SizedBox(height: AppSpacing.xxxl),
+
                         Obx(() {
                           final memorizedCount = controller.memorizedCount;
+
                           final notMemorizedCount =
                               controller.notMemorizedCount;
 
@@ -80,7 +95,9 @@ class FlashcardResultView extends GetView<FlashcardController> {
                                   foregroundColor: AppColors.green700,
                                   borderColor: AppColors.green100,
                                 ),
+
                                 const SizedBox(height: AppSpacing.md),
+
                                 QuizResultStatCard(
                                   label: 'Belum Hafal',
                                   value: notMemorizedCount,
@@ -99,6 +116,7 @@ class FlashcardResultView extends GetView<FlashcardController> {
                 ),
               ),
             ),
+
             _buildBottomActions(),
           ],
         ),
@@ -132,9 +150,14 @@ class FlashcardResultView extends GetView<FlashcardController> {
                       label: 'Ulangi yang Belum Hafal',
                       onPressed: onRetry,
                     ),
+
                     const SizedBox(height: AppSpacing.lg),
                   ],
-                  AppButton.primary(label: 'Selesai', onPressed: onFinish),
+
+                  AppButton.primary(
+                    label: isRecommended ? 'Kembali ke Topik' : 'Selesai',
+                    onPressed: onFinish,
+                  ),
                 ],
               );
             }),
