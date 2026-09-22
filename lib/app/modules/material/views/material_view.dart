@@ -115,6 +115,7 @@ class MaterialView extends GetView<MaterialController> {
 
                             if (controller.totalLessons > 1) ...[
                               const SizedBox(height: AppSpacing.md),
+
                               Text(
                                 'Pelajaran ${controller.currentLessonIndex.value + 1} dari ${controller.totalLessons}',
                                 style: AppTypography.bodySmall.copyWith(
@@ -151,12 +152,8 @@ class MaterialView extends GetView<MaterialController> {
                           AppSpacing.lg,
                         ),
                         child: AppButton.primary(
-                          label: controller.hasNextLesson
-                              ? 'Pelajaran Selanjutnya'
-                              : 'Selesai',
-                          onPressed: controller.hasNextLesson
-                              ? controller.nextLesson
-                              : controller.finishMaterial,
+                          label: controller.bottomButtonLabel,
+                          onPressed: controller.finishMaterial,
                         ),
                       ),
                     ),
