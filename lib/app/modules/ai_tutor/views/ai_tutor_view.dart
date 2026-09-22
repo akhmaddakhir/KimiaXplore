@@ -6,7 +6,6 @@ import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_main_header.dart';
-
 import '../controllers/ai_tutor_controller.dart';
 import '../widgets/ai_chat_bubble.dart';
 import '../widgets/ai_chat_input.dart';
@@ -22,14 +21,34 @@ class AiTutorView extends GetView<AiTutorController> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppMainHeader(
+            AppMainHeader(
               title: 'AI Tutor',
-              padding: EdgeInsets.symmetric(
+              actions: [
+                Obx(
+                  () => controller.isChatOpen.value
+                      ? GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: controller.isSending.value
+                              ? null
+                              : controller.openNewChat,
+                          child: const SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: Icon(
+                              Icons.add_comment_outlined,
+                              color: AppColors.textDark,
+                              size: 24,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+              padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.xl,
                 vertical: AppSpacing.md,
               ),
             ),
-
             Expanded(
               child: Obx(
                 () => controller.isChatOpen.value
@@ -37,7 +56,6 @@ class AiTutorView extends GetView<AiTutorController> {
                     : _buildWelcomeContent(),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg,
@@ -45,9 +63,12 @@ class AiTutorView extends GetView<AiTutorController> {
                 AppSpacing.lg,
                 AppSpacing.lg,
               ),
-              child: AiChatInput(
-                onSend: controller.sendMessage,
-                onAttachment: controller.openAttachment,
+              child: Obx(
+                () => AiChatInput(
+                  enabled: !controller.isSending.value,
+                  onSend: controller.sendMessage,
+                  onAttachment: controller.openAttachment,
+                ),
               ),
             ),
           ],
@@ -84,9 +105,7 @@ class AiTutorView extends GetView<AiTutorController> {
                         color: AppColors.blue500,
                       ),
                     ),
-
                     const SizedBox(height: AppSpacing.xl),
-
                     Text(
                       'Mau belajar apa hari ini?',
                       textAlign: TextAlign.center,
@@ -94,9 +113,7 @@ class AiTutorView extends GetView<AiTutorController> {
                         color: AppColors.textDark,
                       ),
                     ),
-
                     const SizedBox(height: AppSpacing.sm),
-
                     Text(
                       'Tanyakan apa saja tentang kimia kepada Kimi!',
                       textAlign: TextAlign.center,
@@ -115,25 +132,41 @@ class AiTutorView extends GetView<AiTutorController> {
   }
 
   Widget _buildChatContent() {
-    return Obx(
-      () => ListView.builder(
+    return Obx(() {
+      final isSending = controller.isSending.value;
+
+      final itemCount = controller.messages.length + (isSending ? 1 : 0);
+
+      return ListView.builder(
         reverse: true,
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.md,
         ),
-        itemCount: controller.messages.length,
+        itemCount: itemCount,
         itemBuilder: (context, index) {
-          final reversedIndex = controller.messages.length - 1 - index;
+          if (isSending && index == 0) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.md),
+              child: AiChatBubble(
+                message: 'Kimi sedang berpikir...',
+                isUser: false,
+              ),
+            );
+          }
+
+          final adjustedIndex = isSending ? index - 1 : index;
+
+          final reversedIndex = controller.messages.length - 1 - adjustedIndex;
 
           final message = controller.messages[reversedIndex];
 
           return Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: AiChatBubble(message: message, isUser: true),
+            child: AiChatBubble(message: message.text, isUser: message.isUser),
           );
         },
-      ),
-    );
+      );
+    });
   }
 }
