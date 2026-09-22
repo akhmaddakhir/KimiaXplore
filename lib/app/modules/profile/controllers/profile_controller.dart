@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../home/data/home_topics.dart';
@@ -11,7 +12,12 @@ import '../models/quiz_history_model.dart';
 enum UserTier { free, atom, catalyst, quantum }
 
 class ProfileController extends GetxController {
-  final userName = "AkhmadDaqiqulMu'akhkh".obs;
+  final SupabaseClient _supabase = Supabase.instance.client;
+
+  final userName = 'Xplorer'.obs;
+  final userEmail = ''.obs;
+  final avatarUrl = RxnString();
+
   final userTier = UserTier.free.obs;
   final completedTopics = 9.obs;
   final totalBadges = 12.obs;
@@ -43,9 +49,64 @@ class ProfileController extends GetxController {
     ),
   ].obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    loadUser();
+  }
+
+  void loadUser() {
+    final user = _supabase.auth.currentUser;
+
+    if (user == null) {
+      userName.value = 'Xplorer';
+      userEmail.value = '';
+      avatarUrl.value = null;
+      return;
+    }
+
+    userEmail.value = user.email ?? '';
+
+    final metadata = user.userMetadata ?? {};
+
+    final fullName = metadata['full_name']?.toString().trim();
+
+    final name = metadata['name']?.toString().trim();
+
+    final preferredName = fullName?.isNotEmpty == true
+        ? fullName
+        : name?.isNotEmpty == true
+        ? name
+        : null;
+
+    if (preferredName != null) {
+      userName.value = preferredName;
+    } else if (user.email != null && user.email!.contains('@')) {
+      userName.value = user.email!.split('@').first;
+    } else {
+      userName.value = 'Xplorer';
+    }
+
+    final googleAvatar = metadata['avatar_url']?.toString().trim();
+
+    final picture = metadata['picture']?.toString().trim();
+
+    if (googleAvatar?.isNotEmpty == true) {
+      avatarUrl.value = googleAvatar;
+    } else if (picture?.isNotEmpty == true) {
+      avatarUrl.value = picture;
+    } else {
+      avatarUrl.value = null;
+    }
+  }
+
   String get userInitial {
     final name = userName.value.trim();
-    if (name.isEmpty) return 'X';
+
+    if (name.isEmpty) {
+      return 'X';
+    }
+
     return name[0].toUpperCase();
   }
 
@@ -75,23 +136,19 @@ class ProfileController extends GetxController {
     }
   }
 
-  void openSettings() {
-    // Aksi tombol pengaturan
-  }
-
   void setTier(UserTier tier) {
     userTier.value = tier;
   }
 
   void openQuizDiscussion(QuizHistoryModel history) {
-    // Pastikan QuizController terdaftar
     final quizController = Get.isRegistered<QuizController>()
         ? Get.find<QuizController>()
         : Get.put(QuizController());
 
-    // Ambil topik terkait dari HomeTopics jika ada
     final topic =
-        HomeTopics.items.firstWhereOrNull((t) => t.id == history.topicId) ??
+        HomeTopics.items.firstWhereOrNull(
+          (topic) => topic.id == history.topicId,
+        ) ??
         TopicModel(
           id: history.topicId,
           title: history.title,
@@ -103,17 +160,21 @@ class ProfileController extends GetxController {
     quizController.topic.value = topic;
     quizController.loadQuestions();
 
-    // Set jawaban simulasi sesuai jumlah benar dari history
     for (int i = 0; i < quizController.questions.length; i++) {
-      final q = quizController.questions[i];
+      final question = quizController.questions[i];
+
       if (i < history.correctAnswers) {
-        quizController.selectedAnswers[i] = q.correctOptionIndex;
+        quizController.selectedAnswers[i] = question.correctOptionIndex;
       } else {
-        final wrongIndex = (q.correctOptionIndex + 1) % q.options.length;
+        final wrongIndex =
+            (question.correctOptionIndex + 1) % question.options.length;
+
         quizController.selectedAnswers[i] = wrongIndex;
       }
     }
+
     quizController.score.value = history.correctAnswers;
+
     quizController.isQuizFinished.value = true;
 
     Get.to<void>(() => const QuizDiscussionView());

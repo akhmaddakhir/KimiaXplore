@@ -10,35 +10,17 @@ class ProfileHeaderCard extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
+    return Obx(
+      () => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Buletan Profile di Kiri (lebih besar & proporsional)
-            Container(
-              width: 68,
-              height: 68,
-              decoration: const BoxDecoration(
-                color: Color(0xFF7E847B),
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                controller.userInitial,
-                style: const TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+            _ProfileAvatar(
+              avatarUrl: controller.avatarUrl.value,
+              initial: controller.userInitial,
             ),
-
             const SizedBox(width: 16),
-
-            // Nama di Kanan & Role di Bawahnya (lebih besar & jelas)
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +44,7 @@ class ProfileHeaderCard extends GetView<ProfileController> {
                     style: TextStyle(
                       fontFamily: AppTypography.fontFamily,
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color: controller.roleTextColor,
                     ),
                   ),
@@ -71,7 +53,63 @@ class ProfileHeaderCard extends GetView<ProfileController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  const _ProfileAvatar({required this.avatarUrl, required this.initial});
+
+  final String? avatarUrl;
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = avatarUrl?.trim();
+
+    if (url != null && url.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          url,
+          width: 68,
+          height: 68,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _InitialAvatar(initial: initial);
+          },
+        ),
       );
-    });
+    }
+
+    return _InitialAvatar(initial: initial);
+  }
+}
+
+class _InitialAvatar extends StatelessWidget {
+  const _InitialAvatar({required this.initial});
+
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 68,
+      height: 68,
+      decoration: const BoxDecoration(
+        color: AppColors.blue500,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initial,
+        style: const TextStyle(
+          fontFamily: AppTypography.fontFamily,
+          color: Colors.white,
+          fontSize: 26,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
   }
 }
