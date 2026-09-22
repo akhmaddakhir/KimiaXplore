@@ -41,12 +41,15 @@ class QuizResultView extends GetView<QuizController> {
                     child: Column(
                       children: [
                         const SizedBox(height: AppSpacing.xxl),
+
                         SizedBox(
                           width: 180,
                           height: 180,
                           child: mascot ?? const SizedBox.shrink(),
                         ),
+
                         const SizedBox(height: AppSpacing.xxxl),
+
                         Text(
                           'Saatnya evaluasi',
                           textAlign: TextAlign.center,
@@ -55,8 +58,11 @@ class QuizResultView extends GetView<QuizController> {
                             fontSize: 32,
                           ),
                         ),
+
                         const SizedBox(height: AppSpacing.xxxl),
+
                         const SizedBox(height: AppSpacing.lg),
+
                         Obx(() {
                           final correctAnswers = controller.score.value;
 
@@ -75,7 +81,9 @@ class QuizResultView extends GetView<QuizController> {
                                   foregroundColor: AppColors.green700,
                                   borderColor: AppColors.green100,
                                 ),
+
                                 const SizedBox(height: AppSpacing.md),
+
                                 QuizResultStatCard(
                                   label: 'Salah',
                                   value: incorrectAnswers,
@@ -94,6 +102,7 @@ class QuizResultView extends GetView<QuizController> {
                 ),
               ),
             ),
+
             _buildBottomActions(),
           ],
         ),
@@ -120,8 +129,15 @@ class QuizResultView extends GetView<QuizController> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 AppButton.outline(label: 'Pembahasan', onPressed: onDiscussion),
+
                 const SizedBox(height: AppSpacing.lg),
-                AppButton.primary(label: 'Lanjut', onPressed: onContinue),
+
+                AppButton.primary(
+                  label: controller.isRecommended
+                      ? 'Lanjut ke Flashcard'
+                      : 'Selesai',
+                  onPressed: onContinue,
+                ),
               ],
             ),
           ),
