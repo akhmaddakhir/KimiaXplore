@@ -9,4 +9,5 @@ abstract class AppRoutes {
   static const material = '/material';
   static const quiz = '/quiz';
   static const flashcard = '/flashcard';
+  static const profile = '/profile';
 }

@@ -10,6 +10,7 @@ class AppMainHeader extends StatelessWidget {
     this.title = '',
     this.titleWidget,
     this.subtitle,
+    this.leading,
     this.actions = const [],
     this.padding = const EdgeInsets.symmetric(
       horizontal: AppSpacing.xl,
@@ -21,6 +22,7 @@ class AppMainHeader extends StatelessWidget {
   final String title;
   final Widget? titleWidget;
   final String? subtitle;
+  final Widget? leading;
   final List<Widget> actions;
   final EdgeInsetsGeometry padding;
   final Color? backgroundColor;
@@ -33,6 +35,10 @@ class AppMainHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          if (leading != null) ...[
+            leading!,
+            const SizedBox(width: AppSpacing.sm),
+          ],
           Expanded(
             child:
                 titleWidget ??
