@@ -8,6 +8,15 @@ class QuizController extends GetxController {
 
   final currentQuestionIndex = 0.obs;
 
+  final selectedOptionIndex = RxnInt();
+
+  final isAnswerChecked = false.obs;
+  final isAnswerCorrect = false.obs;
+
+  final score = 0.obs;
+
+  final isQuizFinished = false.obs;
+
   QuizQuestionModel? get currentQuestion {
     if (questions.isEmpty) {
       return null;
@@ -32,6 +41,13 @@ class QuizController extends GetxController {
     return currentQuestionNumber / totalQuestions;
   }
 
+  bool get hasSelectedAnswer => selectedOptionIndex.value != null;
+
+  bool get canCheckAnswer =>
+      hasSelectedAnswer && !isAnswerChecked.value && !isQuizFinished.value;
+
+  bool get isLastQuestion => currentQuestionIndex.value == totalQuestions - 1;
+
   @override
   void onInit() {
     super.onInit();
@@ -43,17 +59,83 @@ class QuizController extends GetxController {
     questions.assignAll(QuizData.defaultQuestions);
 
     currentQuestionIndex.value = 0;
+    selectedOptionIndex.value = null;
+
+    isAnswerChecked.value = false;
+    isAnswerCorrect.value = false;
+
+    score.value = 0;
+    isQuizFinished.value = false;
+  }
+
+  void selectOption(int index) {
+    if (isAnswerChecked.value || isQuizFinished.value) {
+      return;
+    }
+
+    final question = currentQuestion;
+
+    if (question == null) {
+      return;
+    }
+
+    if (index < 0 || index >= question.options.length) {
+      return;
+    }
+
+    selectedOptionIndex.value = index;
+  }
+
+  void checkAnswer() {
+    if (!canCheckAnswer) {
+      return;
+    }
+
+    final question = currentQuestion;
+
+    if (question == null) {
+      return;
+    }
+
+    final selectedIndex = selectedOptionIndex.value;
+
+    if (selectedIndex == null) {
+      return;
+    }
+
+    final isCorrect = selectedIndex == question.correctOptionIndex;
+
+    isAnswerCorrect.value = isCorrect;
+    isAnswerChecked.value = true;
+
+    if (isCorrect) {
+      score.value++;
+    }
   }
 
   void nextQuestion() {
-    if (currentQuestionIndex.value < questions.length - 1) {
-      currentQuestionIndex.value++;
+    if (!isAnswerChecked.value || isQuizFinished.value) {
+      return;
     }
+
+    if (isLastQuestion) {
+      isQuizFinished.value = true;
+      return;
+    }
+
+    currentQuestionIndex.value++;
+
+    resetAnswer();
   }
 
-  void previousQuestion() {
-    if (currentQuestionIndex.value > 0) {
-      currentQuestionIndex.value--;
-    }
+  void resetAnswer() {
+    selectedOptionIndex.value = null;
+
+    isAnswerChecked.value = false;
+    isAnswerCorrect.value = false;
+  }
+
+  void restartQuiz() {
+    loadQuestions();
   }
 }
