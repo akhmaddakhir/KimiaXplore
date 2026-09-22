@@ -12,4 +12,5 @@ abstract class AppRoutes {
   static const flashcard = '/flashcard';
   static const simulation = '/simulation';
   static const profile = '/profile';
+  static const settings = '/settings';
 }

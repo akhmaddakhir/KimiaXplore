@@ -14,6 +14,8 @@ import 'package:kimiaxplore/app/modules/profile/bindings/profile_binding.dart';
 import 'package:kimiaxplore/app/modules/profile/views/profile_view.dart';
 import 'package:kimiaxplore/app/modules/quiz/bindings/quiz_binding.dart';
 import 'package:kimiaxplore/app/modules/quiz/views/quiz_view.dart';
+import 'package:kimiaxplore/app/modules/settings/bindings/settings_binding.dart';
+import 'package:kimiaxplore/app/modules/settings/views/settings_view.dart';
 import 'package:kimiaxplore/app/modules/simulation/bindings/simulation_binding.dart';
 import 'package:kimiaxplore/app/modules/simulation/views/simulation_view.dart';
 import 'package:kimiaxplore/app/modules/topic/bindings/topic_binding.dart';
@@ -81,6 +83,11 @@ class AppPages {
       name: AppRoutes.profile,
       page: () => const ProfileView(),
       binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.settings,
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
     ),
   ];
 }

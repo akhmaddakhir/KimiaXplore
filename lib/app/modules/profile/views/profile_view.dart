@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../routes/app_routes.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../widgets/app_main_header.dart';
@@ -24,7 +25,7 @@ class ProfileView extends GetView<ProfileController> {
               actions: [
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: controller.openSettings,
+                  onTap: () => Get.toNamed(AppRoutes.settings),
                   child: const SizedBox(
                     width: 36,
                     height: 36,
@@ -54,10 +55,7 @@ class ProfileView extends GetView<ProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const ProfileHeaderCard(),
-
                     const SizedBox(height: 16),
-
-                    // 2 Badge Statistik: Topik Selesai & Total Badge
                     Obx(
                       () => Row(
                         children: [
@@ -77,12 +75,8 @@ class ProfileView extends GetView<ProfileController> {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
-                    // Bagian Riwayat Evaluasi Kuis (Klik untuk melihat pembahasan kuis)
                     const ProfileQuizHistoryCard(),
-
                     const SizedBox(height: 24),
                   ],
                 ),
