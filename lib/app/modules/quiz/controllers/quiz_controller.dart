@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
 
+import '../../home/models/topic_model.dart';
 import '../data/quiz_data.dart';
 import '../models/quiz_question_model.dart';
 
 class QuizController extends GetxController {
+  final topic = Rxn<TopicModel>();
+
   final questions = <QuizQuestionModel>[].obs;
 
   final currentQuestionIndex = 0.obs;
@@ -58,11 +61,21 @@ class QuizController extends GetxController {
   void onInit() {
     super.onInit();
 
+    if (Get.arguments is TopicModel) {
+      topic.value = Get.arguments as TopicModel;
+    }
+
     loadQuestions();
   }
 
   void loadQuestions() {
-    questions.assignAll(QuizData.defaultQuestions);
+    final currentTopic = topic.value;
+
+    if (currentTopic != null) {
+      questions.assignAll(QuizData.getQuestionsByTopic(currentTopic.id));
+    } else {
+      questions.clear();
+    }
 
     currentQuestionIndex.value = 0;
     selectedOptionIndex.value = null;
