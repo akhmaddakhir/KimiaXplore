@@ -21,48 +21,37 @@ class FlashcardView extends StatefulWidget {
 class _FlashcardViewState extends State<FlashcardView> {
   final FlashcardController controller = Get.find<FlashcardController>();
 
-  late final List<FlashcardModel> flashcards;
-
-  int currentIndex = 0;
-  bool isFlipped = false;
-
   @override
   void initState() {
     super.initState();
 
     final topic = Get.arguments;
 
+    final List<FlashcardModel> flashcards;
+
     if (topic is TopicModel) {
       flashcards = FlashcardData.getFlashcardsByTopic(topic.id);
     } else {
       flashcards = FlashcardData.getFlashcardsByTopic('atomic_structure');
     }
+
+    controller.initializeFlashcards(flashcards);
   }
 
-  void _flipCard() {
-    setState(() {
-      isFlipped = !isFlipped;
-    });
-  }
-
-  void _nextCard() {
-    if (currentIndex >= flashcards.length - 1) {
+  void _handleCardCompleted() {
+    if (controller.isCompleted.value) {
       Get.back();
-      return;
     }
-
-    setState(() {
-      currentIndex++;
-      isFlipped = false;
-    });
   }
 
   void _markNotMemorized() {
-    _nextCard();
+    controller.markNotMemorized();
+    _handleCardCompleted();
   }
 
   void _markMemorized() {
-    _nextCard();
+    controller.markMemorized();
+    _handleCardCompleted();
   }
 
   @override
@@ -71,45 +60,50 @@ class _FlashcardViewState extends State<FlashcardView> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            AppStepHeader.steps(
-              currentStep: flashcards.isEmpty ? 0 : currentIndex + 1,
-              totalSteps: flashcards.length,
-              backIcon: Icons.close_rounded,
-              progressColor: AppColors.blue500,
-              trackColor: AppColors.border,
-              onBackPressed: () => Get.back(),
-            ),
-            Expanded(
-              child: flashcards.isEmpty
-                  ? const Center(
-                      child: Text('Belum ada flashcard untuk topik ini.'),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xl,
-                      ),
-                      child: FlashcardCard(
-                        key: ValueKey(flashcards[currentIndex].id),
-                        flashcard: flashcards[currentIndex],
-                        isFlipped: isFlipped,
-                        onTap: _flipCard,
-                        currentIndex: currentIndex + 1,
-                        totalCards: flashcards.length,
-                      ),
-                    ),
-            ),
-            if (flashcards.isNotEmpty)
-              FlashcardBottomBar(
-                isFlipped: isFlipped,
-                onNotMemorized: _markNotMemorized,
-                onMemorized: _markMemorized,
+        child: Obx(() {
+          final flashcards = controller.flashcards;
+          final currentIndex = controller.currentIndex.value;
+          final isFlipped = controller.isFlipped.value;
+
+          return Column(
+            children: [
+              AppStepHeader.steps(
+                currentStep: flashcards.isEmpty ? 0 : currentIndex + 1,
+                totalSteps: flashcards.length,
+                backIcon: Icons.close_rounded,
+                progressColor: AppColors.blue500,
+                trackColor: AppColors.border,
+                onBackPressed: () => Get.back(),
               ),
-          ],
-        ),
+              Expanded(
+                child: flashcards.isEmpty
+                    ? const Center(
+                        child: Text('Belum ada flashcard untuk topik ini.'),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: FlashcardCard(
+                          key: ValueKey(flashcards[currentIndex].id),
+                          flashcard: flashcards[currentIndex],
+                          isFlipped: isFlipped,
+                          onTap: controller.flipCard,
+                          currentIndex: currentIndex + 1,
+                          totalCards: flashcards.length,
+                        ),
+                      ),
+              ),
+              if (flashcards.isNotEmpty)
+                FlashcardBottomBar(
+                  isFlipped: isFlipped,
+                  onNotMemorized: _markNotMemorized,
+                  onMemorized: _markMemorized,
+                ),
+            ],
+          );
+        }),
       ),
     );
   }
 }
-  
