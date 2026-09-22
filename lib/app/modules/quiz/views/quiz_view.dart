@@ -125,7 +125,7 @@ class _QuizViewState extends State<QuizView> {
         if (_showResult) {
           return QuizResultView(
             onDiscussion: _showQuizDiscussion,
-            onContinue: _exitQuiz,
+            onContinue: controller.finishQuiz,
           );
         }
 
@@ -148,6 +148,7 @@ class _QuizViewState extends State<QuizView> {
                   onBackPressed: _exitQuiz,
                 ),
               ),
+
               Expanded(
                 child: Obx(() {
                   final question = controller.currentQuestion;
@@ -174,7 +175,9 @@ class _QuizViewState extends State<QuizView> {
                                 question: question.question,
                                 onReportPressed: () {},
                               ),
+
                               const SizedBox(height: AppSpacing.xl),
+
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppSpacing.xl,
@@ -206,6 +209,7 @@ class _QuizViewState extends State<QuizView> {
                           ),
                         ),
                       ),
+
                       if (controller.isAnswerChecked.value)
                         Positioned(
                           right: AppSpacing.xl,
@@ -225,6 +229,7 @@ class _QuizViewState extends State<QuizView> {
                   );
                 }),
               ),
+
               Obx(
                 () => QuizBottomBar(
                   state: _bottomState,
