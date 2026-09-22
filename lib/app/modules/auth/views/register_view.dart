@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_button.dart';
-import '../widgets/auth_divider.dart';
 import '../../../widgets/app_step_header.dart';
 import '../../../widgets/app_text_field.dart';
 import '../controllers/auth_controller.dart';
+import '../widgets/auth_divider.dart';
 
 class RegisterView extends GetView<AuthController> {
   const RegisterView({super.key});
@@ -44,14 +44,18 @@ class RegisterView extends GetView<AuthController> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        AppButton.icon(
-                          width: double.infinity,
-                          icon: SvgPicture.asset(
-                            'assets/icons/google.svg',
-                            width: 24,
-                            height: 24,
+                        Obx(
+                          () => AppButton.icon(
+                            width: double.infinity,
+                            icon: SvgPicture.asset(
+                              'assets/icons/google.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                            onPressed: controller.isGoogleLoading.value
+                                ? null
+                                : controller.signInWithGoogle,
                           ),
-                          onPressed: null,
                         ),
                         const SizedBox(height: 24),
                         const AuthDivider(),
@@ -98,7 +102,9 @@ class RegisterView extends GetView<AuthController> {
                 child: Obx(
                   () => AppButton.primary(
                     label: 'Selesai',
-                    onPressed: controller.isFormValid.value
+                    onPressed:
+                        controller.isFormValid.value &&
+                            !controller.isLoading.value
                         ? controller.register
                         : null,
                   ),

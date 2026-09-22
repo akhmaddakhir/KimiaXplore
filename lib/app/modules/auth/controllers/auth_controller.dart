@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,9 +19,14 @@ class AuthController extends GetxController {
   final isFormValid = false.obs;
   final isLoginFormValid = false.obs;
   final isLoading = false.obs;
+  final isGoogleLoading = false.obs;
 
   final AuthService _authService = AuthService();
   final ProfileService _profileService = ProfileService();
+
+  StreamSubscription<AuthState>? _authSubscription;
+
+  bool _waitingForGoogleAuth = false;
 
   Map<String, String> get onboardingAnswers {
     final arguments = Get.arguments;
@@ -47,6 +54,49 @@ class AuthController extends GetxController {
 
     emailController.addListener(validateLoginForm);
     passwordController.addListener(validateLoginForm);
+
+    _authSubscription = _authService.authStateChanges.listen(
+      _handleAuthStateChange,
+    );
+  }
+
+  Future<void> _handleAuthStateChange(AuthState state) async {
+    if (!_waitingForGoogleAuth) {
+      return;
+    }
+
+    if (state.event != AuthChangeEvent.signedIn) {
+      return;
+    }
+
+    final user = state.session?.user;
+
+    if (user == null) {
+      return;
+    }
+
+    _waitingForGoogleAuth = false;
+
+    try {
+      isGoogleLoading.value = true;
+
+      await _profileService.ensureProfile(
+        userId: user.id,
+        email: user.email ?? '',
+        onboardingAnswers: onboardingAnswers,
+      );
+
+      Get.offAllNamed(AppRoutes.home);
+    } on PostgrestException catch (error) {
+      _showError('Profil gagal dibuat', error.message);
+    } catch (_) {
+      _showError(
+        'Login Google gagal',
+        'Terjadi kesalahan setelah login Google.',
+      );
+    } finally {
+      isGoogleLoading.value = false;
+    }
   }
 
   String? validateEmail(String? value) {
@@ -136,10 +186,11 @@ class AuthController extends GetxController {
 
       if (user == null) {
         _showError('Registrasi gagal', 'Akun tidak berhasil dibuat.');
+
         return;
       }
 
-      await _profileService.createProfile(
+      await _profileService.ensureProfile(
         userId: user.id,
         email: user.email ?? emailController.text.trim(),
         onboardingAnswers: onboardingAnswers,
@@ -175,18 +226,68 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      await _authService.login(
+      final response = await _authService.login(
         email: emailController.text.trim(),
         password: passwordController.text,
+      );
+
+      final user = response.user;
+
+      if (user == null) {
+        _showError('Login gagal', 'Akun tidak ditemukan.');
+
+        return;
+      }
+
+      await _profileService.ensureProfile(
+        userId: user.id,
+        email: user.email ?? emailController.text.trim(),
       );
 
       Get.offAllNamed(AppRoutes.home);
     } on AuthException catch (error) {
       _showError('Login gagal', error.message);
+    } on PostgrestException catch (error) {
+      _showError('Profil gagal dimuat', error.message);
     } catch (_) {
       _showError('Login gagal', 'Terjadi kesalahan. Coba lagi.');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    if (isGoogleLoading.value) {
+      return;
+    }
+
+    try {
+      isGoogleLoading.value = true;
+      _waitingForGoogleAuth = true;
+
+      final launched = await _authService.signInWithGoogle();
+
+      if (!launched) {
+        _waitingForGoogleAuth = false;
+
+        _showError(
+          'Google gagal dibuka',
+          'Tidak dapat membuka halaman login Google.',
+        );
+      }
+    } on AuthException catch (error) {
+      _waitingForGoogleAuth = false;
+
+      _showError('Login Google gagal', error.message);
+    } catch (_) {
+      _waitingForGoogleAuth = false;
+
+      _showError(
+        'Login Google gagal',
+        'Terjadi kesalahan saat membuka Google.',
+      );
+    } finally {
+      isGoogleLoading.value = false;
     }
   }
 
@@ -201,6 +302,8 @@ class AuthController extends GetxController {
 
   @override
   void onClose() {
+    _authSubscription?.cancel();
+
     emailController.removeListener(validateForm);
     passwordController.removeListener(validateForm);
     confirmPasswordController.removeListener(validateForm);

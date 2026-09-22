@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 import '../../../routes/app_routes.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_button.dart';
-import '../widgets/auth_divider.dart';
 import '../../../widgets/app_step_header.dart';
 import '../../../widgets/app_text_field.dart';
 import '../controllers/auth_controller.dart';
+import '../widgets/auth_divider.dart';
 
 class LoginView extends GetView<AuthController> {
   const LoginView({super.key});
-  
+
   @override
   String? get tag => 'login';
 
@@ -45,14 +45,18 @@ class LoginView extends GetView<AuthController> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        AppButton.icon(
-                          width: double.infinity,
-                          icon: SvgPicture.asset(
-                            'assets/icons/google.svg',
-                            width: 24,
-                            height: 24,
+                        Obx(
+                          () => AppButton.icon(
+                            width: double.infinity,
+                            icon: SvgPicture.asset(
+                              'assets/icons/google.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                            onPressed: controller.isGoogleLoading.value
+                                ? null
+                                : controller.signInWithGoogle,
                           ),
-                          onPressed: null,
                         ),
                         const SizedBox(height: 24),
                         const AuthDivider(),
@@ -113,7 +117,9 @@ class LoginView extends GetView<AuthController> {
                 child: Obx(
                   () => AppButton.primary(
                     label: 'Masuk',
-                    onPressed: controller.isLoginFormValid.value
+                    onPressed:
+                        controller.isLoginFormValid.value &&
+                            !controller.isLoading.value
                         ? controller.login
                         : null,
                   ),
