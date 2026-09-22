@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../models/activity_navigation.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../widgets/app_step_header.dart';
@@ -22,18 +23,29 @@ class FlashcardView extends StatefulWidget {
 class _FlashcardViewState extends State<FlashcardView> {
   final FlashcardController controller = Get.find<FlashcardController>();
 
+  ActivityNavigation? _navigation;
+
   @override
   void initState() {
     super.initState();
 
-    final topic = Get.arguments;
+    final arguments = Get.arguments;
+
+    TopicModel? topic;
+
+    if (arguments is ActivityNavigation) {
+      _navigation = arguments;
+      topic = arguments.topic;
+    } else if (arguments is TopicModel) {
+      topic = arguments;
+    }
 
     final List<FlashcardModel> flashcards;
 
-    if (topic is TopicModel) {
+    if (topic != null) {
       flashcards = FlashcardData.getFlashcardsByTopic(topic.id);
     } else {
-      flashcards = FlashcardData.getFlashcardsByTopic('atomic_structure');
+      flashcards = [];
     }
 
     controller.initializeFlashcards(flashcards);
@@ -75,6 +87,7 @@ class _FlashcardViewState extends State<FlashcardView> {
                 trackColor: AppColors.border,
                 onBackPressed: () => Get.back(),
               ),
+
               Expanded(
                 child: flashcards.isEmpty
                     ? const Center(
@@ -94,6 +107,7 @@ class _FlashcardViewState extends State<FlashcardView> {
                         ),
                       ),
               ),
+
               if (flashcards.isNotEmpty)
                 FlashcardBottomBar(
                   isFlipped: isFlipped,
