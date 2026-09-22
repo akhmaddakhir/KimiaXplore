@@ -5,6 +5,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
+import '../../../widgets/app_button.dart';
 import '../../../widgets/app_detail_header.dart';
 import '../controllers/material_controller.dart';
 
@@ -25,6 +26,7 @@ class MaterialView extends GetView<MaterialController> {
               child: Obx(() {
                 final topic = controller.topic.value;
                 final material = controller.material.value;
+                final selectedLesson = controller.selectedLesson.value;
 
                 if (topic == null) {
                   return Center(
@@ -48,73 +50,107 @@ class MaterialView extends GetView<MaterialController> {
                   );
                 }
 
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                    vertical: AppSpacing.md,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.xs,
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: SingleChildScrollView(
+                        key: ValueKey(selectedLesson?.id ?? topic.id),
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.xl,
+                          AppSpacing.md,
+                          AppSpacing.xl,
+                          120,
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.green50,
-                          borderRadius: BorderRadius.circular(AppRadius.pill),
-                          border: Border.all(
-                            color: AppColors.green100,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Text(
-                          'Kimia ${topic.level}',
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.darkTeal,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.2,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                                vertical: AppSpacing.xs,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.green50,
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.pill,
+                                ),
+                                border: Border.all(
+                                  color: AppColors.green100,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Text(
+                                'Kimia ${topic.level}',
+                                style: AppTypography.caption.copyWith(
+                                  color: AppColors.darkTeal,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: AppSpacing.md),
+
+                            Text(
+                              selectedLesson?.title ?? topic.title,
+                              style: AppTypography.heading1.copyWith(
+                                color: AppColors.textDark,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                height: 1.25,
+                              ),
+                            ),
+
+                            const SizedBox(height: AppSpacing.sm),
+
+                            Text(
+                              selectedLesson?.description ?? topic.description,
+                              style: AppTypography.body.copyWith(
+                                color: AppColors.textMedium,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                height: 1.5,
+                              ),
+                            ),
+
+                            if (controller.totalLessons > 1) ...[
+                              const SizedBox(height: AppSpacing.md),
+                              Text(
+                                'Pelajaran ${controller.currentLessonIndex.value + 1} dari ${controller.totalLessons}',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: AppColors.textMedium,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+
+                            const SizedBox(height: AppSpacing.xxl),
+
+                            ...material.sections.map(
+                              (section) => _MaterialSection(
+                                title: section.title,
+                                paragraphs: section.paragraphs,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                    ),
 
-                      const SizedBox(height: AppSpacing.md),
-
-                      Text(
-                        topic.title,
-                        style: AppTypography.heading1.copyWith(
-                          color: AppColors.textDark,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          height: 1.25,
-                        ),
+                    Positioned(
+                      left: AppSpacing.xl,
+                      right: AppSpacing.xl,
+                      bottom: AppSpacing.lg,
+                      child: AppButton.primary(
+                        label: controller.hasNextLesson
+                            ? 'Pelajaran Selanjutnya'
+                            : 'Selesai',
+                        onPressed: controller.hasNextLesson
+                            ? controller.nextLesson
+                            : controller.finishMaterial,
                       ),
-
-                      const SizedBox(height: AppSpacing.sm),
-
-                      Text(
-                        topic.description,
-                        style: AppTypography.body.copyWith(
-                          color: AppColors.textMedium,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          height: 1.5,
-                        ),
-                      ),
-
-                      const SizedBox(height: AppSpacing.xxl),
-
-                      ...material.sections.map(
-                        (section) => _MaterialSection(
-                          title: section.title,
-                          paragraphs: section.paragraphs,
-                        ),
-                      ),
-
-                      const SizedBox(height: AppSpacing.xxxl),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               }),
             ),
