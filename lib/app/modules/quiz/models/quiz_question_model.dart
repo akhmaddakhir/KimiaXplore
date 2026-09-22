@@ -3,7 +3,6 @@ class QuizQuestionModel {
   final String question;
   final List<String> options;
   final int correctOptionIndex;
-  final String? hint;
   final String? explanation;
 
   const QuizQuestionModel({
@@ -11,7 +10,6 @@ class QuizQuestionModel {
     required this.question,
     required this.options,
     required this.correctOptionIndex,
-    this.hint,
     this.explanation,
   });
 }
