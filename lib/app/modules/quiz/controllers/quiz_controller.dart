@@ -17,6 +17,8 @@ class QuizController extends GetxController {
 
   final isQuizFinished = false.obs;
 
+  final selectedAnswers = <int, int>{}.obs;
+
   QuizQuestionModel? get currentQuestion {
     if (questions.isEmpty) {
       return null;
@@ -48,6 +50,10 @@ class QuizController extends GetxController {
 
   bool get isLastQuestion => currentQuestionIndex.value == totalQuestions - 1;
 
+  int? getSelectedAnswer(int questionIndex) {
+    return selectedAnswers[questionIndex];
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -60,6 +66,8 @@ class QuizController extends GetxController {
 
     currentQuestionIndex.value = 0;
     selectedOptionIndex.value = null;
+
+    selectedAnswers.clear();
 
     isAnswerChecked.value = false;
     isAnswerCorrect.value = false;
@@ -102,6 +110,8 @@ class QuizController extends GetxController {
     if (selectedIndex == null) {
       return;
     }
+
+    selectedAnswers[currentQuestionIndex.value] = selectedIndex;
 
     final isCorrect = selectedIndex == question.correctOptionIndex;
 
