@@ -45,6 +45,26 @@ class _FlashcardViewState extends State<FlashcardView> {
     });
   }
 
+  void _nextCard() {
+    if (currentIndex >= flashcards.length - 1) {
+      Get.back();
+      return;
+    }
+
+    setState(() {
+      currentIndex++;
+      isFlipped = false;
+    });
+  }
+
+  void _markNotMemorized() {
+    _nextCard();
+  }
+
+  void _markMemorized() {
+    _nextCard();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,10 +101,15 @@ class _FlashcardViewState extends State<FlashcardView> {
                     ),
             ),
             if (flashcards.isNotEmpty)
-              FlashcardBottomBar(onNotMemorized: () {}, onMemorized: () {}),
+              FlashcardBottomBar(
+                isFlipped: isFlipped,
+                onNotMemorized: _markNotMemorized,
+                onMemorized: _markMemorized,
+              ),
           ],
         ),
       ),
     );
   }
 }
+  
