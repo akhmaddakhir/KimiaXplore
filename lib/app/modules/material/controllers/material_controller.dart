@@ -29,8 +29,10 @@ class MaterialController extends GetxController {
   bool get isLastLesson =>
       totalLessons > 0 && currentLessonIndex.value == totalLessons - 1;
 
+  bool get canContinueLesson => isRecommended && hasNextLesson;
+
   String get bottomButtonLabel {
-    if (hasNextLesson) {
+    if (canContinueLesson) {
       return 'Pelajaran Selanjutnya';
     }
 
@@ -112,7 +114,9 @@ class MaterialController extends GetxController {
   void _selectLesson(int index) {
     final currentTopic = topic.value;
 
-    if (currentTopic == null) return;
+    if (currentTopic == null) {
+      return;
+    }
 
     if (index < 0 || index >= lessons.length) {
       return;
@@ -149,7 +153,7 @@ class MaterialController extends GetxController {
   }
 
   void nextLesson() {
-    if (!hasNextLesson) {
+    if (!canContinueLesson) {
       return;
     }
 
@@ -164,22 +168,22 @@ class MaterialController extends GetxController {
       return;
     }
 
+    if (!isRecommended) {
+      Get.back();
+      return;
+    }
+
     if (hasNextLesson) {
       nextLesson();
       return;
     }
 
-    if (isRecommended) {
-      Get.offNamed(
-        AppRoutes.quiz,
-        arguments: ActivityNavigation(
-          topic: currentTopic,
-          entryPoint: ActivityEntryPoint.recommendation,
-        ),
-      );
-      return;
-    }
-
-    Get.back();
+    Get.offNamed(
+      AppRoutes.quiz,
+      arguments: ActivityNavigation(
+        topic: currentTopic,
+        entryPoint: ActivityEntryPoint.recommendation,
+      ),
+    );
   }
 }
