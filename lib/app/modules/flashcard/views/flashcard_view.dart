@@ -10,6 +10,7 @@ import '../data/flashcard_data.dart';
 import '../models/flashcard_model.dart';
 import '../widgets/flashcard_bottom_bar.dart';
 import '../widgets/flashcard_card.dart';
+import 'flashcard_result_view.dart';
 
 class FlashcardView extends StatefulWidget {
   const FlashcardView({super.key});
@@ -38,34 +39,33 @@ class _FlashcardViewState extends State<FlashcardView> {
     controller.initializeFlashcards(flashcards);
   }
 
-  void _handleCardCompleted() {
-    if (controller.isCompleted.value) {
-      Get.back();
-    }
+  void _retryNotMemorized() {
+    controller.retryNotMemorized();
   }
 
-  void _markNotMemorized() {
-    controller.markNotMemorized();
-    _handleCardCompleted();
-  }
-
-  void _markMemorized() {
-    controller.markMemorized();
-    _handleCardCompleted();
+  void _finishFlashcards() {
+    Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        bottom: false,
-        child: Obx(() {
-          final flashcards = controller.flashcards;
-          final currentIndex = controller.currentIndex.value;
-          final isFlipped = controller.isFlipped.value;
+    return Obx(() {
+      if (controller.isCompleted.value) {
+        return FlashcardResultView(
+          onRetry: _retryNotMemorized,
+          onFinish: _finishFlashcards,
+        );
+      }
 
-          return Column(
+      final flashcards = controller.flashcards;
+      final currentIndex = controller.currentIndex.value;
+      final isFlipped = controller.isFlipped.value;
+
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
             children: [
               AppStepHeader.steps(
                 currentStep: flashcards.isEmpty ? 0 : currentIndex + 1,
@@ -97,13 +97,13 @@ class _FlashcardViewState extends State<FlashcardView> {
               if (flashcards.isNotEmpty)
                 FlashcardBottomBar(
                   isFlipped: isFlipped,
-                  onNotMemorized: _markNotMemorized,
-                  onMemorized: _markMemorized,
+                  onNotMemorized: controller.markNotMemorized,
+                  onMemorized: controller.markMemorized,
                 ),
             ],
-          );
-        }),
-      ),
-    );
+          ),
+        ),
+      );
+    });
   }
 }
