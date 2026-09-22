@@ -44,7 +44,6 @@ class HomeView extends GetView<HomeController> {
                 ),
               ],
             ),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -55,7 +54,6 @@ class HomeView extends GetView<HomeController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 8),
-
                     const Text(
                       'Halo, xplorer!',
                       style: TextStyle(
@@ -65,9 +63,7 @@ class HomeView extends GetView<HomeController> {
                         color: Color(0xFF758A83),
                       ),
                     ),
-
                     const SizedBox(height: 6),
-
                     const Text(
                       'Mau xplore apa hari ini?',
                       style: TextStyle(
@@ -78,26 +74,20 @@ class HomeView extends GetView<HomeController> {
                         height: 1.2,
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
                     Obx(() {
-                      if (controller.topics.isEmpty) {
+                      final topic = controller.recommendedTopic.value;
+
+                      if (topic == null) {
                         return const SizedBox.shrink();
                       }
 
-                      final topic = controller.topics.first;
-
                       return RecommendationCard(
                         topic: topic,
-                        onButtonPressed: () {
-                          controller.onTopicSelected(topic);
-                        },
+                        onButtonPressed: controller.onRecommendedTopicPressed,
                       );
                     }),
-
                     const SizedBox(height: 32),
-
                     const Text(
                       'Fondasi Kimia',
                       style: TextStyle(
@@ -107,9 +97,7 @@ class HomeView extends GetView<HomeController> {
                         color: Color(0xFF1E352F),
                       ),
                     ),
-
                     const SizedBox(height: 4),
-
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -125,20 +113,11 @@ class HomeView extends GetView<HomeController> {
                             ),
                           ),
                         ),
-
                         const SizedBox(width: 12),
-
-                        _ActionTextButton(
-                          label: 'Lihat semua',
-                          onTap: () {
-                            // Navigasi ke halaman semua materi
-                          },
-                        ),
+                        _ActionTextButton(label: 'Lihat semua', onTap: () {}),
                       ],
                     ),
-
                     const SizedBox(height: 16),
-
                     Obx(
                       () => ListView.separated(
                         shrinkWrap: true,
@@ -157,7 +136,6 @@ class HomeView extends GetView<HomeController> {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 24),
                   ],
                 ),
