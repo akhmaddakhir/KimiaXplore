@@ -11,6 +11,7 @@ class AppStepHeader extends StatelessWidget {
   final Color progressColor;
   final Color trackColor;
   final Color arrowColor;
+  final IconData backIcon;
   final EdgeInsetsGeometry padding;
 
   const AppStepHeader({
@@ -21,6 +22,7 @@ class AppStepHeader extends StatelessWidget {
     this.progressColor = AppColors.green500,
     this.trackColor = AppColors.textHint,
     this.arrowColor = AppColors.textDark,
+    this.backIcon = Icons.arrow_back_rounded,
     this.padding = const EdgeInsets.fromLTRB(
       AppSpacing.xl,
       AppSpacing.md,
@@ -38,11 +40,12 @@ class AppStepHeader extends StatelessWidget {
     Color progressColor = AppColors.green500,
     Color trackColor = AppColors.textHint,
     Color arrowColor = AppColors.textDark,
+    IconData backIcon = Icons.arrow_back_rounded,
     EdgeInsetsGeometry padding = const EdgeInsets.fromLTRB(
-      AppSpacing.xl, // 24.0
-      AppSpacing.md, // 12.0
-      AppSpacing.xl, // 24.0
-      AppSpacing.md, // 12.0
+      AppSpacing.xl,
+      AppSpacing.md,
+      AppSpacing.xl,
+      AppSpacing.md,
     ),
   }) {
     final calculatedProgress = totalSteps > 0
@@ -57,6 +60,7 @@ class AppStepHeader extends StatelessWidget {
       progressColor: progressColor,
       trackColor: trackColor,
       arrowColor: arrowColor,
+      backIcon: backIcon,
       padding: padding,
     );
   }
@@ -79,7 +83,7 @@ class AppStepHeader extends StatelessWidget {
               maxHeight: 40,
               child: IconButton(
                 onPressed: onBackPressed,
-                icon: const Icon(Icons.arrow_back_rounded),
+                icon: Icon(backIcon),
                 color: arrowColor,
                 iconSize: 26,
                 padding: EdgeInsets.zero,
@@ -88,6 +92,7 @@ class AppStepHeader extends StatelessWidget {
               ),
             ),
           ),
+
           const SizedBox(width: 14),
 
           Expanded(
