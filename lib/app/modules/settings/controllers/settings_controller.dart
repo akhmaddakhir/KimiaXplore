@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../routes/app_routes.dart';
 import '../../../services/auth_service.dart';
+import '../../profile/views/profile_account_view.dart';
 
 class SettingsController extends GetxController {
   final AuthService _authService = AuthService();
@@ -20,12 +21,7 @@ class SettingsController extends GetxController {
   }
 
   void openAccount() {
-    Get.snackbar(
-      'Akun',
-      'Pengaturan akun akan ditambahkan nanti.',
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-    );
+    Get.to(() => const ProfileAccountView());
   }
 
   void openPurchaseHistory() {

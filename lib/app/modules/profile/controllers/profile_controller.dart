@@ -18,6 +18,9 @@ class ProfileController extends GetxController {
   final userEmail = ''.obs;
   final avatarUrl = RxnString();
 
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+
   final userTier = UserTier.free.obs;
   final completedTopics = 9.obs;
   final totalBadges = 12.obs;
@@ -62,6 +65,10 @@ class ProfileController extends GetxController {
       userName.value = 'Xplorer';
       userEmail.value = '';
       avatarUrl.value = null;
+
+      usernameController.text = 'Xplorer';
+      emailController.text = '';
+
       return;
     }
 
@@ -70,7 +77,6 @@ class ProfileController extends GetxController {
     final metadata = user.userMetadata ?? {};
 
     final fullName = metadata['full_name']?.toString().trim();
-
     final name = metadata['name']?.toString().trim();
 
     final preferredName = fullName?.isNotEmpty == true
@@ -87,8 +93,10 @@ class ProfileController extends GetxController {
       userName.value = 'Xplorer';
     }
 
-    final googleAvatar = metadata['avatar_url']?.toString().trim();
+    usernameController.text = userName.value;
+    emailController.text = userEmail.value;
 
+    final googleAvatar = metadata['avatar_url']?.toString().trim();
     final picture = metadata['picture']?.toString().trim();
 
     if (googleAvatar?.isNotEmpty == true) {
@@ -174,9 +182,15 @@ class ProfileController extends GetxController {
     }
 
     quizController.score.value = history.correctAnswers;
-
     quizController.isQuizFinished.value = true;
 
     Get.to<void>(() => const QuizDiscussionView());
+  }
+
+  @override
+  void onClose() {
+    usernameController.dispose();
+    emailController.dispose();
+    super.onClose();
   }
 }
