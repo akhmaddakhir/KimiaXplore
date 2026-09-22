@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../../../models/activity_navigation.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/learning_progress_service.dart';
 import '../../home/data/home_topics.dart';
 import '../../home/models/topic_model.dart';
 import '../data/material_data.dart';
@@ -10,11 +11,14 @@ import '../models/material_lesson_model.dart';
 import '../models/material_model.dart';
 
 class MaterialController extends GetxController {
+  final LearningProgressService _progressService = LearningProgressService();
+
   final topic = Rxn<TopicModel>();
   final material = Rxn<MaterialModel>();
   final selectedLesson = Rxn<MaterialLessonModel>();
 
   final currentLessonIndex = 0.obs;
+  final isSavingProgress = false.obs;
 
   final lessons = <MaterialLessonModel>[].obs;
 
@@ -150,6 +154,42 @@ class MaterialController extends GetxController {
       topicId: currentTopic.id,
       sections: selectedSections,
     );
+
+    _markCurrentLessonOpened();
+  }
+
+  Future<void> _markCurrentLessonOpened() async {
+    final currentTopic = topic.value;
+    final currentLesson = selectedLesson.value;
+
+    if (currentTopic == null || currentLesson == null) {
+      return;
+    }
+
+    try {
+      await _progressService.markActivityOpened(
+        topicId: currentTopic.id,
+        activityType: 'material',
+        activityId: currentLesson.id,
+      );
+    } catch (_) {}
+  }
+
+  Future<void> _completeCurrentLesson() async {
+    final currentTopic = topic.value;
+    final currentLesson = selectedLesson.value;
+
+    if (currentTopic == null || currentLesson == null) {
+      return;
+    }
+
+    await _progressService.completeActivity(
+      topicId: currentTopic.id,
+      activityType: 'material',
+      activityId: currentLesson.id,
+      progress: 1,
+      total: 1,
+    );
   }
 
   void nextLesson() {
@@ -160,7 +200,11 @@ class MaterialController extends GetxController {
     _selectLesson(currentLessonIndex.value + 1);
   }
 
-  void finishMaterial() {
+  Future<void> finishMaterial() async {
+    if (isSavingProgress.value) {
+      return;
+    }
+
     final currentTopic = topic.value;
 
     if (currentTopic == null) {
@@ -168,22 +212,30 @@ class MaterialController extends GetxController {
       return;
     }
 
-    if (!isRecommended) {
-      Get.back();
-      return;
-    }
+    isSavingProgress.value = true;
 
-    if (hasNextLesson) {
-      nextLesson();
-      return;
-    }
+    try {
+      await _completeCurrentLesson();
 
-    Get.offNamed(
-      AppRoutes.quiz,
-      arguments: ActivityNavigation(
-        topic: currentTopic,
-        entryPoint: ActivityEntryPoint.recommendation,
-      ),
-    );
+      if (!isRecommended) {
+        Get.back();
+        return;
+      }
+
+      if (hasNextLesson) {
+        nextLesson();
+        return;
+      }
+
+      Get.offNamed(
+        AppRoutes.quiz,
+        arguments: ActivityNavigation(
+          topic: currentTopic,
+          entryPoint: ActivityEntryPoint.recommendation,
+        ),
+      );
+    } finally {
+      isSavingProgress.value = false;
+    }
   }
 }
