@@ -30,11 +30,17 @@ class AiTutorController extends GetxController {
       );
 
       messages.add(AiChatMessage(text: reply, isUser: false));
-    } catch (_) {
+    } on GeminiException catch (error) {
       messages.add(
-        const AiChatMessage(
-          text:
-              'Maaf, Kimi belum bisa menjawab sekarang. Periksa koneksi internet dan konfigurasi Gemini API lalu coba lagi.',
+        AiChatMessage(
+          text: 'Kimi belum bisa menjawab sekarang.\n\n${error.message}',
+          isUser: false,
+        ),
+      );
+    } catch (error) {
+      messages.add(
+        AiChatMessage(
+          text: 'Kimi mengalami kesalahan yang tidak terduga.\n\n$error',
           isUser: false,
         ),
       );

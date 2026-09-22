@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../modules/ai_tutor/models/ai_chat_message.dart';
 
 class GeminiService {
-  static const String _model = 'gemini-2.5-flash';
+  static const String _model = 'gemini-3.5-flash-lite';
 
   static const String _systemInstruction = '''
 Kamu adalah Kimi, AI Tutor resmi di aplikasi KimiaXplore.
@@ -38,15 +38,13 @@ Topik yang boleh kamu bantu meliputi:
 - Laju reaksi
 - Kimia organik dasar
 - Materi kimia SMA dan SMK lainnya
-- Matematika yang diperlukan untuk menyelesaikan soal kimia
+- Matematika yang digunakan untuk menyelesaikan soal kimia
 
-Jika pengguna bertanya sesuatu yang tidak berhubungan dengan kimia, jangan menjawab pertanyaan tersebut.
-
-Untuk pertanyaan di luar kimia, jawab dengan tepat seperti ini:
+Jika pengguna bertanya sesuatu yang tidak berhubungan dengan kimia, jawab tepat seperti ini:
 
 "Aku khusus membantu topik kimia. Coba tanyakan tentang atom, unsur, reaksi kimia, stoikiometri, pH, atau topik kimia lainnya."
 
-Jangan melanjutkan dengan penjelasan tentang topik di luar kimia.
+Jangan menjawab isi pertanyaan di luar kimia tersebut.
 
 ATURAN MENJAWAB:
 - Gunakan bahasa Indonesia kecuali pengguna meminta bahasa lain dalam konteks pembelajaran kimia.
@@ -55,12 +53,11 @@ ATURAN MENJAWAB:
 - Sebutkan rumus yang digunakan jika diperlukan.
 - Jangan membuat fakta, nilai, konstanta, atau rumus yang tidak diketahui.
 - Jika informasi soal kurang lengkap, jelaskan informasi apa yang masih dibutuhkan.
-- Jangan memberikan prosedur eksperimen berbahaya.
 - Untuk pembahasan praktikum, fokus pada konsep kimia dan keselamatan dasar.
 - Jangan menjawab seperti chatbot layanan pelanggan.
-- Bertindaklah seperti tutor kimia yang membantu siswa memahami alasan di balik jawaban.
-- Hindari jawaban yang terlalu panjang jika pertanyaannya sederhana.
-- Jangan menggunakan markdown yang rumit.
+- Bertindak seperti tutor kimia yang membantu siswa memahami alasan di balik jawaban.
+- Hindari jawaban terlalu panjang untuk pertanyaan sederhana.
+- Gunakan format teks sederhana.
 ''';
 
   String get _apiKey {
@@ -74,103 +71,180 @@ ATURAN MENJAWAB:
   }
 
   Future<String> generateReply(List<AiChatMessage> messages) async {
-    if (_apiKey.isEmpty) {
-      throw StateError('GEMINI_API_KEY belum dikonfigurasi');
+    final apiKey = _apiKey;
+
+    if (apiKey.isEmpty) {
+      throw const GeminiException(
+        'GEMINI_API_KEY tidak ditemukan di file .env.',
+      );
+    }
+
+    if (messages.isEmpty) {
+      throw const GeminiException(
+        'Tidak ada pesan yang dapat dikirim ke Gemini.',
+      );
     }
 
     final contents = messages
         .map((message) => message.toGeminiContent())
         .toList();
 
-    final response = await http
-        .post(
-          _endpoint,
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': _apiKey,
-          },
-          body: jsonEncode({
-            'systemInstruction': {
-              'parts': [
-                {'text': _systemInstruction},
-              ],
+    late http.Response response;
+
+    try {
+      response = await http
+          .post(
+            _endpoint,
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': apiKey,
             },
-            'contents': contents,
-            'generationConfig': {'temperature': 0.35, 'maxOutputTokens': 1024},
-          }),
-        )
-        .timeout(const Duration(seconds: 30));
+            body: jsonEncode({
+              'systemInstruction': {
+                'parts': [
+                  {'text': _systemInstruction},
+                ],
+              },
+              'contents': contents,
+              'generationConfig': {'maxOutputTokens': 1024},
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
+    } on Exception catch (error) {
+      throw GeminiException('Tidak dapat terhubung ke Gemini API: $error');
+    }
 
-    final bodyText = utf8.decode(response.bodyBytes);
+    final responseBody = utf8.decode(response.bodyBytes);
 
-    final decoded = jsonDecode(bodyText);
+    final decoded = _decodeResponse(responseBody, response.statusCode);
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      String message = 'Gemini request gagal';
-
-      if (decoded is Map<String, dynamic>) {
-        final error = decoded['error'];
-
-        if (error is Map<String, dynamic>) {
-          final errorMessage = error['message'];
-
-          if (errorMessage is String && errorMessage.isNotEmpty) {
-            message = errorMessage;
-          }
-        }
-      }
-
-      throw Exception(message);
+      throw GeminiException(_extractApiError(decoded, response.statusCode));
     }
 
     if (decoded is! Map<String, dynamic>) {
-      throw Exception('Format respons Gemini tidak valid');
+      throw const GeminiException('Format respons Gemini tidak valid.');
     }
 
     final candidates = decoded['candidates'];
 
     if (candidates is! List || candidates.isEmpty) {
-      throw Exception('Gemini tidak memberikan jawaban');
+      final promptFeedback = decoded['promptFeedback'];
+
+      if (promptFeedback is Map<String, dynamic>) {
+        final blockReason = promptFeedback['blockReason']?.toString().trim();
+
+        if (blockReason != null && blockReason.isNotEmpty) {
+          throw GeminiException(
+            'Permintaan diblokir oleh Gemini: $blockReason',
+          );
+        }
+      }
+
+      throw const GeminiException('Gemini tidak memberikan jawaban.');
     }
 
-    final firstCandidate = candidates.first;
+    final candidate = candidates.first;
 
-    if (firstCandidate is! Map<String, dynamic>) {
-      throw Exception('Respons Gemini tidak valid');
+    if (candidate is! Map<String, dynamic>) {
+      throw const GeminiException('Format jawaban Gemini tidak valid.');
     }
 
-    final content = firstCandidate['content'];
+    final content = candidate['content'];
 
     if (content is! Map<String, dynamic>) {
-      throw Exception('Konten Gemini tidak ditemukan');
+      final finishReason = candidate['finishReason']?.toString().trim();
+
+      if (finishReason != null && finishReason.isNotEmpty) {
+        throw GeminiException(
+          'Gemini berhenti tanpa memberikan jawaban. Alasan: $finishReason',
+        );
+      }
+
+      throw const GeminiException('Gemini tidak memberikan konten jawaban.');
     }
 
     final parts = content['parts'];
 
     if (parts is! List || parts.isEmpty) {
-      throw Exception('Jawaban Gemini kosong');
+      throw const GeminiException('Jawaban Gemini kosong.');
     }
 
-    final responseParts = <String>[];
+    final textParts = <String>[];
 
     for (final part in parts) {
       if (part is! Map<String, dynamic>) {
         continue;
       }
 
-      final text = part['text'];
+      final text = part['text']?.toString().trim();
 
-      if (text is String && text.trim().isNotEmpty) {
-        responseParts.add(text.trim());
+      if (text != null && text.isNotEmpty) {
+        textParts.add(text);
       }
     }
 
-    final result = responseParts.join('\n').trim();
+    final result = textParts.join('\n').trim();
 
     if (result.isEmpty) {
-      throw Exception('Jawaban Gemini kosong');
+      throw const GeminiException('Gemini tidak menghasilkan teks jawaban.');
     }
 
     return result;
+  }
+
+  dynamic _decodeResponse(String body, int statusCode) {
+    if (body.trim().isEmpty) {
+      throw GeminiException(
+        'Gemini mengembalikan respons kosong. HTTP $statusCode.',
+      );
+    }
+
+    try {
+      return jsonDecode(body);
+    } catch (_) {
+      throw GeminiException(
+        'Respons Gemini tidak dapat dibaca. HTTP $statusCode.',
+      );
+    }
+  }
+
+  String _extractApiError(dynamic decoded, int statusCode) {
+    var message = 'Gemini API gagal dengan HTTP $statusCode.';
+
+    if (decoded is! Map<String, dynamic>) {
+      return message;
+    }
+
+    final error = decoded['error'];
+
+    if (error is! Map<String, dynamic>) {
+      return message;
+    }
+
+    final apiMessage = error['message']?.toString().trim();
+
+    final status = error['status']?.toString().trim();
+
+    if (apiMessage != null && apiMessage.isNotEmpty) {
+      message = apiMessage;
+    }
+
+    if (status != null && status.isNotEmpty) {
+      return '$status: $message';
+    }
+
+    return message;
+  }
+}
+
+class GeminiException implements Exception {
+  final String message;
+
+  const GeminiException(this.message);
+
+  @override
+  String toString() {
+    return message;
   }
 }
