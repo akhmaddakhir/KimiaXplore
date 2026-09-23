@@ -62,7 +62,7 @@ class RecommendationCard extends StatelessWidget {
     final imageAsset = topic.imageAsset;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 4),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -72,7 +72,7 @@ class RecommendationCard extends StatelessWidget {
           boxShadow: const [
             BoxShadow(
               color: AppColors.border,
-              offset: Offset(0, 6),
+              offset: Offset(0, 4),
               blurRadius: 0,
             ),
           ],

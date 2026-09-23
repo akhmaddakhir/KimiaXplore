@@ -40,7 +40,7 @@ class TopicOverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 4),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20),
@@ -51,7 +51,7 @@ class TopicOverviewCard extends StatelessWidget {
           boxShadow: const [
             BoxShadow(
               color: AppColors.border,
-              offset: Offset(0, 6),
+              offset: Offset(0, 4),
               blurRadius: 0,
             ),
           ],

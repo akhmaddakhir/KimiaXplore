@@ -22,7 +22,7 @@ class ShopComparisonTable extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: AppColors.blue100,
-            offset: Offset(0, 5),
+            offset: Offset(0, 4),
             blurRadius: 0,
           ),
         ],

@@ -20,7 +20,7 @@ class TopicActivityCard extends StatefulWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
-    this.shadowDepth = 6.0,
+    this.shadowDepth = 4.0,
     this.shadowColor = AppColors.border,
     this.borderColor = AppColors.border,
   });
@@ -31,7 +31,7 @@ class TopicActivityCard extends StatefulWidget {
     VoidCallback? onTap,
     String? customSubtitle,
     Widget? trailing,
-    double shadowDepth = 6.0,
+    double shadowDepth = 4.0,
   }) {
     return TopicActivityCard(
       key: key,

@@ -16,7 +16,7 @@ class TopicCard extends StatefulWidget {
     super.key,
     required this.topic,
     this.onTap,
-    this.shadowDepth = 6.0,
+    this.shadowDepth = 4.0,
     this.shadowColor = AppColors.border,
     this.borderColor = AppColors.border,
   });

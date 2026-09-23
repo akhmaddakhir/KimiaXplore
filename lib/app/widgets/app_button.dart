@@ -86,7 +86,7 @@ class AppButton extends StatefulWidget {
 }
 
 class _AppButtonState extends State<AppButton> {
-  static const double _shadowDepth = 6;
+  static const double _shadowDepth = 4;
   static const int _minPressDuration = 160;
 
   bool _isPressed = false;
