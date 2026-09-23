@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../routes/app_routes.dart';
@@ -77,6 +78,10 @@ class AuthController extends GetxController {
 
     _waitingForGoogleAuth = false;
 
+    await _finishGoogleLogin(user);
+  }
+
+  Future<void> _finishGoogleLogin(User user) async {
     try {
       isGoogleLoading.value = true;
 
@@ -263,29 +268,39 @@ class AuthController extends GetxController {
 
     try {
       isGoogleLoading.value = true;
-      _waitingForGoogleAuth = true;
 
-      final launched = await _authService.signInWithGoogle();
+      _waitingForGoogleAuth = !_authService.usesNativeGoogleSignIn;
 
-      if (!launched) {
-        _waitingForGoogleAuth = false;
+      final response = await _authService.signInWithGoogle();
 
+      if (_authService.usesNativeGoogleSignIn) {
+        final user = response?.user;
+
+        if (user == null) {
+          throw const AuthException(
+            'Akun Google tidak berhasil diautentikasi.',
+          );
+        }
+
+        await _finishGoogleLogin(user);
+      }
+    } on GoogleSignInException catch (error) {
+      _waitingForGoogleAuth = false;
+
+      if (error.code != GoogleSignInExceptionCode.canceled) {
         _showError(
-          'Google gagal dibuka',
-          'Tidak dapat membuka halaman login Google.',
+          'Login Google gagal',
+          error.description ?? 'Gagal masuk menggunakan akun Google.',
         );
       }
     } on AuthException catch (error) {
       _waitingForGoogleAuth = false;
 
       _showError('Login Google gagal', error.message);
-    } catch (_) {
+    } catch (error) {
       _waitingForGoogleAuth = false;
 
-      _showError(
-        'Login Google gagal',
-        'Terjadi kesalahan saat membuka Google.',
-      );
+      _showError('Login Google gagal', error.toString());
     } finally {
       isGoogleLoading.value = false;
     }
