@@ -32,7 +32,7 @@ class WelcomeView extends GetView<WelcomeController> {
                         const SizedBox(height: 32),
 
                         Text(
-                          'Xplore Lebih Jauh',
+                          'welcome_explore_further'.tr,
                           textAlign: TextAlign.center,
                           style: AppTypography.heading1.copyWith(
                             color: AppColors.textDark,
@@ -42,7 +42,7 @@ class WelcomeView extends GetView<WelcomeController> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Kimia nggak cuma soal hafalan.',
+                          'welcome_desc'.tr,
                           textAlign: TextAlign.center,
                           style: AppTypography.body.copyWith(
                             color: AppColors.textMedium,
@@ -54,12 +54,12 @@ class WelcomeView extends GetView<WelcomeController> {
                         const Spacer(flex: 4),
 
                         AppButton.primary(
-                          label: 'Mulai',
+                          label: 'welcome_start'.tr,
                           onPressed: controller.onStartPressed,
                         ),
                         const SizedBox(height: 14),
                         AppButton.outline(
-                          label: 'Saya sudah punya akun',
+                          label: 'welcome_have_account'.tr,
                           onPressed: controller.onLoginPressed,
                         ),
                         const SizedBox(height: 24),
@@ -76,9 +76,6 @@ class WelcomeView extends GetView<WelcomeController> {
   }
 
   Widget _buildMascotArea() {
-    return const SizedBox(
-      height: 260,
-      width: 260,
-    );
+    return const SizedBox(height: 260, width: 260);
   }
 }

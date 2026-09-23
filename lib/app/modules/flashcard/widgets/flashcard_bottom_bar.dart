@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -37,7 +38,7 @@ class FlashcardBottomBar extends StatelessWidget {
           children: [
             Expanded(
               child: AppButton(
-                label: 'Belum Hafal',
+                label: 'flashcard_need_practice'.tr,
                 height: 52,
                 gradientColors: const [AppColors.surface, AppColors.surface],
                 shadowColor: AppColors.red100,
@@ -49,7 +50,7 @@ class FlashcardBottomBar extends StatelessWidget {
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: AppButton(
-                label: 'Hafal',
+                label: 'flashcard_memorized'.tr,
                 height: 52,
                 gradientColors: const [
                   AppColors.lightGreen,

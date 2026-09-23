@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -128,7 +129,7 @@ class _FlashcardCardState extends State<FlashcardCard>
             Row(
               children: [
                 Text(
-                  showBack ? 'Jawaban' : 'Pertanyaan',
+                  showBack ? 'flashcard_answer'.tr : 'flashcard_question'.tr,
                   style: AppTypography.bodySmall.copyWith(
                     color: AppColors.textMedium,
                     fontWeight: FontWeight.w700,
@@ -160,7 +161,9 @@ class _FlashcardCardState extends State<FlashcardCard>
             SizedBox(
               width: double.infinity,
               child: Text(
-                showBack ? 'Lihat pertanyaan' : 'Lihat jawaban',
+                showBack
+                    ? 'flashcard_view_question'.tr
+                    : 'flashcard_view_answer'.tr,
                 textAlign: TextAlign.center,
                 style: AppTypography.bodySmall.copyWith(
                   color: AppColors.textHint,

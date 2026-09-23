@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -35,7 +36,7 @@ class QuizBottomBar extends StatelessWidget {
   }
 
   String get _buttonLabel {
-    return _isAnswering ? 'Cek' : 'Lanjut';
+    return _isAnswering ? 'quiz_check'.tr : 'quiz_continue'.tr;
   }
 
   List<Color> get _buttonGradient {

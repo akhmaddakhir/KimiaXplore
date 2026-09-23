@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_typography.dart';
@@ -7,15 +8,14 @@ class OnboardingTransition extends StatelessWidget {
   const OnboardingTransition({
     super.key,
     this.imagePath = 'assets/images/onboarding_transition.png',
-    this.title = 'Saatnya Bereaksi!',
-    this.subtitle =
-        'Kalau atom aja bisa berikatan, masa kamu sama kimia cuma sebatas kenalan?',
+    this.title,
+    this.subtitle,
     this.imageHeight = 300,
   });
 
   final String imagePath;
-  final String title;
-  final String subtitle;
+  final String? title;
+  final String? subtitle;
   final double imageHeight;
 
   @override
@@ -51,7 +51,7 @@ class OnboardingTransition extends StatelessWidget {
                   const SizedBox(height: 48),
 
                   Text(
-                    title,
+                    title ?? 'onboarding_react_title'.tr,
                     textAlign: TextAlign.center,
                     style: AppTypography.heading1.copyWith(
                       color: AppColors.textDark,
@@ -61,7 +61,7 @@ class OnboardingTransition extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   Text(
-                    subtitle,
+                    subtitle ?? 'onboarding_react_subtitle'.tr,
                     textAlign: TextAlign.center,
                     style: AppTypography.body.copyWith(
                       color: AppColors.textMedium,

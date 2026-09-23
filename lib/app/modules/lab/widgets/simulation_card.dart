@@ -129,7 +129,7 @@ class _SimulationCardState extends State<SimulationCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          widget.simulation.title,
+                          widget.simulation.localizedTitle,
                           style: const TextStyle(
                             fontFamily: AppTypography.fontFamily,
                             fontSize: 18,
@@ -140,7 +140,7 @@ class _SimulationCardState extends State<SimulationCard> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          widget.simulation.description,
+                          widget.simulation.localizedDescription,
                           style: const TextStyle(
                             fontFamily: AppTypography.fontFamily,
                             fontSize: 14,

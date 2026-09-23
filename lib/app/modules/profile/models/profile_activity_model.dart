@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class ProfileActivityModel {
   final String id;
   final String topicId;
@@ -25,18 +27,18 @@ class ProfileActivityModel {
 
   String get statusText {
     if (activityType == 'quiz' && score != null && isCompleted) {
-      return 'Skor $score%';
+      return 'profile_status_score'.trParams({'score': '$score'});
     }
 
     if (isCompleted) {
-      return 'Selesai';
+      return 'profile_status_completed'.tr;
     }
 
     if (total > 0) {
       return '$progress/$total';
     }
 
-    return 'Dibuka';
+    return 'profile_status_opened'.tr;
   }
 
   String get timeText {
@@ -49,23 +51,23 @@ class ProfileActivityModel {
     final difference = DateTime.now().difference(date);
 
     if (difference.inMinutes < 1) {
-      return 'Baru saja';
+      return 'time_just_now'.tr;
     }
 
     if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} menit lalu';
+      return 'time_minutes_ago'.trParams({'m': '${difference.inMinutes}'});
     }
 
     if (difference.inHours < 24) {
-      return '${difference.inHours} jam lalu';
+      return 'time_hours_ago'.trParams({'h': '${difference.inHours}'});
     }
 
     if (difference.inDays == 1) {
-      return 'Kemarin';
+      return 'time_yesterday'.tr;
     }
 
     if (difference.inDays < 7) {
-      return '${difference.inDays} hari lalu';
+      return 'time_days_ago'.trParams({'d': '${difference.inDays}'});
     }
 
     return '${date.day}/${date.month}/${date.year}';

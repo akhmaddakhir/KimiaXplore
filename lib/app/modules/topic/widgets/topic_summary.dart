@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -27,7 +28,9 @@ class TopicSummary extends StatelessWidget {
             border: Border.all(color: AppColors.green100, width: 1.5),
           ),
           child: Text(
-            'Kimia ${topic.level}',
+            'material_chemistry_level'.trParams({
+              'level': topic.localizedLevel,
+            }),
             style: AppTypography.caption.copyWith(
               color: AppColors.darkTeal,
               fontWeight: FontWeight.w700,
@@ -39,22 +42,22 @@ class TopicSummary extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
 
         Text(
-          topic.title,
+          topic.localizedTitle,
           style: AppTypography.heading1.copyWith(color: AppColors.textDark),
         ),
 
         const SizedBox(height: AppSpacing.sm),
 
         Text(
-          topic.description,
+          topic.localizedDescription,
           style: AppTypography.bodySmall.copyWith(color: AppColors.textMedium),
         ),
 
         const SizedBox(height: AppSpacing.md),
 
         Text(
-          '${topic.totalLessons} pelajaran • '
-          'Tingkat ${topic.level.toLowerCase()}',
+          '${topic.totalLessons} ${'home_lessons'.tr} • '
+          '${topic.localizedLevel}',
           style: AppTypography.caption.copyWith(color: AppColors.textMedium),
         ),
       ],

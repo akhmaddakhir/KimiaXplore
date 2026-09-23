@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class PricingPackageModel {
   final String id;
   final String title;
@@ -18,4 +20,17 @@ class PricingPackageModel {
     this.badge,
     this.isPopular = false,
   });
+
+  String get localizedDuration {
+    final key = 'shop_duration_$id';
+    final translated = key.tr;
+    return translated != key ? translated : duration;
+  }
+
+  String? get localizedBadge {
+    if (badge == null) return null;
+    final key = 'shop_badge_$id';
+    final translated = key.tr;
+    return translated != key ? translated : badge;
+  }
 }

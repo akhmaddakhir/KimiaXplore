@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -51,9 +52,9 @@ class ShopComparisonTable extends StatelessWidget {
               ),
               color: AppColors.background,
               alignment: Alignment.centerLeft,
-              child: const Text(
-                'Manfaat',
-                style: TextStyle(
+              child: Text(
+                'shop_benefits'.tr,
+                style: const TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
@@ -72,9 +73,9 @@ class ShopComparisonTable extends StatelessWidget {
               ),
               color: AppColors.background,
               alignment: Alignment.center,
-              child: const Text(
-                'Gratis',
-                style: TextStyle(
+              child: Text(
+                'shop_free'.tr,
+                style: const TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -99,9 +100,9 @@ class ShopComparisonTable extends StatelessWidget {
                 ),
               ),
               alignment: Alignment.center,
-              child: const Text(
-                'Premium',
-                style: TextStyle(
+              child: Text(
+                'shop_premium'.tr,
+                style: const TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
@@ -137,7 +138,7 @@ class ShopComparisonTable extends StatelessWidget {
               ),
               alignment: Alignment.centerLeft,
               child: Text(
-                benefit.title,
+                benefit.localizedTitle,
                 style: const TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 14,

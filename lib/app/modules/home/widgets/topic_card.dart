@@ -79,6 +79,19 @@ class _TopicCardState extends State<TopicCard> {
     widget.onTap?.call();
   }
 
+  IconData _getTopicIcon(String topicId) {
+    switch (topicId) {
+      case 'atomic_structure':
+        return Icons.bubble_chart_rounded;
+      case 'periodic_table':
+        return Icons.grid_view_rounded;
+      case 'chemical_bonding':
+        return Icons.hub_rounded;
+      default:
+        return Icons.science_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final pressedOffset = _isPressed ? widget.shadowDepth : 0.0;
@@ -115,21 +128,21 @@ class _TopicCardState extends State<TopicCard> {
             splashColor: widget.borderColor.withValues(alpha: 0.6),
             highlightColor: widget.borderColor.withValues(alpha: 0.3),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(
                       left: 20.0,
-                      top: 20.0,
-                      bottom: 20.0,
+                      top: 18.0,
+                      bottom: 18.0,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          widget.topic.title,
+                          widget.topic.localizedTitle,
                           style: const TextStyle(
                             fontFamily: AppTypography.fontFamily,
                             fontSize: 18,
@@ -157,19 +170,29 @@ class _TopicCardState extends State<TopicCard> {
                 const SizedBox(width: 12),
 
                 Padding(
-                  padding: const EdgeInsets.only(right: 16.0, bottom: 6.0),
-                  child: SizedBox(
-                    width: 80,
-                    height: 80,
-                    child:
-                        (widget.topic.imageAsset != null &&
-                            widget.topic.imageAsset!.isNotEmpty)
-                        ? Image.asset(
-                            widget.topic.imageAsset!,
-                            fit: BoxFit.contain,
-                            alignment: Alignment.bottomCenter,
-                          )
-                        : const SizedBox.shrink(),
+                  padding: const EdgeInsets.only(right: 18.0),
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: AppColors.green50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.green100, width: 1.5),
+                    ),
+                    child: Center(
+                      child:
+                          (widget.topic.imageAsset != null &&
+                              widget.topic.imageAsset!.isNotEmpty)
+                          ? Image.asset(
+                              widget.topic.imageAsset!,
+                              fit: BoxFit.contain,
+                            )
+                          : Icon(
+                              _getTopicIcon(widget.topic.id),
+                              color: AppColors.green700,
+                              size: 26,
+                            ),
+                    ),
                   ),
                 ),
               ],

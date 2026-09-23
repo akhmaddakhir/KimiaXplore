@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -50,7 +51,7 @@ class TemperatureControl extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Suhu',
+                  'temperature'.tr,
                   style: AppTypography.title.copyWith(
                     color: AppColors.textDark,
                   ),
@@ -142,7 +143,7 @@ class TemperatureControl extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Simulasi menggunakan air sebagai contoh pada kondisi normal.',
+            'simulation_water_example_note'.tr,
             style: AppTypography.caption.copyWith(color: AppColors.textMedium),
           ),
         ],

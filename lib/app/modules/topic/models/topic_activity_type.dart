@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 enum TopicActivityType {
   materi,
   flashcard,
@@ -7,26 +9,26 @@ enum TopicActivityType {
   String get title {
     switch (this) {
       case TopicActivityType.materi:
-        return 'Materi';
+        return 'topic_act_material_title'.tr;
       case TopicActivityType.flashcard:
-        return 'Flashcard';
+        return 'topic_act_flashcard_title'.tr;
       case TopicActivityType.kuis:
-        return 'Kuis';
+        return 'topic_act_quiz_title'.tr;
       case TopicActivityType.simulasi:
-        return 'Simulasi';
+        return 'topic_act_simulation_title'.tr;
     }
   }
 
   String get subtitle {
     switch (this) {
       case TopicActivityType.materi:
-        return 'Pelajari teori dan konsep kimia';
+        return 'topic_act_material_sub'.tr;
       case TopicActivityType.flashcard:
-        return 'Hafalkan istilah dan rumus penting';
+        return 'topic_act_flashcard_sub'.tr;
       case TopicActivityType.kuis:
-        return 'Uji pemahaman dan latihan soal';
+        return 'topic_act_quiz_sub'.tr;
       case TopicActivityType.simulasi:
-        return 'Eksperimen virtual interaktif';
+        return 'topic_act_simulation_sub'.tr;
     }
   }
 }

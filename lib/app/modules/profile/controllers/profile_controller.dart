@@ -251,8 +251,8 @@ class ProfileController extends GetxController {
 
     if (username.isEmpty) {
       Get.snackbar(
-        'Username belum diisi',
-        'Masukkan username terlebih dahulu.',
+        'profile_username_empty_title'.tr,
+        'profile_username_empty_desc'.tr,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );
@@ -262,8 +262,8 @@ class ProfileController extends GetxController {
 
     if (username.length < 3) {
       Get.snackbar(
-        'Username terlalu pendek',
-        'Username minimal 3 karakter.',
+        'profile_username_short_title'.tr,
+        'profile_username_short_desc'.tr,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );
@@ -273,8 +273,8 @@ class ProfileController extends GetxController {
 
     if (username == userName.value) {
       Get.snackbar(
-        'Tidak ada perubahan',
-        'Username kamu masih sama.',
+        'profile_no_changes_title'.tr,
+        'profile_no_changes_desc'.tr,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );
@@ -297,15 +297,15 @@ class ProfileController extends GetxController {
       usernameController.text = username;
 
       Get.snackbar(
-        'Berhasil',
-        'Username berhasil diperbarui.',
+        'profile_update_success_title'.tr,
+        'profile_update_success_desc'.tr,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );
     } catch (_) {
       Get.snackbar(
-        'Gagal memperbarui username',
-        'Terjadi kesalahan saat menyimpan perubahan.',
+        'profile_update_failed_title'.tr,
+        'profile_update_failed_desc'.tr,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );

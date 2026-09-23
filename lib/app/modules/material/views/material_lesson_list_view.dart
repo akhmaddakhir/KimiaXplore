@@ -101,7 +101,7 @@ class _MaterialLessonListViewState extends State<MaterialLessonListView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppDetailHeader(title: widget.topic.title),
+            AppDetailHeader(title: widget.topic.localizedTitle),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
@@ -115,14 +115,14 @@ class _MaterialLessonListViewState extends State<MaterialLessonListView> {
                   children: [
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Daftar Pelajaran',
+                      'material_lesson_list'.tr,
                       style: AppTypography.heading1.copyWith(
                         color: AppColors.textDark,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Pilih pelajaran yang ingin kamu pelajari.',
+                      'material_choose_lesson'.tr,
                       style: AppTypography.body.copyWith(
                         color: AppColors.textMedium,
                       ),
@@ -151,7 +151,7 @@ class _MaterialLessonListViewState extends State<MaterialLessonListView> {
                         return TopicActivityCard(
                           title: lesson.title,
                           subtitle:
-                              'Pelajaran ${index + 1} · ${lesson.description}',
+                              '${'material_lesson_prefix'.tr} ${index + 1} · ${lesson.description}',
                           trailing: isCompleted
                               ? Container(
                                   width: 34,
@@ -219,7 +219,7 @@ class _ProgressSection extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Progress Belajar',
+                  'topic_learning_progress'.tr,
                   style: AppTypography.title.copyWith(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w800,
@@ -239,8 +239,11 @@ class _ProgressSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             isLoading
-                ? 'Memuat progress...'
-                : '$completed dari $total pelajaran selesai',
+                ? 'material_loading_progress'.tr
+                : 'material_progress_completed'.trParams({
+                    'completed': '$completed',
+                    'total': '$total',
+                  }),
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textMedium,
               fontWeight: FontWeight.w600,

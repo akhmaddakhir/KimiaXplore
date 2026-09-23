@@ -44,9 +44,9 @@ class ShopView extends GetView<ShopController> {
   }
 
   Widget _buildHeader() {
-    return const AppMainHeader(
-      title: 'KimiaXplore Premium',
-      padding: EdgeInsets.symmetric(
+    return AppMainHeader(
+      title: 'shop_title'.tr,
+      padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xl,
         vertical: AppSpacing.md,
       ),
@@ -87,12 +87,12 @@ class ShopView extends GetView<ShopController> {
         children: [
           const SizedBox(height: AppSpacing.md),
 
-          const SizedBox(
+          SizedBox(
             width: double.infinity,
             child: Text(
-              'Pilih Paket Premium',
+              'shop_choose_plan'.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: AppTypography.fontFamily,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
@@ -104,12 +104,12 @@ class ShopView extends GetView<ShopController> {
 
           const SizedBox(height: AppSpacing.sm),
 
-          const SizedBox(
+          SizedBox(
             width: double.infinity,
             child: Text(
-              'Pilih paket yang paling sesuai dengan cara belajarmu.',
+              'shop_choose_desc'.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: AppTypography.fontFamily,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -143,14 +143,14 @@ class ShopView extends GetView<ShopController> {
   }
 
   Widget _buildIntroduction() {
-    return const Column(
+    return Column(
       children: [
         SizedBox(
           width: double.infinity,
           child: Text(
-            'Makin Banyak Tanya, Makin Banyak Paham',
+            'shop_intro_title'.tr,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 22,
               fontWeight: FontWeight.w800,
@@ -160,14 +160,14 @@ class ShopView extends GetView<ShopController> {
           ),
         ),
 
-        SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.sm),
 
         SizedBox(
           width: double.infinity,
           child: Text(
-            'Dapatkan akses AI Tutor lebih lengkap dengan batas penggunaan yang lebih besar.',
+            'shop_intro_desc'.tr,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -191,7 +191,7 @@ class ShopView extends GetView<ShopController> {
       ),
       color: AppColors.background,
       child: AppButton.primary(
-        label: 'Lihat Paket Premium',
+        label: 'shop_view_plans'.tr,
         onPressed: controller.goToPackages,
       ),
     );
@@ -208,7 +208,7 @@ class ShopView extends GetView<ShopController> {
       ),
       color: AppColors.background,
       child: AppButton.primary(
-        label: 'Lanjutkan',
+        label: 'shop_continue'.tr,
         onPressed: () {
           // Payment.
         },

@@ -43,14 +43,14 @@ class SimulationView extends GetView<SimulationController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Lihat partikel berubah',
+                          'simulation_particles_title'.tr,
                           style: AppTypography.heading1.copyWith(
                             color: AppColors.textDark,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
-                          'Geser suhu dan amati bagaimana susunan serta gerakan partikel berubah dari padat, cair, hingga gas.',
+                          'simulation_particles_desc'.tr,
                           style: AppTypography.body.copyWith(
                             color: AppColors.textMedium,
                             fontSize: 15,
@@ -74,7 +74,7 @@ class SimulationView extends GetView<SimulationController> {
                         MatterStateCard(state: state),
                         const SizedBox(height: AppSpacing.xl),
                         AppButton.outline(
-                          label: 'Reset Simulasi',
+                          label: 'simulation_reset'.tr,
                           icon: const Icon(
                             Icons.refresh_rounded,
                             color: AppColors.blue500,
@@ -129,7 +129,7 @@ class _UnavailableSimulationView extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     Text(
-                      'Simulasi belum tersedia',
+                      'simulation_unavailable_title'.tr,
                       textAlign: TextAlign.center,
                       style: AppTypography.heading2.copyWith(
                         color: AppColors.textDark,
@@ -137,7 +137,7 @@ class _UnavailableSimulationView extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Eksperimen ini masih disiapkan. Coba Wujud Zat terlebih dahulu.',
+                      'simulation_unavailable_desc'.tr,
                       textAlign: TextAlign.center,
                       style: AppTypography.body.copyWith(
                         color: AppColors.textMedium,
@@ -145,7 +145,7 @@ class _UnavailableSimulationView extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     AppButton.outline(
-                      label: 'Kembali ke Lab',
+                      label: 'simulation_back_to_lab'.tr,
                       onPressed: Get.back,
                     ),
                   ],

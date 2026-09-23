@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
@@ -26,7 +27,7 @@ class TopicProgressSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Progress Belajar',
+              'topic_learning_progress'.tr,
               style: AppTypography.bodySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: AppColors.textDark,

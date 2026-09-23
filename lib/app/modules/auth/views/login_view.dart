@@ -36,7 +36,7 @@ class LoginView extends GetView<AuthController> {
                       children: [
                         const SizedBox(height: 32),
                         Text(
-                          'Masuk',
+                          'auth_login'.tr,
                           textAlign: TextAlign.center,
                           style: AppTypography.heading1.copyWith(
                             color: AppColors.textDark,
@@ -59,11 +59,11 @@ class LoginView extends GetView<AuthController> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        const AuthDivider(),
+                        AuthDivider(text: 'auth_or'.tr),
                         const SizedBox(height: 24),
                         AppTextField(
-                          label: 'Email',
-                          hintText: 'Masukkan email kamu',
+                          label: 'email'.tr,
+                          hintText: 'auth_email_hint'.tr,
                           controller: controller.emailController,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
@@ -72,8 +72,8 @@ class LoginView extends GetView<AuthController> {
                         ),
                         const SizedBox(height: 16),
                         AppTextField(
-                          label: 'Sandi',
-                          hintText: 'Masukkan sandi kamu',
+                          label: 'auth_password'.tr,
+                          hintText: 'auth_password_hint'.tr,
                           controller: controller.passwordController,
                           isPassword: true,
                           textInputAction: TextInputAction.done,
@@ -85,7 +85,7 @@ class LoginView extends GetView<AuthController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Belum punya akun? ',
+                              'auth_no_account'.tr,
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.textMedium,
                                 fontWeight: FontWeight.w600,
@@ -94,7 +94,7 @@ class LoginView extends GetView<AuthController> {
                             GestureDetector(
                               onTap: () => Get.offNamed(AppRoutes.onboarding),
                               child: Text(
-                                'Gas bikin',
+                                'auth_sign_up_action'.tr,
                                 style: AppTypography.bodySmall.copyWith(
                                   color: AppColors.blue500,
                                   fontWeight: FontWeight.w800,
@@ -116,7 +116,7 @@ class LoginView extends GetView<AuthController> {
                 width: double.infinity,
                 child: Obx(
                   () => AppButton.primary(
-                    label: 'Masuk',
+                    label: 'auth_login'.tr,
                     onPressed:
                         controller.isLoginFormValid.value &&
                             !controller.isLoading.value

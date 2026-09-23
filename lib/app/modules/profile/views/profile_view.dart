@@ -21,7 +21,7 @@ class ProfileView extends GetView<ProfileController> {
         child: Column(
           children: [
             AppMainHeader(
-              title: 'Profile',
+              title: 'nav_profile'.tr,
               actions: [
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -68,14 +68,14 @@ class ProfileView extends GetView<ProfileController> {
                             Expanded(
                               child: ProfileStatBadgeCard(
                                 value: '${controller.completedTopics.value}',
-                                label: 'Topik Selesai',
+                                label: 'profile_completed_topics'.tr,
                               ),
                             ),
                             const SizedBox(width: 14),
                             Expanded(
                               child: ProfileStatBadgeCard(
                                 value: '${controller.totalBadges.value}',
-                                label: 'Total Badge',
+                                label: 'profile_total_badges'.tr,
                               ),
                             ),
                           ],

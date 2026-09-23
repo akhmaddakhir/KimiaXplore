@@ -45,7 +45,7 @@ class QuizCompletionView extends GetView<QuizController> {
                       ),
                       const Spacer(flex: 2),
                       Text(
-                        'Latihan selesai!',
+                        'quiz_practice_completed'.tr,
                         textAlign: TextAlign.center,
                         style: AppTypography.heading1.copyWith(
                           color: AppColors.textDark,
@@ -76,7 +76,7 @@ class QuizCompletionView extends GetView<QuizController> {
                     children: [
                       const Spacer(),
                       Text(
-                        'Skor Total',
+                        'quiz_total_score'.tr,
                         style: AppTypography.title.copyWith(
                           color: AppColors.textDark,
                         ),
@@ -101,7 +101,10 @@ class QuizCompletionView extends GetView<QuizController> {
                         );
                       }),
                       const Spacer(flex: 2),
-                      AppButton.primary(label: 'Lanjut', onPressed: onContinue),
+                      AppButton.primary(
+                        label: 'quiz_continue'.tr,
+                        onPressed: onContinue,
+                      ),
                     ],
                   ),
                 ),

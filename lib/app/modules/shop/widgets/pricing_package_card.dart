@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -20,7 +21,7 @@ class PricingPackageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasBadge = package.badge != null;
+    final hasBadge = package.localizedBadge != null;
 
     return Padding(
       padding: EdgeInsets.only(top: hasBadge ? AppSpacing.md : 0),
@@ -87,7 +88,9 @@ class PricingPackageCard extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
 
         Text(
-          'Akses Xplore+ selama ${package.duration}',
+          'shop_access_duration'.trParams({
+            'duration': package.localizedDuration,
+          }),
           style: AppTypography.bodySmall.copyWith(color: AppColors.textMedium),
         ),
       ],
@@ -138,7 +141,7 @@ class PricingPackageCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Text(
-          package.badge!,
+          package.localizedBadge!,
           style: AppTypography.caption.copyWith(
             color: AppColors.textDark,
             fontWeight: FontWeight.w800,

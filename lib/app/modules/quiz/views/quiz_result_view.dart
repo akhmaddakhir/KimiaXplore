@@ -51,7 +51,7 @@ class QuizResultView extends GetView<QuizController> {
                         const SizedBox(height: AppSpacing.xxxl),
 
                         Text(
-                          'Saatnya evaluasi',
+                          'quiz_evaluation_time'.tr,
                           textAlign: TextAlign.center,
                           style: AppTypography.heading1.copyWith(
                             color: AppColors.textDark,
@@ -74,7 +74,7 @@ class QuizResultView extends GetView<QuizController> {
                             child: Column(
                               children: [
                                 QuizResultStatCard(
-                                  label: 'Benar',
+                                  label: 'quiz_correct'.tr,
                                   value: correctAnswers,
                                   icon: Icons.check_rounded,
                                   backgroundColor: AppColors.green50,
@@ -85,7 +85,7 @@ class QuizResultView extends GetView<QuizController> {
                                 const SizedBox(height: AppSpacing.md),
 
                                 QuizResultStatCard(
-                                  label: 'Salah',
+                                  label: 'quiz_incorrect'.tr,
                                   value: incorrectAnswers,
                                   icon: Icons.close_rounded,
                                   backgroundColor: AppColors.red50,
@@ -128,14 +128,17 @@ class QuizResultView extends GetView<QuizController> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                AppButton.outline(label: 'Pembahasan', onPressed: onDiscussion),
+                AppButton.outline(
+                  label: 'quiz_discussion'.tr,
+                  onPressed: onDiscussion,
+                ),
 
                 const SizedBox(height: AppSpacing.lg),
 
                 AppButton.primary(
                   label: controller.isRecommended
-                      ? 'Lanjut ke Flashcard'
-                      : 'Selesai',
+                      ? 'quiz_continue_to_flashcard'.tr
+                      : 'quiz_finish'.tr,
                   onPressed: onContinue,
                 ),
               ],

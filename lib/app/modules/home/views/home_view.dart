@@ -32,175 +32,118 @@ class HomeView extends GetView<HomeController> {
                     icon: const Icon(
                       Icons.event_available_rounded,
                       size: 18,
-                      color: AppColors.blue500,
+                      color: AppColors.green700,
                     ),
                     value: '${controller.studyProgress.value}',
-                    tooltip: 'Progres Belajar',
-                    backgroundColor: AppColors.blue50,
-                    borderColor: AppColors.blue100,
-                    textColor: AppColors.blue500,
+                    tooltip: 'home_study_progress'.tr,
+                    backgroundColor: AppColors.green50,
+                    borderColor: AppColors.green100,
+                    textColor: AppColors.green700,
                     onTap: () {},
                   ),
                 ),
               ],
             ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                  vertical: AppSpacing.sm,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Halo, xplorer!',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF758A83),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'Mau xplore apa hari ini?',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF1E352F),
-                        height: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(() {
-                      final topic = controller.recommendedTopic.value;
-
-                      if (topic == null) {
-                        return const SizedBox.shrink();
-                      }
-
-                      return RecommendationCard(
-                        topic: topic,
-                        onButtonPressed: controller.onRecommendedTopicPressed,
-                      );
-                    }),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Fondasi Kimia',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF1E352F),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'Konsep utama untuk memulai perjalananmu.',
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF758A83),
-                              height: 1.3,
-                            ),
+              child: RefreshIndicator(
+                color: AppColors.green500,
+                onRefresh: controller.loadHomeData,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      Obx(
+                        () => Text(
+                          'home_greeting'.trParams({
+                            'name': controller.userName.value,
+                          }),
+                          style: const TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF758A83),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        _ActionTextButton(label: 'Lihat semua', onTap: () {}),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Obx(
-                      () => ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.topics.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 14),
-                        itemBuilder: (context, index) {
-                          final topic = controller.topics[index];
-
-                          return TopicCard(
-                            topic: topic,
-                            onTap: () {
-                              controller.onTopicSelected(topic);
-                            },
-                          );
-                        },
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        'home_explore_prompt'.tr,
+                        style: const TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1E352F),
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Obx(() {
+                        final topic = controller.recommendedTopic.value;
+
+                        if (topic == null) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return RecommendationCard(
+                          topic: topic,
+                          isContinuing: controller.hasUserProgress.value,
+                          onButtonPressed: controller.onRecommendedTopicPressed,
+                        );
+                      }),
+                      const SizedBox(height: 28),
+                      Text(
+                        'home_chemistry_foundations'.tr,
+                        style: const TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1E352F),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'home_foundations_desc'.tr,
+                        style: const TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF758A83),
+                          height: 1.3,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Obx(
+                        () => ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.topics.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 14),
+                          itemBuilder: (context, index) {
+                            final topic = controller.topics[index];
+
+                            return TopicCard(
+                              topic: topic,
+                              onTap: () {
+                                controller.onTopicSelected(topic);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ActionTextButton extends StatefulWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _ActionTextButton({required this.label, required this.onTap});
-
-  @override
-  State<_ActionTextButton> createState() => _ActionTextButtonState();
-}
-
-class _ActionTextButtonState extends State<_ActionTextButton> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) {
-        setState(() => _isPressed = true);
-      },
-      onTapUp: (_) async {
-        await Future.delayed(const Duration(milliseconds: 100));
-
-        if (mounted) {
-          setState(() => _isPressed = false);
-        }
-      },
-      onTapCancel: () {
-        if (mounted) {
-          setState(() => _isPressed = false);
-        }
-      },
-      onTap: widget.onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedScale(
-        scale: _isPressed ? 0.94 : 1.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeInOut,
-        child: AnimatedOpacity(
-          opacity: _isPressed ? 0.55 : 1.0,
-          duration: const Duration(milliseconds: 100),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              widget.label,
-              style: const TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF0FA8A4),
-                height: 1.3,
-              ),
-            ),
-          ),
         ),
       ),
     );

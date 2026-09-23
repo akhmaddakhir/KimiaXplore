@@ -23,7 +23,7 @@ class TopicView extends GetView<TopicController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const AppDetailHeader(title: 'Detail'),
+            AppDetailHeader(title: 'topic_detail_title'.tr),
             Expanded(
               child: Obx(() {
                 final topic = controller.topic.value;
@@ -31,7 +31,7 @@ class TopicView extends GetView<TopicController> {
                 if (topic == null) {
                   return Center(
                     child: Text(
-                      'Pilih materi terlebih dahulu',
+                      'topic_select_first'.tr,
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMedium,
                       ),
@@ -63,7 +63,7 @@ class TopicView extends GetView<TopicController> {
                       ),
                       const SizedBox(height: AppSpacing.xl),
                       Text(
-                        'Aktivitas',
+                        'topic_activities'.tr,
                         style: AppTypography.heading2.copyWith(
                           color: AppColors.textDark,
                         ),

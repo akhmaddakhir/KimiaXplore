@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class TopicModel {
   final String id;
   final String title;
@@ -21,12 +23,33 @@ class TopicModel {
          'Jumlah pelajaran selesai tidak valid',
        );
 
+  String get localizedLevel {
+    if (level.toLowerCase() == 'dasar' || level.toLowerCase() == 'basic') {
+      return 'topic_level_basic'.tr;
+    }
+    return level;
+  }
+
+  String get localizedTitle {
+    final key = 'topic_${id}_title';
+    final translated = key.tr;
+    return translated != key ? translated : title;
+  }
+
+  String get localizedDescription {
+    final key = 'topic_${id}_desc';
+    final translated = key.tr;
+    return translated != key ? translated : description;
+  }
+
   String get subtitle {
+    final lessonsText = 'home_lessons'.tr;
+    final lvl = localizedLevel;
     if (completedLessons > 0) {
-      return '$level • $completedLessons/$totalLessons pelajaran';
+      return '$lvl • $completedLessons/$totalLessons $lessonsText';
     }
 
-    return '$level • $totalLessons pelajaran';
+    return '$lvl • $totalLessons $lessonsText';
   }
 
   double get progress => completedLessons / totalLessons;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -25,13 +26,16 @@ class TopicOverviewCard extends StatelessWidget {
 
   String get _category =>
       customCategory ??
-      (_hasProgress ? 'Lanjutkan aktivitas' : 'Rekomendasi aktivitas');
+      (_hasProgress
+          ? 'topic_continue_activity'.tr
+          : 'topic_recommended_activity'.tr);
 
   String get _title =>
-      _hasProgress ? 'Lanjutkan Belajar' : 'Mulai Pembelajaran';
+      _hasProgress ? 'topic_continue_learning'.tr : 'topic_start_learning'.tr;
 
   String get _buttonLabel =>
-      customButtonLabel ?? (_hasProgress ? 'Lanjutkan' : 'Mulai Sekarang');
+      customButtonLabel ??
+      (_hasProgress ? 'topic_continue_learning'.tr : 'topic_start_now'.tr);
 
   @override
   Widget build(BuildContext context) {

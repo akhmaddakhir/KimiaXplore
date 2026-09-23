@@ -23,7 +23,7 @@ class SimulationController extends GetxController {
   }
 
   String get title {
-    return simulation.value?.title ?? 'Simulasi';
+    return simulation.value?.localizedTitle ?? 'simulation_title'.tr;
   }
 
   bool get isStatesOfMatter {

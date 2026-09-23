@@ -20,7 +20,7 @@ class MaterialView extends GetView<MaterialController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const AppDetailHeader(title: 'Materi'),
+            AppDetailHeader(title: 'material_title'.tr),
 
             Expanded(
               child: Obx(() {
@@ -31,7 +31,7 @@ class MaterialView extends GetView<MaterialController> {
                 if (topic == null) {
                   return Center(
                     child: Text(
-                      'Topik tidak ditemukan',
+                      'material_not_found'.tr,
                       style: AppTypography.body.copyWith(
                         color: AppColors.textDark,
                       ),
@@ -42,7 +42,7 @@ class MaterialView extends GetView<MaterialController> {
                 if (material == null) {
                   return Center(
                     child: Text(
-                      'Materi belum tersedia',
+                      'material_unavailable'.tr,
                       style: AppTypography.body.copyWith(
                         color: AppColors.textDark,
                       ),
@@ -80,7 +80,9 @@ class MaterialView extends GetView<MaterialController> {
                                 ),
                               ),
                               child: Text(
-                                'Kimia ${topic.level}',
+                                'material_chemistry_level'.trParams({
+                                  'level': topic.localizedLevel,
+                                }),
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.darkTeal,
                                   fontWeight: FontWeight.w700,
@@ -92,7 +94,7 @@ class MaterialView extends GetView<MaterialController> {
                             const SizedBox(height: AppSpacing.md),
 
                             Text(
-                              selectedLesson?.title ?? topic.title,
+                              selectedLesson?.title ?? topic.localizedTitle,
                               style: AppTypography.heading1.copyWith(
                                 color: AppColors.textDark,
                                 fontSize: 28,
@@ -104,7 +106,8 @@ class MaterialView extends GetView<MaterialController> {
                             const SizedBox(height: AppSpacing.sm),
 
                             Text(
-                              selectedLesson?.description ?? topic.description,
+                              selectedLesson?.description ??
+                                  topic.localizedDescription,
                               style: AppTypography.body.copyWith(
                                 color: AppColors.textMedium,
                                 fontSize: 15,
@@ -117,7 +120,11 @@ class MaterialView extends GetView<MaterialController> {
                               const SizedBox(height: AppSpacing.md),
 
                               Text(
-                                'Pelajaran ${controller.currentLessonIndex.value + 1} dari ${controller.totalLessons}',
+                                'material_lesson_counter'.trParams({
+                                  'current':
+                                      '${controller.currentLessonIndex.value + 1}',
+                                  'total': '${controller.totalLessons}',
+                                }),
                                 style: AppTypography.bodySmall.copyWith(
                                   color: AppColors.textMedium,
                                   fontWeight: FontWeight.w700,

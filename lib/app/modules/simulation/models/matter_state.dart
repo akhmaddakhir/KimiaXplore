@@ -1,36 +1,38 @@
+import 'package:get/get.dart';
+
 enum MatterState { solid, liquid, gas }
 
 extension MatterStateContent on MatterState {
   String get label {
     switch (this) {
       case MatterState.solid:
-        return 'Padat';
+        return 'matter_solid'.tr;
       case MatterState.liquid:
-        return 'Cair';
+        return 'matter_liquid'.tr;
       case MatterState.gas:
-        return 'Gas';
+        return 'matter_gas'.tr;
     }
   }
 
   String get description {
     switch (this) {
       case MatterState.solid:
-        return 'Partikel tersusun sangat rapat dan hanya bergetar di sekitar posisinya.';
+        return 'matter_solid_desc'.tr;
       case MatterState.liquid:
-        return 'Partikel tetap berdekatan, tetapi dapat bergerak dan bergeser satu sama lain.';
+        return 'matter_liquid_desc'.tr;
       case MatterState.gas:
-        return 'Partikel berjauhan dan bergerak bebas dengan kecepatan yang lebih tinggi.';
+        return 'matter_gas_desc'.tr;
     }
   }
 
   String get particleBehavior {
     switch (this) {
       case MatterState.solid:
-        return 'Rapat dan teratur';
+        return 'matter_solid_behavior'.tr;
       case MatterState.liquid:
-        return 'Dekat dan bergerak';
+        return 'matter_liquid_behavior'.tr;
       case MatterState.gas:
-        return 'Renggang dan bebas';
+        return 'matter_gas_behavior'.tr;
     }
   }
 }

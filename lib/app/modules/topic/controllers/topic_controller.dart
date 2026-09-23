@@ -195,8 +195,10 @@ class TopicController extends GetxController {
 
     if (simulation == null) {
       Get.snackbar(
-        'Simulasi belum tersedia',
-        'Simulasi untuk ${currentTopic.title} masih dalam pengembangan.',
+        'simulation_unavailable_title'.tr,
+        'simulation_topic_unavailable_desc'.trParams({
+          'topic': currentTopic.localizedTitle,
+        }),
         snackPosition: SnackPosition.BOTTOM,
       );
 

@@ -27,7 +27,7 @@ class ProfileActivityCard extends GetView<ProfileController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Aktivitas Terakhir',
+              'profile_recent_activity'.tr,
               style: AppTypography.heading2.copyWith(
                 color: AppColors.textDark,
                 fontSize: 18,
@@ -46,7 +46,7 @@ class ProfileActivityCard extends GetView<ProfileController> {
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(
                   child: Text(
-                    'Belum ada aktivitas belajar',
+                    'profile_no_activity'.tr,
                     style: AppTypography.bodySmall.copyWith(
                       color: AppColors.textHint,
                     ),

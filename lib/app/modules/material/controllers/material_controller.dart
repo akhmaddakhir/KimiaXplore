@@ -37,14 +37,14 @@ class MaterialController extends GetxController {
 
   String get bottomButtonLabel {
     if (canContinueLesson) {
-      return 'Pelajaran Selanjutnya';
+      return 'material_next_lesson'.tr;
     }
 
     if (isRecommended) {
-      return 'Lanjut ke Kuis';
+      return 'material_continue_to_quiz'.tr;
     }
 
-    return 'Selesai';
+    return 'material_complete'.tr;
   }
 
   @override

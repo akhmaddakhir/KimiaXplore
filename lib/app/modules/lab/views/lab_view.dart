@@ -20,7 +20,7 @@ class LabView extends GetView<LabController> {
         child: Column(
           children: [
             AppMainHeader(
-              title: 'Lab',
+              title: 'lab_title'.tr,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.xl,
                 vertical: AppSpacing.md,
@@ -34,7 +34,7 @@ class LabView extends GetView<LabController> {
                       color: AppColors.blue500,
                     ),
                     value: '${controller.studyProgress.value}',
-                    tooltip: 'Progres Belajar',
+                    tooltip: 'home_study_progress'.tr,
                     backgroundColor: AppColors.blue50,
                     borderColor: AppColors.blue100,
                     textColor: AppColors.blue500,
@@ -54,9 +54,9 @@ class LabView extends GetView<LabController> {
                   children: [
                     const SizedBox(height: 8),
 
-                    const Text(
-                      'Simulasi Kimia',
-                      style: TextStyle(
+                    Text(
+                      'lab_simulations'.tr,
+                      style: const TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
@@ -69,10 +69,10 @@ class LabView extends GetView<LabController> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Eksperimen tanpa bikin meja meledak.',
-                            style: TextStyle(
+                            'lab_desc'.tr,
+                            style: const TextStyle(
                               fontFamily: AppTypography.fontFamily,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -85,7 +85,7 @@ class LabView extends GetView<LabController> {
                         const SizedBox(width: 12),
 
                         _ActionTextButton(
-                          label: 'Lihat semua',
+                          label: 'lab_view_all'.tr,
                           onTap: () {
                             // Navigasi ke halaman semua simulasi
                           },

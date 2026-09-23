@@ -64,8 +64,8 @@ class OnboardingView extends GetView<OnboardingController> {
                     child: Obx(
                       () => AppButton.primary(
                         label: controller.isTransitionPage
-                            ? 'Kenalan, yuk!'
-                            : 'Lanjut',
+                            ? 'onboarding_lets_meet'.tr
+                            : 'quiz_continue'.tr,
                         onPressed: controller.canContinue
                             ? controller.nextPage
                             : null,
@@ -89,7 +89,7 @@ class OnboardingView extends GetView<OnboardingController> {
           const SizedBox(height: 24),
 
           Text(
-            question.title,
+            question.localizedTitle,
             style: AppTypography.heading2.copyWith(color: AppColors.textDark),
           ),
 
@@ -100,7 +100,7 @@ class OnboardingView extends GetView<OnboardingController> {
               padding: const EdgeInsets.only(bottom: 12),
               child: Obx(
                 () => OnboardingOptionCard(
-                  label: option.title,
+                  label: option.localizedTitle,
                   isSelected: controller.isOptionSelectedForQuestion(
                     question.id,
                     option.id,

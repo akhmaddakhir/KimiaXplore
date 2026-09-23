@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -39,7 +40,7 @@ class QuizExplanationSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Pembahasan',
+                  'quiz_explanation'.tr,
                   style: AppTypography.heading1.copyWith(
                     color: AppColors.textDark,
                   ),
@@ -51,7 +52,7 @@ class QuizExplanationSheet extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     child: Text(
                       explanation.trim().isEmpty
-                          ? 'Pembahasan untuk soal ini belum tersedia.'
+                          ? 'quiz_explanation_unavailable'.tr
                           : explanation,
                       style: AppTypography.body.copyWith(
                         color: AppColors.textDark,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -9,6 +10,7 @@ import '../models/topic_model.dart';
 
 class RecommendationCard extends StatelessWidget {
   final TopicModel topic;
+  final bool isContinuing;
   final String? customCategory;
   final String? customButtonLabel;
   final VoidCallback? onButtonPressed;
@@ -16,19 +18,22 @@ class RecommendationCard extends StatelessWidget {
   const RecommendationCard({
     super.key,
     required this.topic,
+    this.isContinuing = false,
     this.customCategory,
     this.customButtonLabel,
     this.onButtonPressed,
   });
 
-  bool get _hasProgress => topic.completedLessons > 0;
+  bool get _hasProgress => isContinuing;
 
   String get _category {
     if (customCategory != null) {
       return customCategory!;
     }
 
-    return _hasProgress ? 'Lanjutkan belajar' : 'Rekomendasi materi';
+    return _hasProgress
+        ? 'home_continue_learning'.tr
+        : 'home_recommended_topic'.tr;
   }
 
   String get _buttonLabel {
@@ -36,7 +41,20 @@ class RecommendationCard extends StatelessWidget {
       return customButtonLabel!;
     }
 
-    return _hasProgress ? 'Lanjutkan' : 'Coba Sekarang';
+    return _hasProgress ? 'home_continue'.tr : 'home_try_now'.tr;
+  }
+
+  IconData _getTopicIcon(String topicId) {
+    switch (topicId) {
+      case 'atomic_structure':
+        return Icons.bubble_chart_rounded;
+      case 'periodic_table':
+        return Icons.grid_view_rounded;
+      case 'chemical_bonding':
+        return Icons.hub_rounded;
+      default:
+        return Icons.science_rounded;
+    }
   }
 
   @override
@@ -62,28 +80,61 @@ class RecommendationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _category,
-              style: const TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF758A83),
-                letterSpacing: 0.2,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _category,
+                  style: const TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF758A83),
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                if (_hasProgress)
+                  Text(
+                    '${(topic.progress * 100).toInt()}% ${'home_completed'.tr}',
+                    style: const TextStyle(
+                      fontFamily: AppTypography.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.green700,
+                    ),
+                  ),
+              ],
             ),
 
             const SizedBox(height: 16),
 
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: imageAsset != null && imageAsset.isNotEmpty
-                      ? Image.asset(imageAsset, fit: BoxFit.contain)
-                      : const SizedBox.shrink(),
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: _hasProgress ? AppColors.green50 : AppColors.blue50,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: _hasProgress
+                          ? AppColors.green100
+                          : AppColors.blue100,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Center(
+                    child: (imageAsset != null && imageAsset.isNotEmpty)
+                        ? Image.asset(imageAsset, fit: BoxFit.contain)
+                        : Icon(
+                            _getTopicIcon(topic.id),
+                            color: _hasProgress
+                                ? AppColors.green700
+                                : AppColors.blue500,
+                            size: 32,
+                          ),
+                  ),
                 ),
 
                 const SizedBox(width: 16),
@@ -93,33 +144,20 @@ class RecommendationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        topic.title,
+                        topic.localizedTitle,
                         style: const TextStyle(
                           fontFamily: AppTypography.fontFamily,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.w800,
                           color: Color(0xFF1E352F),
                           height: 1.25,
                         ),
                       ),
 
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
 
                       Text(
-                        topic.subtitle,
-                        style: const TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF758A83),
-                          height: 1.3,
-                        ),
-                      ),
-
-                      const SizedBox(height: 6),
-
-                      Text(
-                        topic.description,
+                        topic.localizedDescription,
                         style: const TextStyle(
                           fontFamily: AppTypography.fontFamily,
                           fontSize: 13,
@@ -127,6 +165,8 @@ class RecommendationCard extends StatelessWidget {
                           color: Color(0xFF758A83),
                           height: 1.35,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -137,7 +177,11 @@ class RecommendationCard extends StatelessWidget {
             const SizedBox(height: 16),
 
             if (_hasProgress) ...[
-              AppProgressBar(value: topic.progress),
+              AppProgressBar(
+                value: topic.progress,
+                height: 10,
+                progressColor: AppColors.green500,
+              ),
 
               const SizedBox(height: 14),
             ],

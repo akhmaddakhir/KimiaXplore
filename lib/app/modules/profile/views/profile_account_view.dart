@@ -19,7 +19,7 @@ class ProfileAccountView extends GetView<ProfileController> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppDetailHeader(title: 'Akun'),
+            AppDetailHeader(title: 'account_title'.tr),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
@@ -32,21 +32,21 @@ class ProfileAccountView extends GetView<ProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Informasi Akun',
+                      'account_information'.tr,
                       style: AppTypography.heading2.copyWith(
                         color: AppColors.textDark,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Kelola informasi akun KimiaXplore kamu.',
+                      'account_description'.tr,
                       style: AppTypography.body.copyWith(
                         color: AppColors.textMedium,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     AppTextField(
-                      label: 'Username',
+                      label: 'username'.tr,
                       controller: controller.usernameController,
                       keyboardType: TextInputType.name,
                       textInputAction: TextInputAction.done,
@@ -54,7 +54,7 @@ class ProfileAccountView extends GetView<ProfileController> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     AppTextField(
-                      label: 'Email',
+                      label: 'email'.tr,
                       controller: controller.emailController,
                       keyboardType: TextInputType.emailAddress,
                       prefixIcon: Icons.email_outlined,
@@ -64,8 +64,8 @@ class ProfileAccountView extends GetView<ProfileController> {
                     Obx(
                       () => AppButton.primary(
                         label: controller.isSavingProfile.value
-                            ? 'Menyimpan...'
-                            : 'Simpan Perubahan',
+                            ? 'saving'.tr
+                            : 'save_changes'.tr,
                         onPressed: controller.isSavingProfile.value
                             ? null
                             : controller.updateUsername,

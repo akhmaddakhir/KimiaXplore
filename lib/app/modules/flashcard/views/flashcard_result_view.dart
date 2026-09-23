@@ -57,7 +57,7 @@ class FlashcardResultView extends GetView<FlashcardController> {
                         const SizedBox(height: AppSpacing.xxxl),
 
                         Text(
-                          'Flashcard Selesai!',
+                          'flashcard_completed_title'.tr,
                           textAlign: TextAlign.center,
                           style: AppTypography.heading1.copyWith(
                             color: AppColors.textDark,
@@ -68,7 +68,7 @@ class FlashcardResultView extends GetView<FlashcardController> {
                         const SizedBox(height: AppSpacing.lg),
 
                         Text(
-                          'Kamu sudah mempelajari semua kartu.',
+                          'flashcard_completed_desc'.tr,
                           textAlign: TextAlign.center,
                           style: AppTypography.body.copyWith(
                             color: AppColors.textMedium,
@@ -88,7 +88,7 @@ class FlashcardResultView extends GetView<FlashcardController> {
                             child: Column(
                               children: [
                                 QuizResultStatCard(
-                                  label: 'Hafal',
+                                  label: 'flashcard_memorized'.tr,
                                   value: memorizedCount,
                                   icon: Icons.check_rounded,
                                   backgroundColor: AppColors.green50,
@@ -99,7 +99,7 @@ class FlashcardResultView extends GetView<FlashcardController> {
                                 const SizedBox(height: AppSpacing.md),
 
                                 QuizResultStatCard(
-                                  label: 'Belum Hafal',
+                                  label: 'flashcard_need_practice'.tr,
                                   value: notMemorizedCount,
                                   icon: Icons.refresh_rounded,
                                   backgroundColor: AppColors.red50,
@@ -147,7 +147,7 @@ class FlashcardResultView extends GetView<FlashcardController> {
                 children: [
                   if (hasNotMemorized) ...[
                     AppButton.outline(
-                      label: 'Ulangi yang Belum Hafal',
+                      label: 'flashcard_retry_need_practice'.tr,
                       onPressed: onRetry,
                     ),
 
@@ -155,7 +155,9 @@ class FlashcardResultView extends GetView<FlashcardController> {
                   ],
 
                   AppButton.primary(
-                    label: isRecommended ? 'Kembali ke Topik' : 'Selesai',
+                    label: isRecommended
+                        ? 'flashcard_back_to_topic'.tr
+                        : 'quiz_finish'.tr,
                     onPressed: onFinish,
                   ),
                 ],

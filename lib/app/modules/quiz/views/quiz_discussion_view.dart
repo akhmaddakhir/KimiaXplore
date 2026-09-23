@@ -116,7 +116,7 @@ class QuizDiscussionView extends GetView<QuizController> {
         bottom: false,
         child: Column(
           children: [
-            const AppDetailHeader(title: 'Evaluasi'),
+            AppDetailHeader(title: 'quiz_evaluation_title'.tr),
 
             Expanded(
               child: SingleChildScrollView(

@@ -91,9 +91,7 @@ class _FlashcardViewState extends State<FlashcardView> {
 
               Expanded(
                 child: flashcards.isEmpty
-                    ? const Center(
-                        child: Text('Belum ada flashcard untuk topik ini.'),
-                      )
+                    ? Center(child: Text('flashcard_empty'.tr))
                     : Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.xl,

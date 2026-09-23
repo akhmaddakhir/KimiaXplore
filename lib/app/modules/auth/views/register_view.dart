@@ -35,7 +35,7 @@ class RegisterView extends GetView<AuthController> {
                       children: [
                         const SizedBox(height: 32),
                         Text(
-                          'Siap Mulai?',
+                          'auth_ready_start'.tr,
                           textAlign: TextAlign.center,
                           style: AppTypography.heading1.copyWith(
                             color: AppColors.textDark,
@@ -58,11 +58,11 @@ class RegisterView extends GetView<AuthController> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        const AuthDivider(),
+                        AuthDivider(text: 'auth_or'.tr),
                         const SizedBox(height: 24),
                         AppTextField(
-                          label: 'Email',
-                          hintText: 'Masukkan email kamu',
+                          label: 'email'.tr,
+                          hintText: 'auth_email_hint'.tr,
                           controller: controller.emailController,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
@@ -71,8 +71,8 @@ class RegisterView extends GetView<AuthController> {
                         ),
                         const SizedBox(height: 16),
                         AppTextField(
-                          label: 'Sandi',
-                          hintText: 'Minimal 6 karakter',
+                          label: 'auth_password'.tr,
+                          hintText: 'auth_password_min'.tr,
                           controller: controller.passwordController,
                           isPassword: true,
                           textInputAction: TextInputAction.next,
@@ -81,8 +81,8 @@ class RegisterView extends GetView<AuthController> {
                         ),
                         const SizedBox(height: 16),
                         AppTextField(
-                          label: 'Konfirmasi sandi',
-                          hintText: 'Masukkan ulang sandi kamu',
+                          label: 'auth_confirm_password'.tr,
+                          hintText: 'auth_confirm_password_hint'.tr,
                           controller: controller.confirmPasswordController,
                           isPassword: true,
                           textInputAction: TextInputAction.done,
@@ -101,7 +101,7 @@ class RegisterView extends GetView<AuthController> {
                 width: double.infinity,
                 child: Obx(
                   () => AppButton.primary(
-                    label: 'Selesai',
+                    label: 'material_complete'.tr,
                     onPressed:
                         controller.isFormValid.value &&
                             !controller.isLoading.value
