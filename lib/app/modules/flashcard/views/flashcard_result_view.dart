@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../models/activity_navigation.dart';
@@ -51,7 +52,12 @@ class FlashcardResultView extends GetView<FlashcardController> {
                         SizedBox(
                           width: 180,
                           height: 180,
-                          child: mascot ?? const SizedBox.shrink(),
+                          child:
+                              mascot ??
+                              SvgPicture.asset(
+                                'assets/images/app_mascot.svg',
+                                fit: BoxFit.contain,
+                              ),
                         ),
 
                         const SizedBox(height: AppSpacing.xxxl),

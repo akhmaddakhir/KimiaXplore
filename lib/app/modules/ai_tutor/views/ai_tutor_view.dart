@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
-import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_main_header.dart';
@@ -93,17 +93,12 @@ class AiTutorView extends GetView<AiTutorController> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 160,
-                      height: 160,
-                      decoration: BoxDecoration(
-                        color: AppColors.blue50,
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
-                      ),
-                      child: const Icon(
-                        Icons.science_rounded,
-                        size: 88,
-                        color: AppColors.blue500,
+                    SizedBox(
+                      width: 170,
+                      height: 170,
+                      child: SvgPicture.asset(
+                        'assets/images/app_mascot.svg',
+                        fit: BoxFit.contain,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),

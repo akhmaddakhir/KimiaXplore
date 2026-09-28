@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
@@ -26,11 +27,8 @@ class WelcomeView extends GetView<WelcomeController> {
                     child: Column(
                       children: [
                         const Spacer(flex: 3),
-
                         _buildMascotArea(),
-
                         const SizedBox(height: 32),
-
                         Text(
                           'welcome_explore_further'.tr,
                           textAlign: TextAlign.center,
@@ -50,9 +48,7 @@ class WelcomeView extends GetView<WelcomeController> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-
                         const Spacer(flex: 4),
-
                         AppButton.primary(
                           label: 'welcome_start'.tr,
                           onPressed: controller.onStartPressed,
@@ -76,6 +72,15 @@ class WelcomeView extends GetView<WelcomeController> {
   }
 
   Widget _buildMascotArea() {
-    return const SizedBox(height: 260, width: 260);
+    return Center(
+      child: SizedBox(
+        width: 240,
+        height: 240,
+        child: SvgPicture.asset(
+          'assets/images/app_mascot.svg',
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
   }
 }
