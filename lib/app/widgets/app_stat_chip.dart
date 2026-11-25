@@ -14,6 +14,8 @@ class AppStatChip extends StatelessWidget {
     this.backgroundColor = AppColors.surface,
     this.borderColor = AppColors.border,
     this.textColor = AppColors.textDark,
+    this.fontSize = 14,
+    this.iconSpacing = 6,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
   });
 
@@ -25,6 +27,8 @@ class AppStatChip extends StatelessWidget {
   final Color backgroundColor;
   final Color borderColor;
   final Color textColor;
+  final double fontSize;
+  final double iconSpacing;
   final EdgeInsetsGeometry padding;
 
   @override
@@ -37,7 +41,7 @@ class AppStatChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           icon,
-          const SizedBox(width: 6),
+          SizedBox(width: iconSpacing),
           Text(
             value,
             maxLines: 1,
@@ -45,7 +49,8 @@ class AppStatChip extends StatelessWidget {
             style: AppTypography.bodySmall.copyWith(
               fontWeight: FontWeight.w800,
               color: textColor,
-              fontSize: 14,
+              fontSize: fontSize,
+              height: 1.0,
             ),
           ),
         ],
@@ -58,7 +63,9 @@ class AppStatChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: borderRadius,
-          border: Border.all(color: borderColor, width: 1.5),
+          border: borderColor == Colors.transparent
+              ? null
+              : Border.all(color: borderColor, width: 1.5),
         ),
         child: onTap == null
             ? content

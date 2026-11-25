@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+import 'package:kimiaxplore/app/modules/achievement/bindings/achievement_binding.dart';
+import 'package:kimiaxplore/app/modules/achievement/views/achievement_view.dart';
+import 'package:kimiaxplore/app/modules/ai_tutor/views/ai_chat_history_view.dart';
 import 'package:kimiaxplore/app/modules/auth/bindings/auth_binding.dart';
 import 'package:kimiaxplore/app/modules/auth/views/login_view.dart';
 import 'package:kimiaxplore/app/modules/auth/views/register_view.dart';
@@ -85,9 +88,18 @@ class AppPages {
       binding: ProfileBinding(),
     ),
     GetPage(
+      name: AppRoutes.achievement,
+      page: () => const AchievementView(),
+      binding: AchievementBinding(),
+    ),
+    GetPage(
       name: AppRoutes.settings,
       page: () => const SettingsView(),
       binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.aiChatHistory,
+      page: () => const AiChatHistoryView(),
     ),
   ];
 }

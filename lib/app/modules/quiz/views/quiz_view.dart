@@ -151,10 +151,27 @@ class _QuizViewState extends State<QuizView> {
 
               Expanded(
                 child: Obx(() {
+                  if (controller.isLoadingQuestions.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.blue500,
+                      ),
+                    );
+                  }
+
                   final question = controller.currentQuestion;
 
                   if (question == null) {
-                    return const SizedBox.shrink();
+                    return const Center(
+                      child: Text(
+                        'Tidak ada soal kuis yang tersedia.',
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          color: AppColors.textMedium,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
                   }
 
                   return Stack(

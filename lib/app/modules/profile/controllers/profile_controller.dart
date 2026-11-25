@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../services/content_service.dart';
 import '../../../services/learning_progress_service.dart';
 import '../../../theme/app_colors.dart';
-import '../../home/data/home_topics.dart';
-import '../../material/data/material_lesson_data.dart';
+import '../../home/models/topic_model.dart';
 import '../models/profile_activity_model.dart';
 
 enum UserTier { free, atom, catalyst, quantum }
@@ -13,6 +13,7 @@ enum UserTier { free, atom, catalyst, quantum }
 class ProfileController extends GetxController {
   final SupabaseClient _supabase = Supabase.instance.client;
   final LearningProgressService _progressService = LearningProgressService();
+  final ContentService _contentService = ContentService();
 
   final userName = 'Xplorer'.obs;
   final userEmail = ''.obs;
@@ -36,7 +37,46 @@ class ProfileController extends GetxController {
     super.onInit();
 
     loadUser();
+    loadUserProfileFromDb();
     loadProfileProgress();
+  }
+
+  Future<void> loadUserProfileFromDb() async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      final doc = await _supabase
+          .from('profiles')
+          .select()
+          .eq('id', user.id)
+          .maybeSingle();
+
+      if (doc != null) {
+        final dbName = doc['name']?.toString().trim();
+        if (dbName != null && dbName.isNotEmpty) {
+          userName.value = dbName;
+          usernameController.text = dbName;
+        }
+
+        final status = doc['status']?.toString();
+        final tier = doc['subscription_tier']?.toString().toLowerCase() ?? '';
+
+        if (status == 'premium' || tier.isNotEmpty) {
+          if (tier.contains('quantum')) {
+            userTier.value = UserTier.quantum;
+          } else if (tier.contains('catalyst')) {
+            userTier.value = UserTier.catalyst;
+          } else {
+            userTier.value = UserTier.atom;
+          }
+        } else {
+          userTier.value = UserTier.free;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading user profile from db: $e');
+    }
   }
 
   void loadUser() {
@@ -98,9 +138,10 @@ class ProfileController extends GetxController {
       isLoadingProfile.value = true;
 
       final progress = await _progressService.getUserProgress();
+      final topics = await _contentService.getTopics();
 
-      _calculateCompletedTopics(progress);
-      _buildActivities(progress);
+      await _calculateCompletedTopics(progress, topics);
+      await _buildActivities(progress, topics);
 
       totalBadges.value = 0;
     } catch (_) {
@@ -112,15 +153,18 @@ class ProfileController extends GetxController {
     }
   }
 
-  void _calculateCompletedTopics(List<Map<String, dynamic>> progress) {
+  Future<void> _calculateCompletedTopics(
+    List<Map<String, dynamic>> progress,
+    List<TopicModel> topics,
+  ) async {
     var totalCompleted = 0;
 
-    for (final topic in HomeTopics.items) {
+    for (final topic in topics) {
       final topicProgress = progress.where((item) {
         return item['topic_id'] == topic.id;
       }).toList();
 
-      final lessons = MaterialLessonData.getLessonsByTopic(topic.id);
+      final lessons = await _contentService.getLessonsByTopic(topic.id);
 
       final completedMaterialIds = topicProgress
           .where((item) {
@@ -140,13 +184,11 @@ class ProfileController extends GetxController {
 
       final quizCompleted = topicProgress.any((item) {
         return item['activity_type'] == 'quiz' &&
-            item['activity_id'] == '${topic.id}_quiz' &&
             item['is_completed'] == true;
       });
 
       final flashcardCompleted = topicProgress.any((item) {
         return item['activity_type'] == 'flashcard' &&
-            item['activity_id'] == '${topic.id}_flashcard' &&
             item['is_completed'] == true;
       });
 
@@ -158,29 +200,28 @@ class ProfileController extends GetxController {
     completedTopics.value = totalCompleted;
   }
 
-  void _buildActivities(List<Map<String, dynamic>> progress) {
+  Future<void> _buildActivities(
+    List<Map<String, dynamic>> progress,
+    List<TopicModel> topics,
+  ) async {
     final result = <ProfileActivityModel>[];
 
     for (final item in progress.take(5)) {
       final topicId = item['topic_id']?.toString() ?? '';
 
-      final topic = HomeTopics.items.firstWhereOrNull(
-        (topic) => topic.id == topicId,
+      final topic = topics.firstWhereOrNull(
+        (t) => t.id == topicId,
       );
 
-      if (topic == null) {
-        continue;
-      }
-
+      final topicTitle = topic?.title ?? topicId;
       final activityType = item['activity_type']?.toString() ?? '';
-
       final activityId = item['activity_id']?.toString() ?? '';
 
       result.add(
         ProfileActivityModel(
           id: item['id']?.toString() ?? activityId,
           topicId: topicId,
-          topicTitle: topic.title,
+          topicTitle: topicTitle,
           activityType: activityType,
           activityTitle: _getActivityTitle(
             topicId: topicId,
@@ -208,22 +249,16 @@ class ProfileController extends GetxController {
   }) {
     switch (activityType) {
       case 'material':
-        final lessons = MaterialLessonData.getLessonsByTopic(topicId);
-
-        final lesson = lessons.firstWhereOrNull(
-          (lesson) => lesson.id == activityId,
-        );
-
-        return lesson?.title ?? 'Materi';
+        return 'Materi Pembelajaran';
 
       case 'quiz':
-        return 'Kuis';
+        return 'Kuis Pemahaman';
 
       case 'flashcard':
-        return 'Flashcard';
+        return 'Flashcard Hafalan';
 
       case 'simulation':
-        return 'Simulasi';
+        return 'Simulasi Laboratorium';
 
       default:
         return 'Aktivitas';
@@ -292,6 +327,13 @@ class ProfileController extends GetxController {
       if (response.user == null) {
         throw Exception();
       }
+
+      await _supabase.from('profiles').upsert({
+        'id': response.user!.id,
+        'email': response.user!.email,
+        'name': username,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
       userName.value = username;
       usernameController.text = username;

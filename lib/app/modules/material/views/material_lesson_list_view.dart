@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../routes/app_routes.dart';
+import '../../../services/content_service.dart';
 import '../../../services/learning_progress_service.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -10,7 +11,6 @@ import '../../../theme/app_typography.dart';
 import '../../../widgets/app_detail_header.dart';
 import '../../home/models/topic_model.dart';
 import '../../topic/widgets/topic_activity_card.dart';
-import '../data/material_lesson_data.dart';
 import '../models/material_lesson_model.dart';
 
 class MaterialLessonListView extends StatefulWidget {
@@ -24,13 +24,14 @@ class MaterialLessonListView extends StatefulWidget {
 
 class _MaterialLessonListViewState extends State<MaterialLessonListView> {
   final LearningProgressService _progressService = LearningProgressService();
+  final ContentService _contentService = ContentService();
 
   Set<String> _completedLessonIds = {};
+  List<MaterialLessonModel> _lessons = [];
 
   bool _isLoadingProgress = true;
 
-  List<MaterialLessonModel> get lessons =>
-      MaterialLessonData.getLessonsByTopic(widget.topic.id);
+  List<MaterialLessonModel> get lessons => _lessons;
 
   int get completedLessons {
     return lessons
@@ -60,6 +61,7 @@ class _MaterialLessonListViewState extends State<MaterialLessonListView> {
     }
 
     try {
+      final fetchedLessons = await _contentService.getLessonsByTopic(widget.topic.id);
       final completedIds = await _progressService.getCompletedActivityIds(
         topicId: widget.topic.id,
         activityType: 'material',
@@ -70,6 +72,7 @@ class _MaterialLessonListViewState extends State<MaterialLessonListView> {
       }
 
       setState(() {
+        _lessons = fetchedLessons;
         _completedLessonIds = completedIds;
       });
     } finally {

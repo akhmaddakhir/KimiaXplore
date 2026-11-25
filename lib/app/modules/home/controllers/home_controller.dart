@@ -3,16 +3,20 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../routes/app_routes.dart';
+import '../../../services/content_service.dart';
 import '../../../services/learning_progress_service.dart';
-import '../../material/data/material_lesson_data.dart';
-import '../data/home_topics.dart';
 import '../models/topic_model.dart';
+
+enum StreakStatus { off, frozen, active }
 
 class HomeController extends GetxController {
   final SupabaseClient _supabase = Supabase.instance.client;
   final LearningProgressService _progressService = LearningProgressService();
+  final ContentService _contentService = ContentService();
 
   final studyProgress = 0.obs;
+  final streakCount = 0.obs;
+  final streakStatus = StreakStatus.off.obs;
   final topics = <TopicModel>[].obs;
   final recommendedTopic = Rxn<TopicModel>();
   final hasUserProgress = false.obs;
@@ -61,26 +65,32 @@ class HomeController extends GetxController {
 
       final updatedTopics = <TopicModel>[];
 
-      // 1. Fetch user progress records from database
+      // 1. Fetch topics from Supabase (or fallback)
+      final allTopics = await _contentService.getTopics();
+
+      // 2. Fetch user progress records from database
       final userProgress = await _progressService.getUserProgress();
 
-      // 2. Calculate progress for each topic
-      for (final topic in HomeTopics.items) {
+      // 3. Calculate progress for each topic
+      for (final topic in allTopics) {
         final completedIds = await _progressService.getCompletedActivityIds(
           topicId: topic.id,
           activityType: 'material',
         );
 
-        final lessons = MaterialLessonData.getLessonsByTopic(topic.id);
+        final lessons = await _contentService.getLessonsByTopic(topic.id);
 
         final completedCount = lessons
             .where((lesson) => completedIds.contains(lesson.id))
             .length;
 
+        final totalCount = lessons.isNotEmpty ? lessons.length : 1;
+
         updatedTopics.add(
           topic.copyWith(
-            totalLessons: lessons.length,
-            completedLessons: completedCount,
+            totalLessons: totalCount,
+            completedLessons:
+                completedCount <= totalCount ? completedCount : totalCount,
           ),
         );
       }
@@ -88,9 +98,10 @@ class HomeController extends GetxController {
       topics.assignAll(updatedTopics);
       _updateStudyProgress();
 
-      // 3. Check database: Did this user ID ever try any topic?
+      // 4. Check database: Did this user ID ever try any topic?
       final hasRecords = userProgress.isNotEmpty;
       hasUserProgress.value = hasRecords;
+      _updateStreakFromProgress(userProgress);
 
       if (!hasRecords) {
         // User has NEVER tried any topic -> show pure recommendation
@@ -113,12 +124,63 @@ class HomeController extends GetxController {
     } catch (e) {
       debugPrint('Error loading home data: $e');
       hasUserProgress.value = false;
-      if (topics.isEmpty) {
-        topics.assignAll(HomeTopics.items);
-      }
       recommendedTopic.value = topics.isNotEmpty ? topics.first : null;
     } finally {
       isLoadingProgress.value = false;
+    }
+  }
+
+  void _updateStreakFromProgress(List<Map<String, dynamic>> progressRecords) {
+    if (progressRecords.isEmpty) {
+      streakCount.value = 0;
+      streakStatus.value = StreakStatus.off;
+      return;
+    }
+
+    final activeDays = <DateTime>{};
+    for (final record in progressRecords) {
+      final rawDate =
+          record['last_opened_at']?.toString() ??
+          record['updated_at']?.toString() ??
+          record['created_at']?.toString();
+      if (rawDate == null) continue;
+      final parsed = DateTime.tryParse(rawDate)?.toLocal();
+      if (parsed != null) {
+        activeDays.add(DateTime(parsed.year, parsed.month, parsed.day));
+      }
+    }
+
+    if (activeDays.isEmpty) {
+      streakCount.value = 0;
+      streakStatus.value = StreakStatus.off;
+      return;
+    }
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    if (activeDays.contains(today)) {
+      int count = 0;
+      var cursor = today;
+      while (activeDays.contains(cursor)) {
+        count++;
+        cursor = cursor.subtract(const Duration(days: 1));
+      }
+      streakCount.value = count;
+      streakStatus.value = StreakStatus.active;
+    } else if (activeDays.contains(yesterday)) {
+      int count = 0;
+      var cursor = yesterday;
+      while (activeDays.contains(cursor)) {
+        count++;
+        cursor = cursor.subtract(const Duration(days: 1));
+      }
+      streakCount.value = count;
+      streakStatus.value = StreakStatus.frozen;
+    } else {
+      streakCount.value = 0;
+      streakStatus.value = StreakStatus.off;
     }
   }
 

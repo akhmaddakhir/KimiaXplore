@@ -2,16 +2,15 @@ import 'package:get/get.dart';
 
 import '../../../models/activity_navigation.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/content_service.dart';
 import '../../../services/learning_progress_service.dart';
-import '../../home/data/home_topics.dart';
 import '../../home/models/topic_model.dart';
-import '../data/material_data.dart';
-import '../data/material_lesson_data.dart';
 import '../models/material_lesson_model.dart';
 import '../models/material_model.dart';
 
 class MaterialController extends GetxController {
   final LearningProgressService _progressService = LearningProgressService();
+  final ContentService _contentService = ContentService();
 
   final topic = Rxn<TopicModel>();
   final material = Rxn<MaterialModel>();
@@ -69,53 +68,48 @@ class MaterialController extends GetxController {
     }
   }
 
-  void _initializeLesson(MaterialLessonSelection selection) {
-    if (selection.topicId != selection.lesson.topicId) {
-      return;
-    }
+  Future<void> _initializeLesson(MaterialLessonSelection selection) async {
+    final allTopics = await _contentService.getTopics();
+    final matchedTopic = allTopics.firstWhereOrNull(
+      (item) => item.id == selection.topicId,
+    );
 
-    TopicModel? selectedTopic;
+    topic.value = matchedTopic ??
+        TopicModel(
+          id: selection.topicId,
+          title: selection.lesson.title,
+          description: selection.lesson.description,
+          level: 'Dasar',
+          totalLessons: 1,
+        );
 
-    for (final item in HomeTopics.items) {
-      if (item.id == selection.topicId) {
-        selectedTopic = item;
-        break;
-      }
-    }
-
-    if (selectedTopic == null) {
-      return;
-    }
-
-    topic.value = selectedTopic;
-
-    lessons.assignAll(MaterialLessonData.getLessonsByTopic(selectedTopic.id));
+    final fetchedLessons =
+        await _contentService.getLessonsByTopic(selection.topicId);
+    lessons.assignAll(fetchedLessons);
 
     final lessonIndex = lessons.indexWhere(
       (lesson) => lesson.id == selection.lesson.id,
     );
 
-    if (lessonIndex == -1) {
-      return;
-    }
-
-    _selectLesson(lessonIndex);
+    await _selectLesson(lessonIndex != -1 ? lessonIndex : 0);
   }
 
-  void _initializeTopic(TopicModel selectedTopic) {
+  Future<void> _initializeTopic(TopicModel selectedTopic) async {
     topic.value = selectedTopic;
 
-    lessons.assignAll(MaterialLessonData.getLessonsByTopic(selectedTopic.id));
+    final fetchedLessons =
+        await _contentService.getLessonsByTopic(selectedTopic.id);
+    lessons.assignAll(fetchedLessons);
 
     if (lessons.isEmpty) {
-      material.value = MaterialData.findByTopicId(selectedTopic.id);
+      material.value = await _contentService.getMaterial(selectedTopic.id);
       return;
     }
 
-    _selectLesson(0);
+    await _selectLesson(0);
   }
 
-  void _selectLesson(int index) {
+  Future<void> _selectLesson(int index) async {
     final currentTopic = topic.value;
 
     if (currentTopic == null) {
@@ -126,7 +120,7 @@ class MaterialController extends GetxController {
       return;
     }
 
-    final topicMaterial = MaterialData.findByTopicId(currentTopic.id);
+    final topicMaterial = await _contentService.getMaterial(currentTopic.id);
 
     if (topicMaterial == null) {
       return;
@@ -140,6 +134,10 @@ class MaterialController extends GetxController {
       if (sectionIndex >= 0 && sectionIndex < topicMaterial.sections.length) {
         selectedSections.add(topicMaterial.sections[sectionIndex]);
       }
+    }
+
+    if (selectedSections.isEmpty && topicMaterial.sections.isNotEmpty) {
+      selectedSections.addAll(topicMaterial.sections);
     }
 
     if (selectedSections.isEmpty) {
@@ -192,12 +190,12 @@ class MaterialController extends GetxController {
     );
   }
 
-  void nextLesson() {
+  Future<void> nextLesson() async {
     if (!canContinueLesson) {
       return;
     }
 
-    _selectLesson(currentLessonIndex.value + 1);
+    await _selectLesson(currentLessonIndex.value + 1);
   }
 
   Future<void> finishMaterial() async {
@@ -223,7 +221,7 @@ class MaterialController extends GetxController {
       }
 
       if (hasNextLesson) {
-        nextLesson();
+        await nextLesson();
         return;
       }
 

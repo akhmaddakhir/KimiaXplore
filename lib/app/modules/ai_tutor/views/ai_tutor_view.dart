@@ -23,31 +23,50 @@ class AiTutorView extends GetView<AiTutorController> {
           children: [
             AppMainHeader(
               title: 'ai_title'.tr,
-              actions: [
-                Obx(
-                  () => controller.isChatOpen.value
-                      ? GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: controller.isSending.value
-                              ? null
-                              : controller.openNewChat,
-                          child: const SizedBox(
-                            width: 36,
-                            height: 36,
-                            child: Icon(
-                              Icons.add_comment_outlined,
-                              color: AppColors.textDark,
-                              size: 24,
-                            ),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ],
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.xl,
                 vertical: AppSpacing.md,
               ),
+              actions: [
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: controller.openHistory,
+                  child: const SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: Icon(
+                      Icons.history_rounded,
+                      color: AppColors.textDark,
+                      size: 24,
+                    ),
+                  ),
+                ),
+                Obx(
+                  () => controller.isChatOpen.value
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(width: AppSpacing.sm),
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: controller.isSending.value
+                                  ? null
+                                  : controller.openNewChat,
+                              child: const SizedBox(
+                                width: 36,
+                                height: 36,
+                                child: Icon(
+                                  Icons.add_comment_outlined,
+                                  color: AppColors.textDark,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
             ),
             Expanded(
               child: Obx(
@@ -56,20 +75,38 @@ class AiTutorView extends GetView<AiTutorController> {
                     : _buildWelcomeContent(),
               ),
             ),
+            // Maskot di atas kiri chatbox + AiChatInput yang dipertahankan
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg,
-                AppSpacing.sm,
+                40,
                 AppSpacing.lg,
                 AppSpacing.lg,
               ),
-              child: Obx(
-                () => AiChatInput(
-                  enabled: !controller.isSending.value,
-                  hintText: 'ai_input_hint'.tr,
-                  onSend: controller.sendMessage,
-                  onAttachment: controller.openAttachment,
-                ),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(
+                    top: -42,
+                    left: 14,
+                    child: IgnorePointer(
+                      child: SvgPicture.asset(
+                        'assets/images/app_mascot.svg',
+                        width: 56,
+                        height: 56,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  Obx(
+                    () => AiChatInput(
+                      enabled: !controller.isSending.value,
+                      hintText: 'ai_input_hint'.tr,
+                      onSend: controller.sendMessage,
+                      onAttachment: controller.openAttachment,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -79,58 +116,74 @@ class AiTutorView extends GetView<AiTutorController> {
   }
 
   Widget _buildWelcomeContent() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                  vertical: AppSpacing.lg,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 170,
-                      height: 170,
-                      child: SvgPicture.asset(
-                        'assets/images/app_mascot.svg',
-                        fit: BoxFit.contain,
+    final isEn = controller.activeChatLanguage == 'EN';
+    final headline = isEn
+        ? 'What should we tackle next?'
+        : 'Apa yang mau kita bahas?';
+    final prompts = isEn
+        ? ['Learn something new', 'Let\'s do some puzzles']
+        : ['Pelajari materi baru', 'Ayo latihan soal kimia'];
+
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+          Text(
+            headline,
+            style: AppTypography.heading2.copyWith(
+              color: AppColors.textDark,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          ...prompts.map(
+            (prompt) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm + 2),
+              child: Material(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => controller.sendMessage(prompt),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.border,
+                        width: 1.5,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.xl),
-                    Text(
-                      'ai_welcome_title'.tr,
-                      textAlign: TextAlign.center,
-                      style: AppTypography.heading1.copyWith(
-                        color: AppColors.textDark,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      'ai_welcome_description'.tr,
-                      textAlign: TextAlign.center,
+                    child: Text(
+                      prompt,
                       style: AppTypography.body.copyWith(
-                        color: AppColors.textMedium,
+                        color: AppColors.textDark,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        );
-      },
+        ],
+      ),
+      ),
     );
   }
 
   Widget _buildChatContent() {
     return Obx(() {
       final isSending = controller.isSending.value;
-
       final itemCount = controller.messages.length + (isSending ? 1 : 0);
 
       return ListView.builder(
@@ -148,19 +201,23 @@ class AiTutorView extends GetView<AiTutorController> {
 
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: AiChatBubble(message: thinkingText, isUser: false),
+              child: AiChatBubble(
+                message: thinkingText,
+                isUser: false,
+              ),
             );
           }
 
-          final adjustedIndex = isSending ? index - 1 : index;
-
-          final reversedIndex = controller.messages.length - 1 - adjustedIndex;
-
+          final messageIndex = isSending ? index - 1 : index;
+          final reversedIndex = controller.messages.length - 1 - messageIndex;
           final message = controller.messages[reversedIndex];
 
           return Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: AiChatBubble(message: message.text, isUser: message.isUser),
+            child: AiChatBubble(
+              message: message.text,
+              isUser: message.isUser,
+            ),
           );
         },
       );

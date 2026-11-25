@@ -7,8 +7,6 @@ import '../../../theme/app_spacing.dart';
 import '../../../widgets/app_step_header.dart';
 import '../../home/models/topic_model.dart';
 import '../controllers/flashcard_controller.dart';
-import '../data/flashcard_data.dart';
-import '../models/flashcard_model.dart';
 import '../widgets/flashcard_bottom_bar.dart';
 import '../widgets/flashcard_card.dart';
 import 'flashcard_result_view.dart';
@@ -37,15 +35,9 @@ class _FlashcardViewState extends State<FlashcardView> {
       topic = arguments;
     }
 
-    final List<FlashcardModel> flashcards;
-
-    if (topic != null) {
-      flashcards = FlashcardData.getFlashcardsByTopic(topic.id);
-    } else {
-      flashcards = [];
+    if (topic != null && controller.flashcards.isEmpty) {
+      controller.loadFlashcards(topic.id);
     }
-
-    controller.initializeFlashcards(flashcards);
   }
 
   void _retryNotMemorized() {
@@ -90,9 +82,15 @@ class _FlashcardViewState extends State<FlashcardView> {
               ),
 
               Expanded(
-                child: flashcards.isEmpty
-                    ? Center(child: Text('flashcard_empty'.tr))
-                    : Padding(
+                child: controller.isLoading.value
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.blue500,
+                        ),
+                      )
+                    : flashcards.isEmpty
+                        ? Center(child: Text('flashcard_empty'.tr))
+                        : Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.xl,
                         ),

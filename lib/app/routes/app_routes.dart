@@ -12,5 +12,7 @@ abstract class AppRoutes {
   static const flashcard = '/flashcard';
   static const simulation = '/simulation';
   static const profile = '/profile';
+  static const achievement = '/achievement';
   static const settings = '/settings';
+  static const aiChatHistory = '/ai-chat-history';
 }

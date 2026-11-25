@@ -20,22 +20,25 @@ class AiChatBubble extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           decoration: BoxDecoration(
-            color: isUser ? AppColors.blue50 : AppColors.surface,
+            color: isUser ? AppColors.blue500 : AppColors.surface,
+            border: isUser
+                ? null
+                : Border.all(color: AppColors.border, width: 1.5),
             borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(26),
-              topRight: const Radius.circular(26),
-              bottomLeft: Radius.circular(isUser ? 26 : 6),
-              bottomRight: Radius.circular(isUser ? 6 : 26),
+              topLeft: const Radius.circular(22),
+              topRight: const Radius.circular(22),
+              bottomLeft: Radius.circular(isUser ? 22 : 6),
+              bottomRight: Radius.circular(isUser ? 6 : 22),
             ),
           ),
           child: Text(
             message,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 14,
+              fontSize: 14.5,
               fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-              height: 1.4,
+              color: isUser ? AppColors.surface : AppColors.textDark,
+              height: 1.45,
             ),
           ),
         ),

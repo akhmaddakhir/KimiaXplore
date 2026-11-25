@@ -22,6 +22,24 @@ class ProfileView extends GetView<ProfileController> {
           children: [
             AppMainHeader(
               title: 'nav_profile'.tr,
+              leading: Navigator.canPop(context)
+                  ? GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => Get.back<void>(),
+                      child: const SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Icon(
+                            Icons.arrow_back_rounded,
+                            color: AppColors.textDark,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    )
+                  : null,
               actions: [
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,

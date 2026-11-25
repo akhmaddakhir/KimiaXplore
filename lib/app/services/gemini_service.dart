@@ -1,21 +1,24 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import '../modules/ai_tutor/models/ai_chat_message.dart';
 
 class GeminiService {
-  static const String _model = 'gemini-3.5-flash-lite';
+  List<String> get _candidateModels {
+    final custom = dotenv.env['GEMINI_MODEL']?.trim();
+    return [
+      if (custom != null && custom.isNotEmpty) custom,
+      'gemini-3.5-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+    ];
+  }
 
   String get _apiKey {
     return dotenv.env['GEMINI_API_KEY']?.trim() ?? '';
-  }
-
-  Uri get _endpoint {
-    return Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent',
-    );
   }
 
   Future<String> generateReply(
@@ -44,49 +47,83 @@ class GeminiService {
         .map((message) => message.toGeminiContent())
         .toList();
 
-    late http.Response response;
+    final models = _candidateModels;
 
-    try {
-      response = await http
-          .post(
-            _endpoint,
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': apiKey,
-            },
-            body: jsonEncode({
-              'systemInstruction': {
-                'parts': [
-                  {'text': _buildSystemInstruction(language)},
-                ],
+    for (var i = 0; i < models.length; i++) {
+      final model = models[i];
+      final endpoint = Uri.parse(
+        'https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent',
+      );
+
+      try {
+        final response = await http
+            .post(
+              endpoint,
+              headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey,
               },
-              'contents': contents,
-              'generationConfig': {'maxOutputTokens': 1024},
-            }),
-          )
-          .timeout(const Duration(seconds: 30));
-    } on Exception catch (error) {
-      throw GeminiException(
-        language == 'EN'
-            ? 'Unable to connect to Gemini API: $error'
-            : 'Tidak dapat terhubung ke Gemini API: $error',
-      );
+              body: jsonEncode({
+                'systemInstruction': {
+                  'parts': [
+                    {'text': _buildSystemInstruction(language)},
+                  ],
+                },
+                'contents': contents,
+                'generationConfig': {'maxOutputTokens': 1024},
+              }),
+            )
+            .timeout(const Duration(seconds: 30));
+
+        final responseBody = utf8.decode(response.bodyBytes);
+
+        final decoded = _decodeResponse(
+          responseBody,
+          response.statusCode,
+          language,
+        );
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          return _parseCandidateContent(decoded, language);
+        }
+
+        // Jika model lama/retired (404) atau server Google sibuk (503), otomatis coba fallback berikutnya
+        if ((response.statusCode == 404 || response.statusCode == 503) &&
+            i < models.length - 1) {
+          debugPrint(
+            '[GeminiService] Model $model status ${response.statusCode}, mencoba fallback ke ${models[i + 1]}...',
+          );
+          continue;
+        }
+
+        throw GeminiException(
+          _extractApiError(decoded, response.statusCode, language),
+        );
+      } on GeminiException {
+        if (i < models.length - 1) {
+          continue;
+        }
+        rethrow;
+      } on Exception catch (error) {
+        if (i < models.length - 1) {
+          continue;
+        }
+        throw GeminiException(
+          language == 'EN'
+              ? 'Unable to connect to Gemini API: $error'
+              : 'Tidak dapat terhubung ke Gemini API: $error',
+        );
+      }
     }
 
-    final responseBody = utf8.decode(response.bodyBytes);
-
-    final decoded = _decodeResponse(
-      responseBody,
-      response.statusCode,
-      language,
+    throw GeminiException(
+      language == 'EN'
+          ? 'Failed to generate response from all available Gemini models.'
+          : 'Gagal mendapatkan jawaban dari seluruh model Gemini yang tersedia.',
     );
+  }
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw GeminiException(
-        _extractApiError(decoded, response.statusCode, language),
-      );
-    }
-
+  String _parseCandidateContent(dynamic decoded, String language) {
     if (decoded is! Map<String, dynamic>) {
       throw GeminiException(
         language == 'EN'
@@ -333,3 +370,4 @@ class GeminiException implements Exception {
     return message;
   }
 }
+

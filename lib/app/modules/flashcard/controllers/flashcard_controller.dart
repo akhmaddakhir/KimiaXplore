@@ -1,14 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../models/activity_navigation.dart';
+import '../../../services/content_service.dart';
 import '../../../services/learning_progress_service.dart';
 import '../../home/models/topic_model.dart';
 import '../models/flashcard_model.dart';
 
 class FlashcardController extends GetxController {
   final LearningProgressService _progressService = LearningProgressService();
+  final ContentService _contentService = ContentService();
 
   final flashcards = <FlashcardModel>[].obs;
+  final isLoading = false.obs;
 
   final currentIndex = 0.obs;
   final isFlipped = false.obs;
@@ -97,6 +101,24 @@ class FlashcardController extends GetxController {
       _topic = arguments.topic;
     } else if (arguments is TopicModel) {
       _topic = arguments;
+    }
+
+    final topic = _topic;
+    if (topic != null) {
+      loadFlashcards(topic.id);
+    }
+  }
+
+  Future<void> loadFlashcards(String topicId) async {
+    isLoading.value = true;
+    try {
+      final fetched = await _contentService.getFlashcardsByTopic(topicId);
+      initializeFlashcards(fetched);
+    } catch (e) {
+      debugPrint('Error loading flashcards: $e');
+      initializeFlashcards([]);
+    } finally {
+      isLoading.value = false;
     }
   }
 

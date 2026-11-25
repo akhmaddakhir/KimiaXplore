@@ -1,89 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_colors.dart';
-import '../theme/app_typography.dart';
 
 class AppBottomNavbar extends StatelessWidget {
   const AppBottomNavbar({
     super.key,
     required this.selectedIndex,
     required this.onTabSelected,
+    this.isMoreOpen = false,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onTabSelected;
+  final bool isMoreOpen;
 
   static const List<_NavItem> _items = [
-    _NavItem(labelKey: 'nav_home', icon: Icons.home_outlined),
-    _NavItem(labelKey: 'nav_lab', icon: Icons.science_outlined),
-    _NavItem(labelKey: 'nav_ai_tutor', icon: Icons.smart_toy_outlined),
-    _NavItem(labelKey: 'nav_shop', icon: Icons.workspace_premium_outlined),
-    _NavItem(labelKey: 'nav_profile', icon: Icons.person_outline_rounded),
+    _NavItem(
+      label: 'Home',
+      assetPath: 'assets/icons/home_icon.svg',
+      size: 36,
+    ),
+    _NavItem(
+      label: 'Achievement',
+      assetPath: 'assets/icons/achievement_icon.svg',
+      size: 36,
+    ),
+    _NavItem(
+      label: 'AI Tutor',
+      assetPath: 'assets/icons/aitutor_icon.svg',
+      size: 42,
+    ),
+    _NavItem(
+      label: 'Shop',
+      assetPath: 'assets/icons/shop_icon.svg',
+      size: 42,
+    ),
+    _NavItem(
+      label: 'More',
+      assetPath: 'assets/icons/more_icon.svg',
+      size: 36,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final activeIndex = isMoreOpen ? 4 : selectedIndex;
+
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(color: AppColors.surface),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(
+          top: BorderSide(color: AppColors.border, width: 1.5),
+        ),
+      ),
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+          padding: const EdgeInsets.fromLTRB(10, 14, 10, 16),
           child: Row(
             children: List.generate(_items.length, (index) {
               final item = _items[index];
-
-              final isSelected = selectedIndex == index;
+              final isSelected = activeIndex == index;
 
               return Expanded(
-                child: InkWell(
-                  onTap: () {
-                    onTabSelected(index);
-                  },
-                  borderRadius: BorderRadius.circular(24),
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 36,
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                child: Semantics(
+                  label: item.label,
+                  selected: isSelected,
+                  button: true,
+                  child: GestureDetector(
+                    onTap: () => onTabSelected(index),
+                    behavior: HitTestBehavior.opaque,
+                    child: Center(
+                      heightFactor: 1.0,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 140),
+                        width: 50,
+                        height: 48,
                         decoration: BoxDecoration(
                           color: isSelected
                               ? AppColors.blue50
                               : Colors.transparent,
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(14),
+                          border: isSelected
+                              ? Border.all(
+                                  color: AppColors.blue500,
+                                  width: 2,
+                                )
+                              : null,
                         ),
                         alignment: Alignment.center,
-                        child: Icon(
-                          item.icon,
-                          size: 24,
-                          color: isSelected
-                              ? AppColors.textDark
-                              : AppColors.textHint,
+                        child: SvgPicture.asset(
+                          item.assetPath,
+                          width: item.size,
+                          height: item.size,
+                          fit: BoxFit.contain,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item.labelKey.tr,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected
-                              ? AppColors.textDark
-                              : AppColors.textHint,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               );
@@ -96,8 +111,13 @@ class AppBottomNavbar extends StatelessWidget {
 }
 
 class _NavItem {
-  const _NavItem({required this.labelKey, required this.icon});
+  const _NavItem({
+    required this.label,
+    required this.assetPath,
+    required this.size,
+  });
 
-  final String labelKey;
-  final IconData icon;
+  final String label;
+  final String assetPath;
+  final double size;
 }

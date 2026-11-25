@@ -1,18 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../models/activity_navigation.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/content_service.dart';
 import '../../../services/learning_progress_service.dart';
 import '../../home/models/topic_model.dart';
-import '../data/quiz_data.dart';
 import '../models/quiz_question_model.dart';
 
 class QuizController extends GetxController {
   final LearningProgressService _progressService = LearningProgressService();
+  final ContentService _contentService = ContentService();
 
   final topic = Rxn<TopicModel>();
 
   final questions = <QuizQuestionModel>[].obs;
+  final isLoadingQuestions = false.obs;
 
   final currentQuestionIndex = 0.obs;
 
@@ -102,11 +105,21 @@ class QuizController extends GetxController {
     _markQuizOpened();
   }
 
-  void loadQuestions() {
+  Future<void> loadQuestions() async {
     final currentTopic = topic.value;
 
     if (currentTopic != null) {
-      questions.assignAll(QuizData.getQuestionsByTopic(currentTopic.id));
+      isLoadingQuestions.value = true;
+      try {
+        final fetched =
+            await _contentService.getQuizzesByTopic(currentTopic.id);
+        questions.assignAll(fetched);
+      } catch (e) {
+        debugPrint('Error loading quizzes: $e');
+        questions.clear();
+      } finally {
+        isLoadingQuestions.value = false;
+      }
     } else {
       questions.clear();
     }

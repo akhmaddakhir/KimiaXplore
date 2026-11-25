@@ -203,11 +203,14 @@ class AuthController extends GetxController {
 
       Get.offAllNamed(AppRoutes.home);
     } on AuthException catch (error) {
+      debugPrint('Register AuthException: ${error.message}');
       _showError('Registrasi gagal', error.message);
     } on PostgrestException catch (error) {
+      debugPrint('Register PostgrestException: ${error.message} - ${error.details}');
       _showError('Profil gagal dibuat', error.message);
-    } catch (_) {
-      _showError('Registrasi gagal', 'Terjadi kesalahan. Coba lagi.');
+    } catch (error) {
+      debugPrint('Register unexpected error: $error');
+      _showError('Registrasi gagal', error.toString());
     } finally {
       isLoading.value = false;
     }

@@ -2,17 +2,17 @@ import 'package:get/get.dart';
 
 import '../../../models/activity_navigation.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/content_service.dart';
 import '../../../services/learning_progress_service.dart';
 import '../../home/models/topic_model.dart';
 import '../../lab/data/lab_simulations.dart';
-import '../../lab/models/simulation_model.dart';
-import '../../material/data/material_lesson_data.dart';
 import '../../material/models/material_lesson_model.dart';
 import '../../material/views/material_lesson_list_view.dart';
 import '../models/topic_activity_type.dart';
 
 class TopicController extends GetxController {
   final LearningProgressService _progressService = LearningProgressService();
+  final ContentService _contentService = ContentService();
 
   final topic = Rxn<TopicModel>();
 
@@ -37,19 +37,19 @@ class TopicController extends GetxController {
     }
   }
 
-  void _initializeProgress() {
+  Future<void> _initializeProgress() async {
     final currentTopic = topic.value;
 
     if (currentTopic == null) {
       return;
     }
 
-    final lessons = MaterialLessonData.getLessonsByTopic(currentTopic.id);
+    final lessons = await _contentService.getLessonsByTopic(currentTopic.id);
 
     totalLessons.value = lessons.length;
     totalProgress.value = lessons.length + 2;
 
-    loadProgress();
+    await loadProgress();
   }
 
   Future<void> loadProgress() async {
@@ -62,7 +62,7 @@ class TopicController extends GetxController {
     isLoadingProgress.value = true;
 
     try {
-      final lessons = MaterialLessonData.getLessonsByTopic(currentTopic.id);
+      final lessons = await _contentService.getLessonsByTopic(currentTopic.id);
 
       final progressData = await _progressService.getTopicProgress(
         currentTopic.id,
@@ -161,7 +161,7 @@ class TopicController extends GetxController {
   }
 
   Future<void> _openMaterial(TopicModel currentTopic) async {
-    final lessons = MaterialLessonData.getLessonsByTopic(currentTopic.id);
+    final lessons = await _contentService.getLessonsByTopic(currentTopic.id);
 
     if (lessons.length > 1) {
       await Get.to(() => MaterialLessonListView(topic: currentTopic));
@@ -191,50 +191,20 @@ class TopicController extends GetxController {
   }
 
   Future<void> _openSimulation(TopicModel currentTopic) async {
-    final simulation = _getSimulationForTopic(currentTopic.id);
+    final matchingSimulation = LabSimulations.items.firstWhereOrNull(
+      (sim) => sim.id == currentTopic.id,
+    );
 
-    if (simulation == null) {
-      Get.snackbar(
-        'simulation_unavailable_title'.tr,
-        'simulation_topic_unavailable_desc'.trParams({
-          'topic': currentTopic.localizedTitle,
-        }),
-        snackPosition: SnackPosition.BOTTOM,
-      );
-
+    if (matchingSimulation != null) {
+      await Get.toNamed(AppRoutes.simulation, arguments: matchingSimulation);
       return;
     }
 
-    await Get.toNamed(AppRoutes.simulation, arguments: simulation);
-  }
-
-  SimulationModel? _getSimulationForTopic(String topicId) {
-    String? simulationId;
-
-    switch (topicId) {
-      case 'atomic_structure':
-        simulationId = 'electron_configuration';
-        break;
-
-      case 'periodic_table':
-        simulationId = 'periodic_table';
-        break;
-
-      case 'chemical_bonding':
-        simulationId = null;
-        break;
+    if (LabSimulations.items.isNotEmpty) {
+      await Get.toNamed(
+        AppRoutes.simulation,
+        arguments: LabSimulations.items.first,
+      );
     }
-
-    if (simulationId == null) {
-      return null;
-    }
-
-    for (final simulation in LabSimulations.items) {
-      if (simulation.id == simulationId) {
-        return simulation;
-      }
-    }
-
-    return null;
   }
 }

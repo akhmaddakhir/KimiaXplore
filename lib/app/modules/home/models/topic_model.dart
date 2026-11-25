@@ -52,6 +52,35 @@ class TopicModel {
     return '$lvl • $totalLessons $lessonsText';
   }
 
+  factory TopicModel.fromJson(Map<String, dynamic> json) {
+    final rawLessons = (json['total_lessons'] as num?)?.toInt() ?? 1;
+    final total = rawLessons > 0 ? rawLessons : 1;
+    final rawCompleted = (json['completed_lessons'] as num?)?.toInt() ?? 0;
+    final completed = rawCompleted <= total ? rawCompleted : total;
+
+    return TopicModel(
+      id: json['id'] as String,
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      level: json['level'] as String? ?? 'Dasar',
+      totalLessons: total,
+      completedLessons: completed >= 0 ? completed : 0,
+      imageAsset: json['image_asset'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'level': level,
+      'total_lessons': totalLessons,
+      'completed_lessons': completedLessons,
+      if (imageAsset != null) 'image_asset': imageAsset,
+    };
+  }
+
   double get progress => completedLessons / totalLessons;
 
   bool get isCompleted => completedLessons == totalLessons;

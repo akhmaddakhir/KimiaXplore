@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../achievement/controllers/achievement_controller.dart';
 import '../../ai_tutor/controllers/ai_tutor_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../lab/controllers/lab_controller.dart';
@@ -14,6 +15,8 @@ class MainBinding extends Bindings {
     Get.lazyPut<MainController>(() => MainController());
 
     Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
+
+    Get.lazyPut<AchievementController>(() => AchievementController(), fenix: true);
 
     Get.lazyPut<LabController>(() => LabController(), fenix: true);
 

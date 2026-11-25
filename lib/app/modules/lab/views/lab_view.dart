@@ -44,11 +44,15 @@ class LabView extends GetView<LabController> {
               ],
             ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                  vertical: AppSpacing.sm,
-                ),
+              child: RefreshIndicator(
+                color: AppColors.blue500,
+                onRefresh: controller.loadSimulations,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                    vertical: AppSpacing.sm,
+                  ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -119,6 +123,7 @@ class LabView extends GetView<LabController> {
                 ),
               ),
             ),
+          ),
           ],
         ),
       ),

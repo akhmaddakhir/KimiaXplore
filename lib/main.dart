@@ -25,7 +25,7 @@ Future<void> main() async {
     throw StateError('Supabase configuration is missing');
   }
 
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  await Supabase.initialize(url: supabaseUrl, publishableKey: supabaseAnonKey);
 
   final languageService = await AppLanguageService().init();
 

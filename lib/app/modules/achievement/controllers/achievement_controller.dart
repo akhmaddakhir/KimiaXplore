@@ -1,0 +1,133 @@
+import 'package:get/get.dart';
+
+import '../../../theme/app_colors.dart';
+import '../models/achievement_model.dart';
+
+class AchievementController extends GetxController {
+  final personalRecords = <PersonalRecordModel>[
+    const PersonalRecordModel(
+      id: 'streak_record',
+      title: 'Rekor Streak',
+      date: '25 Nov 2026',
+      valueLabel: '7 Hari',
+      // Isi imageAsset dengan path gambar kamu nanti, misal: 'assets/images/...'
+      imageAsset: null,
+      accentColor: AppColors.orange,
+      softColor: AppColors.yellow50,
+    ),
+    const PersonalRecordModel(
+      id: 'quiz_record',
+      title: 'Skor Kuis Tertinggi',
+      date: '24 Nov 2026',
+      valueLabel: '100%',
+      imageAsset: null,
+      accentColor: AppColors.blue500,
+      softColor: AppColors.blue50,
+    ),
+    const PersonalRecordModel(
+      id: 'lesson_record',
+      title: 'Materi Selesai',
+      date: '23 Nov 2026',
+      valueLabel: '12 Modul',
+      imageAsset: null,
+      accentColor: AppColors.green500,
+      softColor: AppColors.green50,
+    ),
+  ].obs;
+
+  final achievements = <AchievementModel>[
+    const AchievementModel(
+      id: 'penjelajah_atom',
+      title: 'Penjelajah Atom',
+      currentTier: 4,
+      totalTiers: 10,
+      badgeNumber: '10',
+      imageAsset: null,
+      isNew: true,
+      accentColor: AppColors.orange,
+      softColor: AppColors.yellow50,
+    ),
+    const AchievementModel(
+      id: 'si_paling_pagi',
+      title: 'Si Paling Pagi',
+      currentTier: 2,
+      totalTiers: 10,
+      badgeNumber: '5',
+      imageAsset: null,
+      isNew: true,
+      accentColor: AppColors.yellow700,
+      softColor: AppColors.yellow50,
+    ),
+    const AchievementModel(
+      id: 'tanpa_cacat',
+      title: 'Tanpa Cacat',
+      currentTier: 1,
+      totalTiers: 5,
+      badgeNumber: '100%',
+      imageAsset: null,
+      accentColor: AppColors.blue500,
+      softColor: AppColors.blue50,
+    ),
+    const AchievementModel(
+      id: 'api_menyala',
+      title: 'Api Menyala',
+      currentTier: 3,
+      totalTiers: 7,
+      badgeNumber: '7',
+      imageAsset: null,
+      accentColor: AppColors.red500,
+      softColor: AppColors.red50,
+    ),
+    const AchievementModel(
+      id: 'asisten_lab',
+      title: 'Asisten Lab',
+      currentTier: 2,
+      totalTiers: 6,
+      badgeNumber: '2',
+      imageAsset: null,
+      accentColor: AppColors.teal,
+      softColor: AppColors.blue50,
+    ),
+    const AchievementModel(
+      id: 'kolektor_hafalan',
+      title: 'Kolektor Hafalan',
+      currentTier: 5,
+      totalTiers: 10,
+      badgeNumber: '50',
+      imageAsset: null,
+      accentColor: AppColors.green500,
+      softColor: AppColors.green50,
+    ),
+    const AchievementModel(
+      id: 'ilmuwan_malam',
+      title: 'Ilmuwan Malam',
+      currentTier: 1,
+      totalTiers: 10,
+      badgeNumber: '3',
+      imageAsset: null,
+      accentColor: AppColors.blue700,
+      softColor: AppColors.blue50,
+    ),
+    const AchievementModel(
+      id: 'tanya_prof_ai',
+      title: 'Tanya Prof. AI',
+      currentTier: 3,
+      totalTiers: 10,
+      badgeNumber: '15',
+      imageAsset: null,
+      accentColor: AppColors.darkTeal,
+      softColor: AppColors.green50,
+    ),
+    const AchievementModel(
+      id: 'master_reaksi',
+      title: 'Master Reaksi',
+      currentTier: 0,
+      totalTiers: 5,
+      badgeNumber: null,
+      imageAsset: null,
+      isUnlocked: false,
+      accentColor: AppColors.textHint,
+      softColor: AppColors.background,
+    ),
+  ].obs;
+}
