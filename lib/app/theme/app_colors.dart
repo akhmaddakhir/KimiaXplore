@@ -53,4 +53,23 @@ abstract final class AppColors {
   static const Color textMedium = Color(0xFF6E8191);
   static const Color textHint = Color(0xFF9AA9B5);
   static const Color border = Color(0xFFDDE6EF);
+
+  // Avatar Background Palette (15 warna)
+  static const List<Color> avatarBackgrounds = [
+    Color(0xFFE9EEF4),
+    Color(0xFFDCE4EC),
+    Color(0xFFBAC7D5),
+    Color(0xFFDCEBFF),
+    Color(0xFFB7D7FF),
+    Color(0xFF7EB4F2),
+    Color(0xFFD3F4F2),
+    Color(0xFF9EE3DF),
+    Color(0xFFDAF2D4),
+    Color(0xFFADE0A2),
+    Color(0xFFFFF1C2),
+    Color(0xFFFFD8B5),
+    Color(0xFFFFC9C9),
+    Color(0xFFEBD9FF),
+    Color(0xFFD2C1F0),
+  ];
 }

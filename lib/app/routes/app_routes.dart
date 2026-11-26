@@ -15,4 +15,5 @@ abstract class AppRoutes {
   static const achievement = '/achievement';
   static const settings = '/settings';
   static const aiChatHistory = '/ai-chat-history';
+  static const teacherTutor = '/teacher-tutor';
 }

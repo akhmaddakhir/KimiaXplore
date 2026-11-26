@@ -32,9 +32,11 @@ class AppMainHeader extends StatelessWidget {
     return Container(
       color: backgroundColor ?? Colors.transparent,
       padding: padding,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 40),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
           if (leading != null) ...[
             leading!,
             const SizedBox(width: AppSpacing.sm),
@@ -84,6 +86,7 @@ class AppMainHeader extends StatelessWidget {
             ),
           ],
         ],
+        ),
       ),
     );
   }

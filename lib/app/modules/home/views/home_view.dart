@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../widgets/app_main_header.dart';
-import '../../../widgets/app_stat_chip.dart';
+import '../../../widgets/app_streak_chip.dart';
 import '../controllers/home_controller.dart';
 import '../data/home_topics.dart';
 import '../widgets/learning_path_node.dart';
@@ -134,59 +133,13 @@ class HomeView extends GetView<HomeController> {
         child: Column(
           children: [
             // Header bawaan KimiaXplore
-            AppMainHeader(
+            const AppMainHeader(
               title: 'Home',
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: AppSpacing.xl,
                 vertical: AppSpacing.md,
               ),
-              actions: [
-                Obx(() {
-                  final status = controller.streakStatus.value;
-                  final String iconAsset;
-                  final Color backgroundColor;
-                  final Color borderColor;
-                  final Color textColor;
-
-                  switch (status) {
-                    case StreakStatus.active:
-                      iconAsset = 'assets/icons/streak_icon.svg';
-                      backgroundColor = AppColors.yellow50;
-                      borderColor = AppColors.lightOrange;
-                      textColor = AppColors.darkOrange;
-                    case StreakStatus.frozen:
-                      iconAsset = 'assets/icons/streak_icon_freeze.svg';
-                      backgroundColor = AppColors.blue50;
-                      borderColor = AppColors.blue100;
-                      textColor = AppColors.blue700;
-                    case StreakStatus.off:
-                      iconAsset = 'assets/icons/streak_icon_off.svg';
-                      backgroundColor = AppColors.surface;
-                      borderColor = AppColors.border;
-                      textColor = AppColors.textMedium;
-                  }
-
-                  return AppStatChip(
-                    icon: SvgPicture.asset(
-                      iconAsset,
-                      width: 28,
-                      height: 28,
-                    ),
-                    value: '${controller.streakCount.value}',
-                    tooltip: 'Streak',
-                    backgroundColor: backgroundColor,
-                    borderColor: borderColor,
-                    textColor: textColor,
-                    fontSize: 16,
-                    iconSpacing: 4,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 11,
-                      vertical: 4,
-                    ),
-                    onTap: () {},
-                  );
-                }),
-              ],
+              actions: [AppStreakChip()],
             ),
 
             // Learning Path Multi-Bab dengan Banner Bab melayang di atasnya
@@ -285,8 +238,9 @@ class _HomePathBodyState extends State<_HomePathBody> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final centerX = constraints.maxWidth / 2;
+        const double pathSidePadding = AppSpacing.xl;
         final double sideOffset =
-            (centerX - AppSpacing.xl - (_nodeWidth / 2)).clamp(
+            (centerX - pathSidePadding - (_nodeWidth / 2)).clamp(
               0.0,
               double.infinity,
             );
@@ -390,7 +344,15 @@ class _HomePathBodyState extends State<_HomePathBody> {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // Semua garis konektor bab digambar paling belakang & tidak menangkap sentuhan
+                      // Pola titik-titik papan pin (pegboard) di paling belakang
+                      const Positioned.fill(
+                        child: IgnorePointer(
+                          child: CustomPaint(
+                            painter: _PegboardBackgroundPainter(),
+                          ),
+                        ),
+                      ),
+                      // Semua garis konektor bab digambar di atas background & tidak menangkap sentuhan
                       for (int c = 0; c < layouts.length; c++)
                         Positioned.fill(
                           child: IgnorePointer(
@@ -464,6 +426,9 @@ class _HomePathBodyState extends State<_HomePathBody> {
                                     : PathNode(
                                         type: layouts[c].chapter.nodes[i].type,
                                         done: layouts[c].chapter.nodes[i].done,
+                                        width: _nodeWidth,
+                                        height: _nodeHeight,
+                                        depth: _nodeDepth,
                                         isSelected:
                                             _selectedChapterIndex == c &&
                                             _selectedNodeIndex == i,
@@ -597,4 +562,30 @@ class _PathConnectorPainter extends CustomPainter {
   bool shouldRepaint(covariant _PathConnectorPainter oldDelegate) {
     return oldDelegate.centers != centers || oldDelegate.nodes != nodes;
   }
+}
+
+class _PegboardBackgroundPainter extends CustomPainter {
+  const _PegboardBackgroundPainter();
+
+  static const double _spacing = 42.0;
+  static const double _radius = 3.2;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.border.withValues(alpha: 0.85)
+      ..style = PaintingStyle.fill;
+
+    final startX = (size.width % _spacing) / 2;
+    const startY = 20.0;
+
+    for (double y = startY; y < size.height; y += _spacing) {
+      for (double x = startX; x < size.width; x += _spacing) {
+        canvas.drawCircle(Offset(x, y), _radius, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _PegboardBackgroundPainter oldDelegate) => false;
 }

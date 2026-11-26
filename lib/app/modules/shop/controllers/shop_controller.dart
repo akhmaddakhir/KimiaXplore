@@ -14,16 +14,16 @@ class ShopController extends GetxController {
   final selectedPackageId = 'yearly'.obs;
   final isLoading = false.obs;
 
-  final List<PremiumBenefitModel> benefits = const [
+  List<PremiumBenefitModel> get benefits => const [
     PremiumBenefitModel(
-      id: 'ai_tutor_access',
-      title: 'AI Tutor lebih lengkap',
+      id: 'ai_tutor_usage',
+      title: 'Usage AI Tutor lebih banyak',
       freeIncluded: false,
       premiumIncluded: true,
     ),
     PremiumBenefitModel(
-      id: 'ai_tutor_usage',
-      title: 'Usage lebih banyak',
+      id: 'ai_tutor_features',
+      title: 'Fitur tambahan AI Tutor',
       freeIncluded: false,
       premiumIncluded: true,
     ),
@@ -34,8 +34,14 @@ class ShopController extends GetxController {
       premiumIncluded: true,
     ),
     PremiumBenefitModel(
+      id: 'teacher_tutor',
+      title: 'Fitur Guru Tutor',
+      freeIncluded: false,
+      premiumIncluded: true,
+    ),
+    PremiumBenefitModel(
       id: 'upcoming_features',
-      title: 'Akses fitur baru lebih awal',
+      title: 'Fitur baru yang akan mendatang',
       freeIncluded: false,
       premiumIncluded: true,
     ),
@@ -56,8 +62,15 @@ class ShopController extends GetxController {
       if (fetched.isNotEmpty) {
         packages.assignAll(fetched);
 
-        // Jika package id yang terpilih sebelumnya tidak ada di paket baru, pilih paket populer/pertama
-        if (!packages.any((p) => p.id == selectedPackageId.value)) {
+        // Pastikan Quantum menjadi default terpilih jika tersedia
+        final quantum = fetched.firstWhereOrNull(
+          (p) =>
+              p.id.toLowerCase().contains('quantum') ||
+              p.title.toLowerCase().contains('quantum'),
+        );
+        if (quantum != null) {
+          selectedPackageId.value = quantum.id;
+        } else if (!packages.any((p) => p.id == selectedPackageId.value)) {
           final popular = packages.firstWhereOrNull((p) => p.isPopular);
           selectedPackageId.value = popular?.id ?? packages.first.id;
         }
@@ -67,6 +80,20 @@ class ShopController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  List<PricingPackageModel> get orderedPackages {
+    int rank(PricingPackageModel p) {
+      final id = p.id.toLowerCase();
+      final title = p.title.toLowerCase();
+      if (id.contains('quantum') || title.contains('quantum')) return 0;
+      if (id.contains('atom') || title.contains('atom')) return 2;
+      return 1;
+    }
+
+    final list = List<PricingPackageModel>.from(packages);
+    list.sort((a, b) => rank(a).compareTo(rank(b)));
+    return list;
   }
 
   PricingPackageModel? get selectedPackage {

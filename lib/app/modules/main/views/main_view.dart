@@ -13,6 +13,8 @@ import '../../ai_tutor/views/ai_tutor_view.dart';
 import '../../home/views/home_view.dart';
 import '../../lab/views/lab_view.dart';
 import '../../shop/views/shop_view.dart';
+import '../../teacher_tutor/bindings/teacher_tutor_binding.dart';
+import '../../teacher_tutor/views/teacher_tutor_view.dart';
 
 import '../controllers/main_controller.dart';
 
@@ -34,11 +36,9 @@ class MainView extends GetView<MainController> {
 
   void _openTeacherTutor() {
     controller.closeMoreMenu();
-    Get.snackbar(
-      'Guru Tutor',
-      'Fitur konsultasi dengan Guru Tutor segera hadir.',
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
+    Get.to(
+      () => const TeacherTutorView(),
+      binding: TeacherTutorBinding(),
     );
   }
 

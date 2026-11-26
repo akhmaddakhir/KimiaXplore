@@ -5,9 +5,10 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
 import '../../../widgets/app_main_header.dart';
+import '../../../widgets/app_streak_chip.dart';
 import '../controllers/achievement_controller.dart';
 import '../widgets/achievement_badge_card.dart';
-import '../widgets/personal_record_card.dart';
+import 'achievement_detail_view.dart';
 
 class AchievementView extends GetView<AchievementController> {
   const AchievementView({super.key});
@@ -30,6 +31,7 @@ class AchievementView extends GetView<AchievementController> {
                 horizontal: AppSpacing.xl,
                 vertical: AppSpacing.md,
               ),
+              actions: [AppStreakChip()],
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -45,42 +47,7 @@ class AchievementView extends GetView<AchievementController> {
                         horizontal: AppSpacing.xl,
                       ),
                       child: Text(
-                        'Rekor Personal',
-                        style: AppTypography.heading2.copyWith(
-                          color: AppColors.textDark,
-                          fontSize: 19,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    SizedBox(
-                      height: 212,
-                      child: Obx(
-                        () => ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xl,
-                          ),
-                          itemCount: controller.personalRecords.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(width: AppSpacing.md),
-                          itemBuilder: (context, index) {
-                            final record = controller.personalRecords[index];
-                            return PersonalRecordCard(
-                              record: record,
-                              onTap: () {},
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xl,
-                      ),
-                      child: Text(
-                        'Penghargaan',
+                        'Rekor Pribadi',
                         style: AppTypography.heading2.copyWith(
                           color: AppColors.textDark,
                           fontSize: 19,
@@ -90,7 +57,7 @@ class AchievementView extends GetView<AchievementController> {
                     const SizedBox(height: AppSpacing.lg),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xl,
+                        horizontal: AppSpacing.lg,
                       ),
                       child: Obx(
                         () => GridView.builder(
@@ -100,15 +67,17 @@ class AchievementView extends GetView<AchievementController> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            crossAxisSpacing: AppSpacing.md,
-                            mainAxisSpacing: AppSpacing.lg,
-                            mainAxisExtent: 158,
+                            crossAxisSpacing: AppSpacing.sm,
+                            mainAxisSpacing: AppSpacing.xs,
+                            mainAxisExtent: 180,
                           ),
                           itemBuilder: (context, index) {
                             final item = controller.achievements[index];
                             return AchievementBadgeCard(
                               achievement: item,
-                              onTap: () {},
+                              onTap: () => Get.to(
+                                () => AchievementDetailView(achievement: item),
+                              ),
                             );
                           },
                         ),

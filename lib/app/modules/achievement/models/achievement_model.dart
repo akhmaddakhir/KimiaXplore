@@ -23,6 +23,8 @@ class PersonalRecordModel {
 class AchievementModel {
   final String id;
   final String title;
+  final String description;
+  final String? unlockedDate;
   final int currentTier;
   final int totalTiers;
   final String? badgeNumber;
@@ -35,6 +37,8 @@ class AchievementModel {
   const AchievementModel({
     required this.id,
     required this.title,
+    this.description = '',
+    this.unlockedDate,
     required this.currentTier,
     required this.totalTiers,
     this.badgeNumber,

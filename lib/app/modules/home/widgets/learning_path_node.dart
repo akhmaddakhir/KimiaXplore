@@ -38,8 +38,8 @@ class PathNode extends StatefulWidget {
     this.done = false,
     this.isSelected = false,
     this.onTap,
-    this.width = 82,
-    this.height = 66,
+    this.width = 86,
+    this.height = 70,
     this.depth = 8,
     this.borderRadius = 18,
   });

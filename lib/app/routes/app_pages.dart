@@ -19,6 +19,8 @@ import 'package:kimiaxplore/app/modules/quiz/bindings/quiz_binding.dart';
 import 'package:kimiaxplore/app/modules/quiz/views/quiz_view.dart';
 import 'package:kimiaxplore/app/modules/settings/bindings/settings_binding.dart';
 import 'package:kimiaxplore/app/modules/settings/views/settings_view.dart';
+import 'package:kimiaxplore/app/modules/teacher_tutor/bindings/teacher_tutor_binding.dart';
+import 'package:kimiaxplore/app/modules/teacher_tutor/views/teacher_tutor_view.dart';
 import 'package:kimiaxplore/app/modules/simulation/bindings/simulation_binding.dart';
 import 'package:kimiaxplore/app/modules/simulation/views/simulation_view.dart';
 import 'package:kimiaxplore/app/modules/topic/bindings/topic_binding.dart';
@@ -100,6 +102,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.aiChatHistory,
       page: () => const AiChatHistoryView(),
+    ),
+    GetPage(
+      name: AppRoutes.teacherTutor,
+      page: () => const TeacherTutorView(),
+      binding: TeacherTutorBinding(),
     ),
   ];
 }

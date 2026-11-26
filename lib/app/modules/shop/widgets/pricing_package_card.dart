@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
@@ -7,243 +6,143 @@ import '../../../theme/app_spacing.dart';
 import '../../../theme/app_typography.dart';
 import '../models/pricing_package_model.dart';
 
-/// Kartu paket langganan bergaya Duolingo dengan palet AppColors KimiaXplore.
 class PricingPackageCard extends StatelessWidget {
   final PricingPackageModel package;
   final bool isSelected;
-  final bool isLoading;
+  final bool showPopularTag;
   final VoidCallback? onTap;
-  final VoidCallback? onSubscribe;
 
   const PricingPackageCard({
     super.key,
     required this.package,
     this.isSelected = false,
-    this.isLoading = false,
+    this.showPopularTag = false,
     this.onTap,
-    this.onSubscribe,
   });
-
-  Widget _buildImageSlot() {
-    final asset = package.imageAsset;
-    if (asset != null && asset.isNotEmpty) {
-      return SizedBox(
-        width: 84,
-        height: 84,
-        child: asset.toLowerCase().endsWith('.svg')
-            ? SvgPicture.asset(asset, fit: BoxFit.contain)
-            : Image.asset(asset, fit: BoxFit.contain),
-      );
-    }
-
-    return Container(
-      width: 84,
-      height: 84,
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border, width: 1.5),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.image_outlined,
-            size: 28,
-            color: AppColors.textHint,
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'Gambar',
-            style: AppTypography.caption.copyWith(
-              color: AppColors.textHint,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    final isRecommended = package.isPopular;
-    final features = package.features.isNotEmpty
-        ? package.features
-        : <String>[
-            'Akses penuh seluruh materi & kuis',
-            'Tutor Kimia AI lebih lengkap',
-            'Belajar bebas iklan',
-          ];
+    final hasOriginalPrice =
+        package.originalPrice != null &&
+        package.originalPrice!.trim().isNotEmpty;
+    final subtitleText =
+        (package.description != null && package.description!.trim().isNotEmpty)
+        ? package.description!
+        : 'Akses premium ${package.localizedDuration}';
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isRecommended || isSelected
-              ? AppColors.blue500
-              : AppColors.border,
-          width: 2,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            width: double.infinity,
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              showPopularTag ? 22 : AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg,
+            ),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.blue50 : AppColors.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: isSelected ? AppColors.blue500 : AppColors.border,
+                width: 2,
+              ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Rekomendasi dengan maskot tanpa background khusus
-                if (isRecommended) ...[
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/app_mascot.svg',
-                        width: 28,
-                        height: 28,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        'REKOMENDASI',
-                        style: AppTypography.caption.copyWith(
-                          color: AppColors.blue500,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  const Divider(color: AppColors.border, height: 1, thickness: 1.5),
-                  const SizedBox(height: AppSpacing.md),
-                ],
-
-                // Isi utama: Judul & list keuntungan di kiri, slot gambar di kanan
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            package.title,
-                            style: AppTypography.title.copyWith(
-                              color: AppColors.textDark,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Text(
-                                package.localizedDuration,
-                                style: AppTypography.caption.copyWith(
-                                  color: AppColors.textMedium,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              if (package.originalPrice != null) ...[
-                                const SizedBox(width: 8),
-                                Text(
-                                  package.originalPrice!,
-                                  style: AppTypography.caption.copyWith(
-                                    color: AppColors.textHint,
-                                    decoration: TextDecoration.lineThrough,
-                                    decorationColor: AppColors.textHint,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          ...features.map(
-                            (feature) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 2),
-                                    child: Icon(
-                                      Icons.check_rounded,
-                                      size: 16,
-                                      color: AppColors.blue500,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      feature,
-                                      style: AppTypography.bodySmall.copyWith(
-                                        color: AppColors.textDark,
-                                        fontWeight: FontWeight.w600,
-                                        height: 1.3,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        package.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.heading2.copyWith(
+                          color: AppColors.textDark,
+                          fontSize: 18.5,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
-                    _buildImageSlot(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (hasOriginalPrice)
+                          Text(
+                            package.originalPrice!,
+                            style: AppTypography.caption.copyWith(
+                              color: AppColors.textHint,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: AppColors.textHint,
+                            ),
+                          ),
+                        Text(
+                          package.price,
+                          style: AppTypography.heading2.copyWith(
+                            color: isSelected
+                                ? AppColors.blue500
+                                : AppColors.textDark,
+                            fontSize: 18.5,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                // Tombol CTA persis gaya Duolingo: menampilkan harga langsung di tombol
-                SizedBox(
-                  width: double.infinity,
-                  height: 46,
-                  child: OutlinedButton(
-                    onPressed: isLoading ? null : (onSubscribe ?? onTap),
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: isRecommended
-                          ? AppColors.blue500
-                          : AppColors.surface,
-                      side: BorderSide(
-                        color: isRecommended
-                            ? AppColors.blue700
-                            : AppColors.border,
-                        width: 2,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.button),
-                      ),
-                    ),
-                    child: Text(
-                      isLoading
-                          ? 'MEMPROSES...'
-                          : 'COBA SEHARGA ${package.price.toUpperCase()}',
-                      style: AppTypography.caption.copyWith(
-                        color: isRecommended
-                            ? AppColors.surface
-                            : AppColors.blue500,
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.6,
-                      ),
-                    ),
+                const SizedBox(height: 6),
+                Text(
+                  subtitleText,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textMedium,
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
-        ),
+          if (showPopularTag)
+            Positioned(
+              top: -12,
+              left: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.yellow100,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  border: Border.all(
+                    color: AppColors.lightOrange,
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  'Paling Populer',
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.darkOrange,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

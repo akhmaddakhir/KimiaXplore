@@ -58,7 +58,7 @@ class AppBottomNavbar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 14, 10, 16),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: List.generate(_items.length, (index) {
               final item = _items[index];
@@ -72,30 +72,33 @@ class AppBottomNavbar extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () => onTabSelected(index),
                     behavior: HitTestBehavior.opaque,
-                    child: Center(
-                      heightFactor: 1.0,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 140),
-                        width: 50,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.blue50
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(14),
-                          border: isSelected
-                              ? Border.all(
-                                  color: AppColors.blue500,
-                                  width: 2,
-                                )
-                              : null,
-                        ),
-                        alignment: Alignment.center,
-                        child: SvgPicture.asset(
-                          item.assetPath,
-                          width: item.size,
-                          height: item.size,
-                          fit: BoxFit.contain,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 14, 0, 16),
+                      child: Center(
+                        heightFactor: 1.0,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 140),
+                          width: 50,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.blue50
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(14),
+                            border: isSelected
+                                ? Border.all(
+                                    color: AppColors.blue500,
+                                    width: 2,
+                                  )
+                                : null,
+                          ),
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            item.assetPath,
+                            width: item.size,
+                            height: item.size,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ),

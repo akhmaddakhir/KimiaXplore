@@ -19,6 +19,25 @@ class ProfileController extends GetxController {
   final userEmail = ''.obs;
   final avatarUrl = RxnString();
 
+  final selectedAvatarAsset = 'assets/images/profile_avatar_scientist.svg'.obs;
+  final selectedAvatarBg = AppColors.avatarBackgrounds[1].obs;
+
+  static const List<({String label, String asset})> avatarOptions = [
+    (label: 'Profesor', asset: 'assets/images/profile_avatar_scientist.svg'),
+    (label: 'Guru Kimia', asset: 'assets/images/profile_avatar_teacher.svg'),
+    (label: 'Mas Mas', asset: 'assets/images/profile_avatar_man.svg'),
+    (label: 'Mbak Mbak', asset: 'assets/images/profile_avatar_woman.svg'),
+    (label: 'Suhu Kimia', asset: 'assets/images/profile_avatar_grandpa.svg'),
+  ];
+
+  void updateAvatarAppearance({
+    required String assetPath,
+    required Color backgroundColor,
+  }) {
+    selectedAvatarAsset.value = assetPath;
+    selectedAvatarBg.value = backgroundColor;
+  }
+
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
 
